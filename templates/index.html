@@ -1,18 +1,68 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-	<link href="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.css" rel="stylesheet">
-	<link href="{{ url_for('static', path='/css/styles.css') }}" rel="stylesheet">
+
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+
+
+
+	<link href="{{ url_for('static', filename='/css/styles.css') }}" rel="stylesheet">
 	<title>Hello World</title>
 </head>
+
 <body>
-	<h1>Hello World</h1>
-	
-	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script> 
-	<script type="text/javascript" src="https://cdn.jsdelivr.net/gh/ethereum/web3.js@1.0.0-beta.34/dist/web3.min.js"></script> 
-	<script src="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.js"></script>
+
+	<header class="mdc-top-app-bar">
+		<nav>
+			<div class="nav-wrapper">
+				<a href="#!" class="brand-logo"> DigiLocker</a>
+				<a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+				<ul class="right hide-on-med-and-down">
+					<li><a href="/home">Home</a></li>
+					<li id="auth-btn" btn-for = "login"><a class="waves-effect waves-light btn" href = "">Login</a></li>
+				</ul>
+			</div>
+		</nav>
+
+		<ul class="sidenav" id="mobile-demo">
+			<li><a href="mobile.html">Mobile</a></li>
+		</ul>
+	</header>
+
+
+	<main>
+		<div class = "container">
+		<p id = "account-address"></p>
+		<p id = "funds"></p>
+		</div>
+	</main>
+
+
+
+
+	<footer class="page-footer">
+		<div class="container">
+			<div class="footer-copyright">
+				<div class="container">
+					© 2020 Copyright Text
+				</div>
+			</div>
+		</div>
+
+	</footer>
+
+
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+	<script type="text/javascript" src="https://cdn.jsdelivr.net/gh/ethereum/web3.js@1.0.0-beta.34/dist/web3.min.js">
+	</script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
 	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
 
-	<script type="text/javascript" src="{{ url_for('static', path='/js/scripts.js') }}"></script> 
+	<script type="text/javascript" src="{{ url_for('static', filename='/js/abi.js') }}"></script>
+
+	<script type="text/javascript" src="{{ url_for('static', filename='/js/scripts.js') }}"></script>
 </body>
+
 </html>
