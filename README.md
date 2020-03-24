@@ -14,7 +14,7 @@ uvicorn main:app --reload
 
 ## Resources
 
-## Building etherium dapps with metamask
+## Building etherium dapps with metamask[*]
 
 - https://medium.com/crowdbotics/building-ethereum-dapps-with-meta-mask-9bd0685dfd57
 
