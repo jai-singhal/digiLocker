@@ -1,18 +1,22 @@
-<!DOCTYPE html>
-<html>
-<head>
-	<link href="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.css" rel="stylesheet">
-	<link href="{{ url_for('static', path='/css/styles.css') }}" rel="stylesheet">
-	<title>Hello World</title>
-</head>
-<body>
-	<h1>Hello World</h1>
-	
-	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script> 
-	<script type="text/javascript" src="https://cdn.jsdelivr.net/gh/ethereum/web3.js@1.0.0-beta.34/dist/web3.min.js"></script> 
-	<script src="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+{% extends 'base.html' %}
 
-	<script type="text/javascript" src="{{ url_for('static', path='/js/scripts.js') }}"></script> 
-</body>
-</html>
+{% block title %}
+<title>DigiLocker</title>
+{% endblock title %}
+
+{% block style %}
+{% endblock style %}
+
+
+{% block container %}
+	<main>
+		<div class = "container">
+		<p id = "account-address"></p>
+		<p id = "funds"></p>
+		</div>
+	</main>
+
+    {% block javascript %}
+    {% endblock javascript %}
+
+{% endblock container %}
