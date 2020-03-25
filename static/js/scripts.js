@@ -1,4 +1,4 @@
-var web3 = new Web3(window.web3.currentProvider);
+var web3 ;
 
 function getCookie(name) {
     var cookieValue = null;
@@ -162,6 +162,11 @@ function web3Login(login_url, onTokenRequestFail, onTokenSignFail, onTokenSignSu
 
 
 $("#auth-btn").click(function (e) {
+    if(! window.web3){
+        alert("Please install metamask");
+        return false;
+    }
+    web3 = new Web3(window.web3.currentProvider);
     e.preventDefault();
 
     if($(this).attr("btn-for") === "logout"){
