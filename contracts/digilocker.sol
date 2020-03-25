@@ -56,18 +56,21 @@ contract digiLocker {
         emit registeredUserEvent(_firstName,_lastName,_email, _utype, _useraddress);
     }
 
-    function addDocument(string memory docName,
-        uint256 timestamp,
-        bytes32 accessKey, 
-        string memory ipfsHash) public{
+    function addDocument(string docName,uint256 timestamp,bytes32 accessKey,string ipfsHash) public{
         
     }
 
     function getTotalSharedDocsByOthers() public{}
     
-    function getOwnerDocInfoByDocId() public{}
+    function getOwnerDocInfoByDocId(uint256 docId)public view returns (string,string,bytes32){
+        
+            return(ipfsHash,docName,accessKey);
+        
+    }
     
-    function getSharedDocByDocId() public{}
+    function getSharedDocByDocId(uint256 docId) public view returns(uint256,string docName, Permission){
+            return(,,);
+    }
 
 
 }
