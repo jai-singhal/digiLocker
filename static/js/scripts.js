@@ -194,9 +194,8 @@ $("#auth-btn").click(function (e) {
                 
             }
         }
-        else if (window.web3) {
-            web3 = new Web3(window.web3.currentProvider);
-        }
+        
+        web3 = new Web3(window.web3.currentProvider);
 
         checkWeb3(function (loggedIn) {
             if (!loggedIn) {
