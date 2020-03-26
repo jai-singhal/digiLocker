@@ -1,6 +1,6 @@
 from flask import Flask, escape, request, session, redirect, url_for
 from flask import render_template
-
+from utils import recover_to_addr
 
 import random, os, string
 # import sha3
@@ -36,6 +36,11 @@ def login_postapi():
         session.pop("login_token", None)
         signature = request.form.get("signature")
         address = request.form.get("address")
+        # TODO: VERIFY SIGNATURE: use web3.py lib for signing the etherium
+        
+        # if not address == recover_to_addr(token, signature):
+        #     return {'success': False, 'redirect_url': "/"}
+
         print(signature, address)
         return {'success': True, 'redirect_url': "/"}
 

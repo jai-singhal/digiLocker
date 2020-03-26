@@ -18,6 +18,9 @@ uvicorn main:app --reload
 
 - https://medium.com/crowdbotics/building-ethereum-dapps-with-meta-mask-9bd0685dfd57
 
+## Setup local ganache and private network[*]
+- https://medium.com/@tricialobo/testing-smart-contracts-with-remix-ganache-and-metamask-a62d5fe525a1
+
 ### How to generate multiple keys
 
 - https://crypto.stackexchange.com/questions/76588/multiple-aes-key-derivation-from-a-master-key

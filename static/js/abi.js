@@ -1,27 +1,15 @@
 var abi = [
 	{
-		"inputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "constructor"
-	},
-	{
 		"anonymous": false,
 		"inputs": [
 			{
 				"indexed": false,
-				"internalType": "uint256",
-				"name": "id",
-				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"internalType": "bool",
-				"name": "completed",
-				"type": "bool"
+				"internalType": "address",
+				"name": "_useraddress",
+				"type": "address"
 			}
 		],
-		"name": "TaskCompleted",
+		"name": "alreadyRegistred",
 		"type": "event"
 	},
 	{
@@ -29,97 +17,89 @@ var abi = [
 		"inputs": [
 			{
 				"indexed": false,
-				"internalType": "uint256",
-				"name": "id",
-				"type": "uint256"
-			},
-			{
-				"indexed": false,
 				"internalType": "string",
-				"name": "content",
+				"name": "_firstName",
 				"type": "string"
 			},
 			{
 				"indexed": false,
-				"internalType": "bool",
-				"name": "completed",
-				"type": "bool"
+				"internalType": "string",
+				"name": "_lastName",
+				"type": "string"
+			},
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "_email",
+				"type": "string"
+			},
+			{
+				"indexed": false,
+				"internalType": "enum digiLocker.userType",
+				"name": "utype",
+				"type": "uint8"
+			},
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "_useraddress",
+				"type": "address"
 			}
 		],
-		"name": "TaskCreated",
+		"name": "registeredUserEvent",
 		"type": "event"
 	},
 	{
 		"constant": false,
 		"inputs": [
 			{
-				"internalType": "string",
-				"name": "_content",
-				"type": "string"
+				"internalType": "address",
+				"name": "_maddress",
+				"type": "address"
 			}
 		],
-		"name": "createTask",
-		"outputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [],
-		"name": "taskCount",
+		"name": "isalreadyRegisteredUser",
 		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"name": "tasks",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "id",
-				"type": "uint256"
-			},
-			{
-				"internalType": "string",
-				"name": "content",
-				"type": "string"
-			},
 			{
 				"internalType": "bool",
-				"name": "completed",
+				"name": "",
 				"type": "bool"
 			}
 		],
 		"payable": false,
-		"stateMutability": "view",
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
 		"constant": false,
 		"inputs": [
 			{
-				"internalType": "uint256",
-				"name": "_id",
-				"type": "uint256"
+				"internalType": "string",
+				"name": "_firstName",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_lastName",
+				"type": "string"
+			},
+			{
+				"internalType": "string",
+				"name": "_email",
+				"type": "string"
+			},
+			{
+				"internalType": "enum digiLocker.userType",
+				"name": "_utype",
+				"type": "uint8"
+			},
+			{
+				"internalType": "string",
+				"name": "contact",
+				"type": "string"
 			}
 		],
-		"name": "toggleCompleted",
+		"name": "registerUser",
 		"outputs": [],
 		"payable": false,
 		"stateMutability": "nonpayable",
