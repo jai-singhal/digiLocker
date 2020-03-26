@@ -63,6 +63,9 @@ python main.py
 
 - http://www.programmersought.com/article/6535156845/
 
+## Other resources
+
+- https://ethereum.stackexchange.com/questions/31355/storing-and-passing-encrypted-data-to-another-owner
 
 ## Discussion with mentor
 
