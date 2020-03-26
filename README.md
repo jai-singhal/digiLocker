@@ -8,6 +8,11 @@ uvicorn main:app --reload
 
 ## System Design
 
+### Login
+
+![doc-upload](./sequence-diagram.png)
+
+
 ### Document uploading
 
 ![doc-upload](./doc-upload.png)

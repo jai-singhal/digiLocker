@@ -29,6 +29,7 @@ function loginWithSignature(address, signature, balance, login_url, onLoginReque
                     onLoginSuccess(resp);
                     console.log("Logined");
                     //display the address and balance
+                    
                     $("#account-address").html("Your account address is: " + from);
                     $("#funds").html("Your current balance is: " + balance + " ETH");
 
