@@ -3,15 +3,10 @@ from flask import render_template
 from utils import recover_to_addr
 
 import random, os, string
-# import sha3
-# import ethereum
 
 
 app = Flask(__name__)
 app.secret_key = b'OCML3BRawWEUeaxcuKHLpw'
-# app.mount("/static", StaticFiles(directory="static"), name="static")
-# templates = Jinja2Templates(directory="templates")
-
 
 
 @app.route("/")
@@ -24,7 +19,6 @@ def login_api():
     token = ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for i in range(32))
     session['login_token'] = token
     return {"data": token, }
-    # eth_addr = recover_to_addr(token, signature)
 
 @app.route("/api/login/metamask", methods = ['POST'])
 def login_postapi():
@@ -36,13 +30,16 @@ def login_postapi():
         session.pop("login_token", None)
         signature = request.form.get("signature")
         address = request.form.get("address")
-        # TODO: VERIFY SIGNATURE: use web3.py lib for signing the etherium
-        
-        # if not address == recover_to_addr(token, signature):
-        #     return {'success': False, 'redirect_url': "/"}
-
-        print(signature, address)
-        return {'success': True, 'redirect_url': "/"}
+        recovered_addr = recover_to_addr(token, signature)
+        print(recovered_addr, address)
+        if address != recovered_addr:
+            return {
+                'success': False, 
+                'redirect_url': "/",
+                'error': "Address verification failed"
+            }
+        else:
+            return {'success': True, 'redirect_url': "/"}
 
 
 @app.route("/api/logout/metamask", methods = ['POST'])

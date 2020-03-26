@@ -16,7 +16,7 @@ function getCookie(name) {
     return cookieValue;
 }
 
-function loginWithSignature(address, signature, login_url, onLoginRequestError, onLoginFail, onLoginSuccess) {
+function loginWithSignature(address, signature, balance, login_url, onLoginRequestError, onLoginFail, onLoginSuccess) {
     console.log(address, signature, login_url)
     var request = new XMLHttpRequest();
     request.open('POST', login_url, true);
@@ -27,12 +27,14 @@ function loginWithSignature(address, signature, login_url, onLoginRequestError, 
             if (resp.success) {
                 if (typeof onLoginSuccess == 'function') {
                     onLoginSuccess(resp);
-                    console.log("Logined")
+                    console.log("Logined");
+                    //display the address and balance
+                    $("#account-address").html("Your account address is: " + from);
+                    $("#funds").html("Your current balance is: " + balance + " ETH");
+
                     $("#auth-btn a").html("Logout");
                     $("#auth-btn").attr("btn-for", "logout");
                     $("#auth-btn a").attr("href", "/api/logout/metamask");
- 
-
                 }
             } else {
                 if (typeof onLoginFail == 'function') {
@@ -108,10 +110,8 @@ function web3Login(login_url, onTokenRequestFail, onTokenSignFail, onTokenSignSu
                     console.log("token: ", msg);
                     console.log("from: ", from)
 
-                    $("#account-address").html("Your account address is: " + from);
                     web3.eth.getBalance(from, (err, balance) => {
                         balance = web3.utils.fromWei(balance, "ether")
-                        $("#funds").html("Your current balance is: " + balance + " ETH");
                         if (balance == 0) {
                             alert("Insufficient funds in your account. Total balance = 0 ETH");
                             return false;
@@ -128,7 +128,7 @@ function web3Login(login_url, onTokenRequestFail, onTokenSignFail, onTokenSignSu
                                     if (typeof onTokenSignSuccess == 'function') {
                                         onTokenSignSuccess(result);
                                     }
-                                    loginWithSignature(from, result, login_url, onLoginRequestError, onLoginFail, onLoginSuccess);
+                                    loginWithSignature(from, result, balance, login_url, onLoginRequestError, onLoginFail, onLoginSuccess);
                                 }
                             });
 
