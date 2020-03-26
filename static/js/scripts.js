@@ -167,7 +167,7 @@ $("#auth-btn").click(function (e) {
         alert("Please install metamask");
         return false;
     }
-    web3 = new Web3(window.web3.currentProvider);
+   
     e.preventDefault();
 
     if($(this).attr("btn-for") === "logout"){
@@ -181,6 +181,23 @@ $("#auth-btn").click(function (e) {
     }
 
     if (typeof web3 !== 'undefined') {
+        // Modern dapp browsers...
+        if (window.ethereum) {
+            window.web3 = new Web3(ethereum);
+            try {
+                // Request account access if needed
+                ethereum.enable();
+                // Acccounts now exposed
+            } catch (error) {
+                // User denied account access...
+                alert(error);
+                
+            }
+        }
+        else if (window.web3) {
+            web3 = new Web3(window.web3.currentProvider);
+        }
+
         checkWeb3(function (loggedIn) {
             if (!loggedIn) {
                 alert("Please unlock/login to your web3 provider (probably, Metamask)")
@@ -193,9 +210,11 @@ $("#auth-btn").click(function (e) {
         });
 
 
-
     } else {
         alert('web3 missing');
     }
+
+
+
 
 })
