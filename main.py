@@ -36,7 +36,10 @@ def index():
 def dashboard(user_address):
     return render_template("dashboard.html", user_address = user_address)
 
-
+@app.route("/registration")
+@token_required
+def registration(user_address):
+    return render_template("registration.html", user_address = user_address)
 
 @app.route("/api/login/metamask", methods = ['GET'])
 def login_api():
@@ -60,6 +63,7 @@ def login_postapi():
         # session.pop("x-access-tokens", None)
         signature = request.form.get("signature")
         address = request.form.get("address")
+        is_registered = request.form.get("newuser")
         session["user_address"] = address
         recovered_addr = recover_to_addr(token, signature)
         if address != recovered_addr:
@@ -69,8 +73,13 @@ def login_postapi():
                 'error': "Address verification failed"
             }
         else:
-            return {'success': True, 'redirect_url': "/dashboard"}
+            if is_registered == "false":
+                return {'success': True, 'redirect_url': "/registration"}
+            else:
+                return {'success': True, 'redirect_url': "/dashboard"}
 
+
+            
 
 @app.route("/api/logout/metamask", methods = ['GET'])
 @token_required

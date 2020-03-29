@@ -1,6 +1,5 @@
 var web3 ;
 
-
 function loginWithSignature(address, signature, balance, login_url, onLoginRequestError, onLoginFail, onLoginSuccess) {
     console.log(address, signature, login_url)
     var request = new XMLHttpRequest();
@@ -39,22 +38,16 @@ function loginWithSignature(address, signature, balance, login_url, onLoginReque
     request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
     request.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
 
-    var contractAddress = "0x5E72914535f202659083Db3a02C984188Fa26e9f"
     var contract = new web3.eth.Contract(abi, contractAddress, {
         from: address,
         gasLimit: 3000000,
-      });
-    // console.log(contract)
-    // contract.options.address = contractAddress
-    // var contractInstance = contract.at(contractAddress)
-    var res = contract.methods.isalreadyRegisteredUser().call(function(obj){
-        console.log(obj);
     });
 
-
-
-    var formData = 'address=' + address + '&signature=' + signature;
-    // request.send(formData);
+    contract.methods.isalreadyRegisteredUser().call().then(function(obj){
+        var formData = 'address=' + address + '&signature=' + signature + "&newuser=" + obj;
+        request.send(formData);
+    });
+    
 }
 
 

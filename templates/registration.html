@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block container %}
+	{% include "components/navbar_dash.html" %}
+
+	<main>
+		<div class = "container">
+		<p id = "account-address">{{user_address}}</p>
+        <form>
+
+        </form>
+		</div>
+	</main>
+
+{% endblock container %}
+
+{% block javascript %}
+	<script type="text/javascript" src="{{ url_for('static', filename='js/registration.js') }}"></script>
+{% endblock javascript %}

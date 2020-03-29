@@ -1,3 +1,6 @@
+var contractAddress = "0xf9DF11e5f8678784e7b00c49107269356749C3Cc"
+
+
 function getCookie(name) {
     var cookieValue = null;
     if (document.cookie && document.cookie != '') {
