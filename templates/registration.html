@@ -1,19 +1,47 @@
 {% extends "base.html" %}
 
 {% block container %}
-	{% include "components/navbar_dash.html" %}
+{% include "components/navbar_dash.html" %}
 
-	<main>
-		<div class = "container">
-		<p id = "account-address">{{user_address}}</p>
-        <form>
+<main>
+    <div class="container">
+        <div class="row">
+            <form class="col s12" id = "registration" address = "{{user_address}}">
+                <div class="row">
+                    <div class="input-field col s6">
+                        <input placeholder="First Name" id="first_name" type="text" class="validate">
+                        <label for="first_name">First Name</label>
+                    </div>
+                    <div class="input-field col s6">
+                        <input id="last_name" type="text" class="validate">
+                        <label for="last_name">Last Name</label>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="input-field col s12">
+                        <input id="email" type="email" class="validate">
+                        <label for="email">Email</label>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="input-field col s12">
+                        <input id="contact_no" type="text" class="validate">
+                        <label for="contact_no">Contact Number</label>
+                    </div>
+                </div>
+
+        <button class="btn waves-effect waves-light" type="submit" name="action">Register
+        </button>
 
         </form>
-		</div>
-	</main>
+    </div>
+    </div>
+</main>
 
 {% endblock container %}
 
 {% block javascript %}
-	<script type="text/javascript" src="{{ url_for('static', filename='js/registration.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/registration.js') }}"></script>
 {% endblock javascript %}

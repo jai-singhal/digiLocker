@@ -1,12 +1,25 @@
 {% extends "base.html" %}
 
+{% block style %}
+<link href = "{{ url_for('static', filename='css/dropzone.min.css') }}">
+{% endblock style %}
+
 {% block container %}
 	{% include "components/navbar_dash.html" %}
-
 	<main>
 		<div class = "container">
 		<p id = "account-address">{{user_address}}</p>
-        <button class = "btn btn-primary">Upload document</button>
+
+		<form action="" class="dropzone" id="UploadDoc"
+			method="post" enctype="multipart/form-data">
+
+			<button class = "btn btn-primary" type="submit">Upload document</button>
+
+			<div id="upload_files">
+				<input name="file" type="file" multiple />
+			</div>
+			
+		</form>
 		<p id = "funds"></p>
 		</div>
 	</main>
@@ -15,4 +28,6 @@
 
 {% block javascript %}
 	<script type="text/javascript" src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+	<script type="text/javascript" src="{{ url_for('static', filename='js/dropzone.min.js') }}"></script>
+
 {% endblock javascript %}

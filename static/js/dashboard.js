@@ -21,6 +21,16 @@ $("#logout-btn").click(function (e) {
     request.send();
 });
 
+$("#btn btn-primary").click(function(e){
+
+   var file_data = $("#file").value()
+   //Can fetch filename
+   
+}
+
+
+)
+
 
 $(document).ready(function(){
     var from = $("#account-address").html()
@@ -28,4 +38,9 @@ $(document).ready(function(){
         balance = web3.utils.fromWei(balance, "ether");
         $("#funds").html(balance)
     });
+
+
+
+    $("div#upload_files").dropzone({ url: "/api/upload/file" });
 })
+
