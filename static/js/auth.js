@@ -1,21 +1,3 @@
-var web3 ;
-
-function getCookie(name) {
-    var cookieValue = null;
-    if (document.cookie && document.cookie != '') {
-        var cookies = document.cookie.split(';');
-        for (var i = 0; i < cookies.length; i++) {
-            var cookie = jQuery.trim(cookies[i]);
-            // Does this cookie string begin with the name we want?
-            if (cookie.substring(0, name.length + 1) == (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
-            }
-        }
-    }
-    return cookieValue;
-}
-
 function loginWithSignature(address, signature, balance, login_url, onLoginRequestError, onLoginFail, onLoginSuccess) {
     console.log(address, signature, login_url)
     var request = new XMLHttpRequest();
@@ -57,14 +39,7 @@ function loginWithSignature(address, signature, balance, login_url, onLoginReque
     request.send(formData);
 }
 
-function checkWeb3(callback) {
-    web3.eth.getAccounts(function (err, accounts) { // Check for wallet being locked
-        if (err) {
-            throw err;
-        }
-        callback(accounts.length !== 0);
-    });
-}
+
 
 function web3Login(login_url, onTokenRequestFail, onTokenSignFail, onTokenSignSuccess, // used in this function
     onLoginRequestError, onLoginFail, onLoginSuccess) {
@@ -77,7 +52,7 @@ function web3Login(login_url, onTokenRequestFail, onTokenSignFail, onTokenSignSu
     // 4.1 The user with an according eth address is found - you are logged in
     // 4.2 The user with an according eth address is NOT found - you are redirected to signup page
 
-    if (typeof web3 === 'undefined') {
+    if (typeof window.web3 === 'undefined') {
         alert('MetaMask is not installed');
         return false;
     }
@@ -90,9 +65,9 @@ function web3Login(login_url, onTokenRequestFail, onTokenSignFail, onTokenSignSu
             // Success!
             var resp = JSON.parse(request.responseText);
             var token = resp.data;
-            var msg = web3.utils.toHex(token);
+            var msg = window.web3.utils.toHex(token);
 
-            web3.eth.getAccounts(function (err, accounts) {
+            window.web3.eth.getAccounts(function (err, accounts) {
                 if (err != null) {
                     console.log(err);
                     return false;
@@ -104,13 +79,13 @@ function web3Login(login_url, onTokenRequestFail, onTokenSignFail, onTokenSignSu
                     console.log("token: ", msg);
                     console.log("from: ", from)
 
-                    web3.eth.getBalance(from, (err, balance) => {
-                        balance = web3.utils.fromWei(balance, "ether")
+                    window.web3.eth.getBalance(from, (err, balance) => {
+                        balance = window.web3.utils.fromWei(balance, "ether")
                         if (balance == 0) {
                             alert("Insufficient funds in your account. Total balance = 0 ETH");
                             return false;
                         } else {
-                            web3.eth.personal.sign(msg, from, function (err, result) {
+                            window.web3.eth.personal.sign(msg, from, function (err, result) {
                                 if (err) {
                                     if (typeof onTokenSignFail == 'function') {
                                         alert(err.message);
@@ -163,7 +138,7 @@ $("#auth-btn").click(function (e) {
    
     e.preventDefault();
 
-    if (typeof web3 !== 'undefined') {
+    if (typeof window.web3 !== 'undefined') {
         // Modern dapp browsers...
         if (window.ethereum) {
             window.web3 = new Web3(ethereum);
@@ -178,7 +153,7 @@ $("#auth-btn").click(function (e) {
             }
         }
         
-        web3 = new Web3(window.web3.currentProvider);
+        window.web3 = new Web3(window.web3.currentProvider);
 
         checkWeb3(function (loggedIn) {
             if (!loggedIn) {
@@ -190,36 +165,7 @@ $("#auth-btn").click(function (e) {
                 });
             }
         });
-
-
     } else {
         alert('web3 missing');
     }
-
-
 })
-
-$("#logout-btn").click(function (e) {
-    e.preventDefault();
-    console.log(e)
-    var request = new XMLHttpRequest();
-    let logout_url = "/api/logout/metamask";
-    request.open('GET', logout_url, true);
-    console.log(request)
-    request.onload = function () {
-        if (request.status >= 200 && request.status < 400) {
-            var resp = JSON.parse(request.responseText);
-            console.log(resp)
-
-            window.location.replace(resp.redirect_url);
-        }
-        else{
-            alert("Logout failed")
-        }
-    };
-    request.onerror = function () {
-        // There was a connection error of some sort
-        alert("Logout failed");
-    };
-    request.send();
-});

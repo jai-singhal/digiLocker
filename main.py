@@ -12,19 +12,19 @@ app.config['SECRET_KEY'] = b'OCML3BRawWEUeaxcuKHLpw'
 def token_required(f):
     @wraps(f)
     def decorator(*args, **kwargs):
-        token = None
-        print(session.keys())
         if 'x-access-tokens' in session.keys():
             token = session.get('x-access-tokens')
-        if not token:
-            return {'message': 'a valid token is missing'}
-        try:
-            data = jwt.decode(token, app.config["SECRET_KEY"])
-            user_address = session.get("user_address")
-        except:
-            return redirect("/")
+            try:
+                data = jwt.decode(token, app.config["SECRET_KEY"])
+                user_address = session.get("user_address")
+                return f(user_address, *args, **kwargs)
+            except Exception as e:
+                print(e)
+                return redirect("/")
 
-        return f(user_address, *args, **kwargs)
+        return redirect("/")
+        # return {'message': 'a valid token is missing'}
+
     return decorator
 
 

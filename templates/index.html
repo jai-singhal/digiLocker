@@ -16,7 +16,10 @@
 		</div>
 	</main>
 
-    {% block javascript %}
-    {% endblock javascript %}
 
 {% endblock container %}
+
+
+{% block javascript %}
+<script type="text/javascript" src="{{ url_for('static', filename='js/auth.js') }}"></script>
+{% endblock javascript %}
