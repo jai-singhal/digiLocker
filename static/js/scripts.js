@@ -29,13 +29,6 @@ function loginWithSignature(address, signature, balance, login_url, onLoginReque
                     onLoginSuccess(resp);
                     console.log("Logined");
                     //display the address and balance
-                    
-                    $("#account-address").html("Your account address is: " + address);
-                    $("#funds").html("Your current balance is: " + balance + " ETH");
-
-                    $("#auth-btn a").html("Logout");
-                    $("#auth-btn").attr("btn-for", "logout");
-                    $("#auth-btn a").attr("href", "/api/logout/metamask");
                 }
             } else {
                 if (typeof onLoginFail == 'function') {
@@ -170,16 +163,6 @@ $("#auth-btn").click(function (e) {
    
     e.preventDefault();
 
-    if($(this).attr("btn-for") === "logout"){
-        console.log("Logout");
-        $("#account-address").html("");
-        $("#funds").html("");
-        $("#auth-btn a").html("Login");
-        $("#auth-btn").attr("btn-for", "login");
-        $("#auth-btn a").attr("href", "/api/login/metamask");
-        return false;
-    }
-
     if (typeof web3 !== 'undefined') {
         // Modern dapp browsers...
         if (window.ethereum) {
@@ -203,7 +186,7 @@ $("#auth-btn").click(function (e) {
             } else {
                 var login_url = "/api/login/metamask";
                 web3Login(login_url, console.log, console.log, console.log, console.log, console.log, function (resp) {
-                    // window.location.replace(resp.redirect_url);
+                    window.location.replace(resp.redirect_url);
                 });
             }
         });
@@ -214,6 +197,29 @@ $("#auth-btn").click(function (e) {
     }
 
 
-
-
 })
+
+$("#logout-btn").click(function (e) {
+    e.preventDefault();
+    console.log(e)
+    var request = new XMLHttpRequest();
+    let logout_url = "/api/logout/metamask";
+    request.open('GET', logout_url, true);
+    console.log(request)
+    request.onload = function () {
+        if (request.status >= 200 && request.status < 400) {
+            var resp = JSON.parse(request.responseText);
+            console.log(resp)
+
+            window.location.replace(resp.redirect_url);
+        }
+        else{
+            alert("Logout failed")
+        }
+    };
+    request.onerror = function () {
+        // There was a connection error of some sort
+        alert("Logout failed");
+    };
+    request.send();
+});

@@ -10,14 +10,11 @@ contract digiLocker {
         bytes32 docHash; //doc hash
         bytes32 accessKey; // user public key 
     }
-    
     struct sharedDoc{
-         bytes32 docid;
-         address sharedWith;   
-         Permission permission;
+        bytes32 docid;
+        address sharedWith;
+        Permission permission;
     }
-    
-    
     struct UserDetails{
         string firstName;
         string lastName;
@@ -32,9 +29,6 @@ contract digiLocker {
         UserDetails details;
         address _useraddress;
     }
-    
-   
-    
     
     ///////////////////////-- enums here -- ///////////////////////////////////
     enum userType { Issuer, Resident, Requester, Admin }
@@ -115,16 +109,13 @@ contract digiLocker {
 
     function uploadDocument(string memory docName, bytes32 accessKey, bytes32 docHash) public{
         bytes32 docid = keccak256(abi.encode(docHash, msg.sender));
-        
         if(!checkAlreadyUpload(docid)){
             Document memory d = Document(docid, docName, now, docHash, accessKey);
             ownerDocuments[msg.sender].push(d);
-            
-            emit uploadDocumentEvent(docName, accessKey, docHash, msg.sender);            
+            emit uploadDocumentEvent(docName, accessKey, docHash, msg.sender);
         }// -- Check 
         emit alreadyuploadedDocumentEvent(docName, accessKey, docHash, msg.sender); 
     }
-    
 
     function checkAlreadyShared(bytes32 docId, address sharedWith)public view returns(bool){
         for(uint i = 0; i<sharedDocuments[msg.sender].length; i++)

@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block container %}
+	{% include "components/navbar_dash.html" %}
+
+	<main>
+		<div class = "container">
+		<p id = "account-address">{{user_address}}</p>
+		<p id = "funds"></p>
+		</div>
+	</main>
+
+{% endblock container %}
+
