@@ -23,7 +23,6 @@ def token_required(f):
                 return redirect("/")
 
         return redirect("/")
-        # return {'message': 'a valid token is missing'}
 
     return decorator
 

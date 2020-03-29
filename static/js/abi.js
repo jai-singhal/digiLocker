@@ -18,6 +18,37 @@ var abi = [
 			{
 				"indexed": false,
 				"internalType": "string",
+				"name": "dName",
+				"type": "string"
+			},
+			{
+				"indexed": false,
+				"internalType": "bytes32",
+				"name": "accessKey",
+				"type": "bytes32"
+			},
+			{
+				"indexed": false,
+				"internalType": "bytes32",
+				"name": "docHash",
+				"type": "bytes32"
+			},
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "user_addr",
+				"type": "address"
+			}
+		],
+		"name": "alreadyuploadedDocumentEvent",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "string",
 				"name": "_firstName",
 				"type": "string"
 			},
@@ -31,6 +62,12 @@ var abi = [
 				"indexed": false,
 				"internalType": "string",
 				"name": "_email",
+				"type": "string"
+			},
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "_contact",
 				"type": "string"
 			},
 			{
@@ -50,14 +87,187 @@ var abi = [
 		"type": "event"
 	},
 	{
-		"constant": false,
+		"anonymous": false,
 		"inputs": [
 			{
+				"indexed": false,
+				"internalType": "bytes32",
+				"name": "docid",
+				"type": "bytes32"
+			},
+			{
+				"indexed": false,
 				"internalType": "address",
-				"name": "_maddress",
+				"name": "sharedWith",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint32",
+				"name": "permission",
+				"type": "uint32"
+			}
+		],
+		"name": "sharedDocumentEvent",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "dName",
+				"type": "string"
+			},
+			{
+				"indexed": false,
+				"internalType": "bytes32",
+				"name": "accessKey",
+				"type": "bytes32"
+			},
+			{
+				"indexed": false,
+				"internalType": "bytes32",
+				"name": "docHash",
+				"type": "bytes32"
+			},
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "user_addr",
 				"type": "address"
 			}
 		],
+		"name": "uploadDocumentEvent",
+		"type": "event"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"internalType": "bytes32",
+				"name": "docId",
+				"type": "bytes32"
+			},
+			{
+				"internalType": "address",
+				"name": "sharedWith",
+				"type": "address"
+			}
+		],
+		"name": "checkAlreadyShared",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"internalType": "bytes32",
+				"name": "docId",
+				"type": "bytes32"
+			}
+		],
+		"name": "checkAlreadyUpload",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "getDocCountByUserId",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"internalType": "bytes32",
+				"name": "docId",
+				"type": "bytes32"
+			}
+		],
+		"name": "getOwnerDocInfoByDocId",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			},
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "getRegisteredUser",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			},
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "getTotalSharedDocsByOthers",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
 		"name": "isalreadyRegisteredUser",
 		"outputs": [
 			{
@@ -67,7 +277,7 @@ var abi = [
 			}
 		],
 		"payable": false,
-		"stateMutability": "nonpayable",
+		"stateMutability": "view",
 		"type": "function"
 	},
 	{
@@ -89,17 +299,67 @@ var abi = [
 				"type": "string"
 			},
 			{
-				"internalType": "enum digiLocker.userType",
+				"internalType": "uint8",
 				"name": "_utype",
 				"type": "uint8"
 			},
 			{
 				"internalType": "string",
-				"name": "contact",
+				"name": "_contact",
 				"type": "string"
 			}
 		],
 		"name": "registerUser",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"internalType": "bytes32",
+				"name": "docid",
+				"type": "bytes32"
+			},
+			{
+				"internalType": "address",
+				"name": "sharedWith",
+				"type": "address"
+			},
+			{
+				"internalType": "uint32",
+				"name": "permission",
+				"type": "uint32"
+			}
+		],
+		"name": "shareDocumentwithUser",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "docName",
+				"type": "string"
+			},
+			{
+				"internalType": "bytes32",
+				"name": "accessKey",
+				"type": "bytes32"
+			},
+			{
+				"internalType": "bytes32",
+				"name": "docHash",
+				"type": "bytes32"
+			}
+		],
+		"name": "uploadDocument",
 		"outputs": [],
 		"payable": false,
 		"stateMutability": "nonpayable",

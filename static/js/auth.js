@@ -1,3 +1,6 @@
+var web3 ;
+
+
 function loginWithSignature(address, signature, balance, login_url, onLoginRequestError, onLoginFail, onLoginSuccess) {
     console.log(address, signature, login_url)
     var request = new XMLHttpRequest();
@@ -35,10 +38,24 @@ function loginWithSignature(address, signature, balance, login_url, onLoginReque
     };
     request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
     request.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
-    var formData = 'address=' + address + '&signature=' + signature;
-    request.send(formData);
-}
 
+    var contractAddress = "0x5E72914535f202659083Db3a02C984188Fa26e9f"
+    var contract = new web3.eth.Contract(abi, contractAddress, {
+        from: address,
+        gasLimit: 3000000,
+      });
+    // console.log(contract)
+    // contract.options.address = contractAddress
+    // var contractInstance = contract.at(contractAddress)
+    var res = contract.methods.isalreadyRegisteredUser().call(function(obj){
+        console.log(obj);
+    });
+
+
+
+    var formData = 'address=' + address + '&signature=' + signature;
+    // request.send(formData);
+}
 
 
 function web3Login(login_url, onTokenRequestFail, onTokenSignFail, onTokenSignSuccess, // used in this function
@@ -52,7 +69,7 @@ function web3Login(login_url, onTokenRequestFail, onTokenSignFail, onTokenSignSu
     // 4.1 The user with an according eth address is found - you are logged in
     // 4.2 The user with an according eth address is NOT found - you are redirected to signup page
 
-    if (typeof window.web3 === 'undefined') {
+    if (typeof web3 === 'undefined') {
         alert('MetaMask is not installed');
         return false;
     }
@@ -65,9 +82,9 @@ function web3Login(login_url, onTokenRequestFail, onTokenSignFail, onTokenSignSu
             // Success!
             var resp = JSON.parse(request.responseText);
             var token = resp.data;
-            var msg = window.web3.utils.toHex(token);
+            var msg = web3.utils.toHex(token);
 
-            window.web3.eth.getAccounts(function (err, accounts) {
+            web3.eth.getAccounts(function (err, accounts) {
                 if (err != null) {
                     console.log(err);
                     return false;
@@ -79,13 +96,13 @@ function web3Login(login_url, onTokenRequestFail, onTokenSignFail, onTokenSignSu
                     console.log("token: ", msg);
                     console.log("from: ", from)
 
-                    window.web3.eth.getBalance(from, (err, balance) => {
-                        balance = window.web3.utils.fromWei(balance, "ether")
+                    web3.eth.getBalance(from, (err, balance) => {
+                        balance = web3.utils.fromWei(balance, "ether")
                         if (balance == 0) {
                             alert("Insufficient funds in your account. Total balance = 0 ETH");
                             return false;
                         } else {
-                            window.web3.eth.personal.sign(msg, from, function (err, result) {
+                            web3.eth.personal.sign(msg, from, function (err, result) {
                                 if (err) {
                                     if (typeof onTokenSignFail == 'function') {
                                         alert(err.message);
@@ -138,7 +155,7 @@ $("#auth-btn").click(function (e) {
    
     e.preventDefault();
 
-    if (typeof window.web3 !== 'undefined') {
+    if (typeof web3 !== 'undefined') {
         // Modern dapp browsers...
         if (window.ethereum) {
             window.web3 = new Web3(ethereum);
@@ -153,7 +170,7 @@ $("#auth-btn").click(function (e) {
             }
         }
         
-        window.web3 = new Web3(window.web3.currentProvider);
+        web3 = new Web3(window.web3.currentProvider);
 
         checkWeb3(function (loggedIn) {
             if (!loggedIn) {
@@ -165,7 +182,11 @@ $("#auth-btn").click(function (e) {
                 });
             }
         });
+
+
     } else {
         alert('web3 missing');
     }
+
+
 })
