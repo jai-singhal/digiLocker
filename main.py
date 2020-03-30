@@ -60,40 +60,34 @@ def allowed_file(filename):
 	return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
-@app.route('/dashboard/upload/doc', methods=['GET', 'POST'])
+@app.route('/dashboard/upload/doc', methods=['GET'])
 @token_required
 def upload_file(user_address):
-    if request.method == 'POST':
-
-        if 'file' not in request.files:
-            flash('No file part')
-            return redirect(request.url)
-        if 'total_doc' not in request.form:
-            flash('No file part')
-            return redirect(request.url)
-        
-        total_doc = request.form["total_doc"]
-        file_name = request.form["filename"]
-        file = request.files['file']
-        try:
-            if file_name:
-                savepath = f"{user_address[2:]}/{file_name}"
-            else:
-                savepath = f"{user_address[2:]}/{file.filename}"
-            # dropbox_.files_upload(file.read(), savepath)
-        except Exception as e:
-            print(e)
-
-        if file.filename == '':
-            flash('No selected file')
-            return redirect(request.url)
-        if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-            # file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            return redirect(url_for('uploaded_file',
-                                    filename=filename))
     return render_template("upload_doc.html", user_address=user_address)
 
+@app.route('/post/api/upload/doc', methods=['POST'])
+@token_required
+def upload_file_postapi(user_address):
+    if 'file' not in request.files:
+        return {"success": False, "error": "No files uploaded"}
+    if 'total_doc' not in request.form:
+        return {"success": False, "error": "No files uploaded"}
+    
+    total_doc = request.form["total_doc"]
+    file = request.files['file']
+
+    if file.filename == '':
+        return {"success": False, "error": "No selected file"}
+    else:
+        try:
+            savepath = secure_filename(file.filename)
+            savepath = f"/test_dropbox/{user_address}/{savepath}"
+            res = dropbox_.files_upload(file.read(), savepath)
+            print(res)
+        except Exception as e:
+            return {"success": False, "error": str(e)}
+            print(e)
+        return {"success": True, "redirect_url": "/dashboard"}
 
 
 @app.route("/api/user/accesskey", methods = ['POST'])

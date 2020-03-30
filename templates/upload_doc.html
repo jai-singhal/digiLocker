@@ -8,12 +8,6 @@
         <div class="row">
             <form id = "id_upload_doc" 
                 method="post" enctype="multipart/form-data" address="{{user_address}}">
-                <div class="row">
-                    <div class="input-field col s12">
-                        <input id="filename" type="text" name = "filename">
-                        <label for="filename">Filename</label>
-                    </div>
-                </div>
 
                 <input id="total_doc" type="text" class="validate" hidden  name = "total_doc">
 
@@ -40,5 +34,6 @@
 
 {% block javascript %}
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"></script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9/sha256.js"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
 {% endblock javascript %}

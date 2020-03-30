@@ -51,41 +51,57 @@ $('#id_upload_doc').submit(function(event) {
                 }
                 else{
                     var key = resp.ekey;
-                    var filename = document.getElementById('filename');
                     var fileInput = document.getElementById('file');
                     var file = fileInput.files[0]
-                    if(file.size/1000000 <= 5){
-                        var reader = new FileReader();
+
+                    if(Math.floor(file.size/1000000) <= 5){
                         // Read file callback!
+                        var reader = new FileReader();
                         reader.onload = function (e) {
+                            console.log(e.target.result)
                             var encrypted = CryptoJS.AES.encrypt(e.target.result, key);
-                            if(filename){
-                                var fhash = CryptoJS.SHA1(address + filename);
-                            }
-                            else
-                                var fhash = CryptoJS.SHA1(address + file.name);
+                            console.log(encrypted)
 
-                            var encryptedFile = new File([encrypted], fhash + '.encrypted', {type: file.type, lastModified: file.lastModified});
-                            var dochash = "0x" + CryptoJS.SHA1(e.target.result);
+                            var encryptedFile = new File([encrypted], file.name, {type: file.type, lastModified: file.lastModified});
+                            var dochash =  "0x" + CryptoJS.SHA256(e.target.result).toString();
+                            
+                            contract.methods.uploadDocument(file.name, dochash).send().then(function(obj){
+                                var data = new FormData($("#id_upload_doc")[0]);
+                                data.append('file[0]', encryptedFile);
+                                data.append("X-CSRFToken", getCookie('csrftoken'));
 
-                            contract.methods.uploadDocument(dochash).send().then(function(obj){
-                                console.log(obj)
-                                if(obj == false){
-                                    window.location.replace("/registration");
-                                }
+                                $.ajax({
+                                    url: '/post/api/upload/doc',
+                                    data: data,
+                                    cache: false,
+                                    contentType: false,
+                                    processData: false,
+                                    type: 'POST',
+                                    success: function (res) {
+                                        if(res.success == true){
+                                            window.location.replace(res.redirect_url);
+                                        }
+                                        else{
+                                            alert(res["error"])
+                                        }
+                                        // document.getElementById('wait').innerHTML="File Upload Done";
+                                        // document.getElementById('status').innerHTML="Send this in your email: " + data +"&password="+password;
+                                    },
+                                    error: function(res){
+                                        console.log(res, "error")
+                                    }
+                                 });
+
+
                             });
-                            console.log('encryptedFile', encryptedFile);
-                        }
+                        } // end reader onload
+
                         reader.readAsDataURL(file);
 
-                        // _this.unbind('submit').submit(); 
-                    }
+                    } // end if
                     else{
                         alert("Upload size limits to 5MB");
                     }
-                    console.log(resp, key, file)
-                    console.log( _this, fileInput)
- 
                 }
             }
             else{
