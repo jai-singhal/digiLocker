@@ -38,12 +38,12 @@ python main.py
 
 ### Login
 
-![doc-upload](./sequence-diagram.png)
+![doc-upload](https://i.imgur.com/mC79hzC.png)
 
 
 ### Document uploading
 
-![doc-upload](./doc-upload.png)
+![doc-upload](https://i.imgur.com/bwbkliL.png)
 
 ## Resources
 
