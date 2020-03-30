@@ -20,6 +20,7 @@ app.config.from_object(settings)
 mail = Mail(app)
 dropbox_ = dropbox.Dropbox(app.config["DROPBOX_ACCESS_TOKEN"])
 
+
 # API_KEY = 'your_api_key'
 # dbx_client = dropbox.Dropbox(API_KEY)
 
@@ -55,9 +56,8 @@ def registration(user_address):
     return render_template("registration.html", user_address = user_address)
 
 
-
-def allowed_file(filename):
-	return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+# def allowed_file(filename):
+# 	return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
 @app.route('/dashboard/upload/doc', methods=['GET'])
