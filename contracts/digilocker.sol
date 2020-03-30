@@ -58,14 +58,14 @@ contract digiLocker {
     mapping (address => sharedDoc[])  sharedDocuments;
     
     ///////////////////////-- modifier here -- ///////////////////////////////////
-    // modifier isalreadyRegisteredUserModifier(){
-    //     if(isalreadyRegisteredUser()){
-    //         _;
-    //     }
-    //     else{
-    //         emit alreadyRegistred(msg.sender);
-    //     }
-    // }
+    modifier isalreadyRegisteredUserModifier{
+         if((registerUsers[msg.sender]._useraddress == 0x0000000000000000000000000000000000000000)){
+             emit alreadyRegistred(msg.sender);
+         }
+         else{
+             _;
+         }
+     }
 
     ///////////////////////-- functions here -- ///////////////////////////////////
     function isalreadyRegisteredUser() public view returns(bool){
@@ -93,7 +93,7 @@ contract digiLocker {
             string memory _lastName,
             string memory _email, uint8 _utype,
             string memory _contact, bytes32 accessKey,
-            string memory pubKey) public returns(bool) {
+            string memory pubKey) public isalreadyRegisteredUserModifier returns(bool) {
             if (!isalreadyRegisteredUser()){
                 UserDetails memory d = UserDetails(_firstName,_lastName, _email, _contact);
                 User memory newuser = User(userType(_utype), true, d, 
