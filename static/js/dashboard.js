@@ -34,6 +34,8 @@ $('#id_upload_doc').submit(function(event) {
 
     event.preventDefault(); 
     var master_key = $("#master_key").val();
+    var total_doc = $("#total_doc").val();
+
     var _this = $(this);
     contract.methods.getUseraccessKey().call().then(function(mkeyHash){
         var request = new XMLHttpRequest();
@@ -45,43 +47,45 @@ $('#id_upload_doc').submit(function(event) {
                 var resp = JSON.parse(request.responseText);
                 if(resp.valid == false){
                     alert("Master key is not valid")
+                    return false;
                 }
                 else{
+                    var key = resp.ekey;
+                    var filename = document.getElementById('filename');
+                    var fileInput = document.getElementById('file');
+                    var file = fileInput.files[0]
+                    if(file.size/1000000 <= 5){
+                        var reader = new FileReader();
+                        // Read file callback!
+                        reader.onload = function (e) {
+                            var encrypted = CryptoJS.AES.encrypt(e.target.result, key);
+                            if(filename){
+                                var fhash = CryptoJS.SHA1(address + filename);
+                            }
+                            else
+                                var fhash = CryptoJS.SHA1(address + file.name);
 
+                            var encryptedFile = new File([encrypted], fhash + '.encrypted', {type: file.type, lastModified: file.lastModified});
+                            var dochash = "0x" + CryptoJS.SHA1(e.target.result);
 
-                    // function mainController($scope) {
-  
-                    //     var key = 'anything?';
-                    //     var salt = CryptoJS.lib.WordArray.random(128/8);
-                    //       var iv = CryptoJS.lib.WordArray.random(128/8);
-                      
-                    //     $scope.files = [];
-                        
-                    //     $scope.doUpload = function(element)
-                    //     {
-                    //         var file = element.files[0];
-                    //         var reader = new FileReader();
-                      
-                    //         // Read file callback!
-                    //         reader.onload = function (e) {
-                          
-                    //             var encrypted = CryptoJS.AES.encrypt(e.target.result, key, { iv: iv, 
-                    //                 mode: CryptoJS.mode.CBC, 
-                    //                 padding: CryptoJS.pad.Pkcs7 
-                    //             });
-                              
-                    //             var encryptedFile = new File([encrypted], file.name + '.encrypted', {type: file.type, lastModified: file.lastModified});
-                    //             console.log('encryptedFile', encryptedFile);
-                      
-                    //             //console.log('CryptoJS', CryptoJS.AES.decrypt(encrypted, key).toString(CryptoJS.enc.Utf8));
-                    //         }
-                            
-                    //         reader.readAsDataURL(file);
-                    //     }
-                        
-                    //   }
+                            contract.methods.uploadDocument(dochash).send().then(function(obj){
+                                console.log(obj)
+                                if(obj == false){
+                                    window.location.replace("/registration");
+                                }
+                            });
+                            console.log('encryptedFile', encryptedFile);
+                        }
+                        reader.readAsDataURL(file);
 
-                    _this.unbind('submit').submit(); 
+                        // _this.unbind('submit').submit(); 
+                    }
+                    else{
+                        alert("Upload size limits to 5MB");
+                    }
+                    console.log(resp, key, file)
+                    console.log( _this, fileInput)
+ 
                 }
             }
             else{
@@ -92,10 +96,9 @@ $('#id_upload_doc').submit(function(event) {
             alert("Request failed");
         };
 
-        
-        
-
-        var formData = 'master_key=' + master_key + "&mkeydigest=" + mkeyHash;
+    
+        var formData = 'master_key=' + master_key + "&mkeydigest=" + mkeyHash + "&total_doc=" + total_doc;
+        console.log(formData)
         request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
         request.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
         request.send(formData);

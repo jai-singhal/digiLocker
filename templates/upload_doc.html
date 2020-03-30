@@ -17,17 +17,16 @@
 
                 <input id="total_doc" type="text" class="validate" hidden  name = "total_doc">
 
-
                 <div class="row">
                     <div class="input-field col s12">
-                        <input id="master_key" type="password" class="validate" name = "master_key">
+                        <input id="master_key" type="password" class="validate" name = "master_key" required>
                         <label for="master_key">Master Key</label>
                     </div>
                 </div>
 
                 <div class="row">
                     <div class="input-field col s12">
-                        <input type="file" name="file">
+                        <input type="file" id = "file" name="file" required>
                     </div>
                 </div>
                 <button class="btn waves-effect waves-light" type="submit" name="action">Upload

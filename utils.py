@@ -2,7 +2,7 @@ from eth_utils import is_hex_address
 from web3.auto import w3
 from eth_account.messages import defunct_hash_message
 from flask_mail import Mail, Message
-
+import binascii
 from cryptography.hazmat.primitives import serialization as crypto_serialization
 from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.hazmat.backends import default_backend as crypto_default_backend
@@ -68,11 +68,10 @@ def prepareMailMsg(name, from_mail, address, pub, pr, master_key):
 
 
 
-def getKey(masterKey):
-    masterKey = b'x'*32
-    salt = b'y'*32 # user hash
-    numb = 3
-    keys = PBKDF2(masterKey, salt, 128*numb, count=10000)
-    key1 = keys[:128]
-    key2 = keys[128:256]
-    key3 = keys[256:384]
+def getKey(total_doc, masterKey, user_address):
+    salt = user_address.encode()
+    masterKey = masterKey.encode()
+    keys = PBKDF2(masterKey, salt, 128*(total_doc+1), count=10000, prf= None)
+    keys = binascii.hexlify(keys)
+    key = keys[total_doc*128:(total_doc+1)*128]
+    return key.decode()

@@ -63,7 +63,7 @@ function web3Login(login_url, onTokenRequestFail, onTokenSignFail, onTokenSignSu
     // 4.2 The user with an according eth address is NOT found - you are redirected to signup page
 
     if (typeof web3 === 'undefined') {
-        alert('MetaMask is not installed');
+        Swal('MetaMask is not installed');
         return false;
     }
 
@@ -82,7 +82,7 @@ function web3Login(login_url, onTokenRequestFail, onTokenSignFail, onTokenSignSu
                     console.log(err);
                     return false;
                 } else if (accounts.length === 0) {
-                    alert('MetaMask is locked');
+                    Swal('MetaMask is locked');
                     return false;
                 } else {
                     var from = accounts[0]
@@ -92,16 +92,16 @@ function web3Login(login_url, onTokenRequestFail, onTokenSignFail, onTokenSignSu
                     web3.eth.getBalance(from, (err, balance) => {
                         balance = web3.utils.fromWei(balance, "ether")
                         if (balance == 0) {
-                            alert("Insufficient funds in your account. Total balance = 0 ETH");
+                            Swal("Insufficient funds in your account. Total balance = 0 ETH");
                             return false;
                         } else {
                             web3.eth.personal.sign(msg, from, function (err, result) {
                                 if (err) {
                                     if (typeof onTokenSignFail == 'function') {
-                                        alert(err.message);
+                                        Swal(err.message);
                                         onTokenSignFail(err);
                                     }
-                                    alert("Failed signing message \n" + msg + "\n - " + err);
+                                    // Swal("Failed signing message \n" + msg + "\n - " + err);
                                 } else {
                                     console.log("Signed message: " + result);
                                     if (typeof onTokenSignSuccess == 'function') {
@@ -139,13 +139,17 @@ function web3Login(login_url, onTokenRequestFail, onTokenSignFail, onTokenSignSu
 }
 
 
+function openInNewTab(url) {
+    var win = window.open(url, '_blank');
+    window.focus();
+  }
 
 $("#auth-btn").click(function (e) {
     if(! window.web3){
-        alert("Please install metamask");
+        Swal.fire("Please install metamask. You will be redirected to Metamask");
+        openInNewTab("https://metamask.io/");
         return false;
     }
-   
     e.preventDefault();
 
     if (typeof web3 !== 'undefined') {
@@ -167,18 +171,20 @@ $("#auth-btn").click(function (e) {
 
         checkWeb3(function (loggedIn) {
             if (!loggedIn) {
-                alert("Please unlock/login to your web3 provider (probably, Metamask)")
-            } else {
+                Swal.fire("Please unlock/login to your Metamask")
+            }
+            else{
                 var login_url = "/api/login/metamask";
                 web3Login(login_url, console.log, console.log, console.log, console.log, console.log, function (resp) {
                     window.location.replace(resp.redirect_url);
                 });
             }
+                
         });
 
 
     } else {
-        alert('web3 missing');
+        Swal('web3 missing');
     }
 
 

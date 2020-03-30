@@ -75,10 +75,12 @@ def upload_file(user_address):
         total_doc = request.form["total_doc"]
         file_name = request.form["filename"]
         file = request.files['file']
-
         try:
-            savepath = f"{user_address}/{file.filename}"
-            dropbox_.files_upload(file.read(), savepath)
+            if file_name:
+                savepath = f"{user_address[2:]}/{file_name}"
+            else:
+                savepath = f"{user_address[2:]}/{file.filename}"
+            # dropbox_.files_upload(file.read(), savepath)
         except Exception as e:
             print(e)
 
@@ -91,6 +93,30 @@ def upload_file(user_address):
             return redirect(url_for('uploaded_file',
                                     filename=filename))
     return render_template("upload_doc.html", user_address=user_address)
+
+
+
+@app.route("/api/user/accesskey", methods = ['POST'])
+@token_required
+def comparehash_digest(user_address):
+    try:
+        master_key = request.form['master_key']
+        mkeydigest = request.form['mkeydigest']
+        total_doc = request.form['total_doc']
+        mkey_digest_new = hashlib.sha256(master_key.strip().encode()).hexdigest()
+        result = dict()
+        if "0x" + mkey_digest_new == mkeydigest:
+            result={"valid": True, 'success': True}
+        else:
+            result={"valid": False, 'success': True}   
+
+        ekey = getKey(int(total_doc), master_key, user_address)
+        result["ekey"] = ekey
+        return jsonify(result)
+
+    except Exception as e:
+        print(e)
+        return jsonify({'success': False})   
 
 
 @app.route("/api/register/metamask", methods = ['POST'])
@@ -160,20 +186,6 @@ def login_postapi():
                 return {'success': True, 'redirect_url': "/dashboard"}
 
 
-@app.route("/api/user/accesskey", methods = ['POST'])
-@token_required
-def comparehash_digest(user_address):
-    try:
-        master_key, mkeydigest = request.form['master_key'], request.form['mkeydigest']
-        mkey_digest_new = hashlib.sha256(master_key.strip().encode()).hexdigest()
-
-        if "0x" + mkey_digest_new == mkeydigest:
-            return jsonify({"valid": True, 'success': True})  
-        else:
-            return jsonify({"valid": False, 'success': True})        
-    except Exception as e:
-        print(e)
-        return jsonify({'success': False})   
 
 
 @app.route("/api/logout/metamask", methods = ['GET'])

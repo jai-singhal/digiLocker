@@ -27,7 +27,7 @@ contract digiLocker {
         UserDetails details;
         address _useraddress;
         bytes32 accessKey; // user master key Hash
-        bytes32 pubKey; // Public key of user
+        string pubKey; // Public key of user
     }
     
     ///////////////////////-- enums here -- ///////////////////////////////////
@@ -43,13 +43,13 @@ contract digiLocker {
         userType utype,
         address _useraddress,
         bytes32 accessKey,
-        bytes32 pubKey,
+        string pubKey
     );
     event alreadyRegistred(
         address _useraddress
     );
-    event uploadDocumentEvent(string dName,bytes32 accessKey, bytes32 docHash, address user_addr);
-    event alreadyuploadedDocumentEvent(string dName,bytes32 accessKey, bytes32 docHash, address user_addr);
+    event uploadDocumentEvent(string dName, bytes32 docHash, address user_addr);
+    event alreadyuploadedDocumentEvent(string dName, bytes32 docHash, address user_addr);
     event sharedDocumentEvent(bytes32 docid, address sharedWith, uint32 permission);
     
     ///////////////////////-- mapping here -- ///////////////////////////////////
@@ -69,7 +69,7 @@ contract digiLocker {
 
     ///////////////////////-- functions here -- ///////////////////////////////////
     function isalreadyRegisteredUser() public view returns(bool){
-        if(registerUsers[msg.sender].valid == false){
+        if(registerUsers[msg.sender]._useraddress == 0x0000000000000000000000000000000000000000){
             return false;
         }
         else{
@@ -77,15 +77,23 @@ contract digiLocker {
         }
     }
     // temp function
-    function getRegisteredUser() public view returns(uint256, address){
-       return (registerUsers[msg.sender].timestamp, msg.sender);
+    function getUseraccessKey() public view returns(bytes32){
+       return (registerUsers[msg.sender].accessKey);
     }
+    
+    function getRegisteredUser() public view returns(bytes32, address, string memory){
+       return (registerUsers[msg.sender].accessKey, 
+       registerUsers[msg.sender]._useraddress,
+       registerUsers[msg.sender].details.firstName
+       );
+    }
+    
     //register user
     function registerUser(string memory _firstName,
             string memory _lastName,
             string memory _email, uint8 _utype,
             string memory _contact, bytes32 accessKey,
-            bytes32 pubKey) public  {
+            string memory pubKey) public returns(bool) {
             if (!isalreadyRegisteredUser()){
                 UserDetails memory d = UserDetails(_firstName,_lastName, _email, _contact);
                 User memory newuser = User(userType(_utype), true, d, 
@@ -95,9 +103,11 @@ contract digiLocker {
                 emit registeredUserEvent(_firstName,_lastName,
                 _email, _contact, userType(_utype), 
                 msg.sender, accessKey, pubKey);
+                return true;
             }
             else{
                 emit alreadyRegistred(msg.sender);
+                return false;
             }
     }
  
@@ -112,14 +122,14 @@ contract digiLocker {
         return ownerDocuments[msg.sender].length;
     }
 
-    function uploadDocument(string memory docName, bytes32 accessKey, bytes32 docHash) public{
+    function uploadDocument(string memory docName, bytes32 docHash) public{
         bytes32 docid = keccak256(abi.encode(docHash, msg.sender));
         if(!checkAlreadyUpload(docid)){
-            Document memory d = Document(docid, docName, now, docHash, accessKey);
+            Document memory d = Document(docid, docName, now, docHash);
             ownerDocuments[msg.sender].push(d);
-            emit uploadDocumentEvent(docName, accessKey, docHash, msg.sender);
+            emit uploadDocumentEvent(docName, docHash, msg.sender);
         }// -- Check 
-        emit alreadyuploadedDocumentEvent(docName, accessKey, docHash, msg.sender); 
+        emit alreadyuploadedDocumentEvent(docName, docHash, msg.sender); 
     }
 
     function checkAlreadyShared(bytes32 docId, address sharedWith)public view returns(bool){
