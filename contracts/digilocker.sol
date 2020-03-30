@@ -113,7 +113,7 @@ contract digiLocker {
  
     function checkAlreadyUpload(bytes32 docId)public view returns(bool){
         for(uint i = 0; i<ownerDocuments[msg.sender].length; i++)
-            if(ownerDocuments[msg.sender][i].docid == docId)
+            if(ownerDocuments[msg.sender][i].docHash == docId)
                 return true;
         return false;
     }
