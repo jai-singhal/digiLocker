@@ -68,8 +68,6 @@ def upload_file(user_address):
 @app.route('/post/api/upload/doc', methods=['POST'])
 @token_required
 def upload_file_postapi(user_address):
-    if 'file' not in request.files:
-        return {"success": False, "error": "No files uploaded"}
     if 'total_doc' not in request.form:
         return {"success": False, "error": "No files uploaded"}
     
@@ -83,7 +81,6 @@ def upload_file_postapi(user_address):
             savepath = secure_filename(file.filename)
             savepath = f"/test_dropbox/{user_address}/{savepath}"
             res = dropbox_.files_upload(file.read(), savepath)
-            print(res)
         except Exception as e:
             return {"success": False, "error": str(e)}
             print(e)

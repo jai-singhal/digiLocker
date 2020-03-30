@@ -58,18 +58,21 @@ $('#id_upload_doc').submit(function(event) {
                         // Read file callback!
                         var reader = new FileReader();
                         reader.onload = function (e) {
-                            console.log(e.target.result)
-                            var encrypted = CryptoJS.AES.encrypt(e.target.result, key);
-                            console.log(encrypted)
+                            var encrypted = CryptoJS.AES.encrypt(e.target.result, key,{ 
+                                    iv: address, 
+                                    padding: CryptoJS.pad.Pkcs7,
+                                    mode: CryptoJS.mode.CBC
+                            }).toString()
 
                             var encryptedFile = new File([encrypted], file.name, {type: file.type, lastModified: file.lastModified});
                             var dochash =  "0x" + CryptoJS.SHA256(e.target.result).toString();
                             
                             contract.methods.uploadDocument(file.name, dochash).send().then(function(obj){
-                                var data = new FormData($("#id_upload_doc")[0]);
-                                data.append('file[0]', encryptedFile);
+                                var data = new FormData();
+                                data.append( 'file', encryptedFile );
                                 data.append("X-CSRFToken", getCookie('csrftoken'));
-
+                                data.append("total_doc", total_doc);
+                                
                                 $.ajax({
                                     url: '/post/api/upload/doc',
                                     data: data,
