@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block container %}
+{% include "components/navbar_dash.html" %}
+
+<main id = "main_id" user_address = "{{user_address}}">
+    <div class="container">
+        <div class="row">
+            <form id = "id_upload_doc" 
+                method="post" enctype="multipart/form-data" address="{{user_address}}">
+                <div class="row">
+                    <div class="input-field col s12">
+                        <input id="filename" type="text" name = "filename">
+                        <label for="filename">Filename</label>
+                    </div>
+                </div>
+
+                <input id="total_doc" type="text" class="validate" hidden  name = "total_doc">
+
+
+                <div class="row">
+                    <div class="input-field col s12">
+                        <input id="master_key" type="password" class="validate" name = "master_key">
+                        <label for="master_key">Master Key</label>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="input-field col s12">
+                        <input type="file" name="file">
+                    </div>
+                </div>
+                <button class="btn waves-effect waves-light" type="submit" name="action">Upload
+                </button>
+            </form>
+        </div>
+    </div>
+</main>
+
+{% endblock container %}
+
+{% block javascript %}
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+{% endblock javascript %}

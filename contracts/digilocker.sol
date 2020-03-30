@@ -8,7 +8,6 @@ contract digiLocker {
         string docName;
         uint256 timestamp; //
         bytes32 docHash; //doc hash
-        bytes32 accessKey; // user public key 
     }
     struct sharedDoc{
         bytes32 docid;
@@ -23,11 +22,12 @@ contract digiLocker {
     }
     
     struct User{
-        uint256 timestamp;
         userType utype;
         bool valid;
         UserDetails details;
         address _useraddress;
+        bytes32 accessKey; // user master key Hash
+        bytes32 pubKey; // Public key of user
     }
     
     ///////////////////////-- enums here -- ///////////////////////////////////
@@ -41,7 +41,9 @@ contract digiLocker {
         string _email,
         string _contact,
         userType utype,
-        address _useraddress
+        address _useraddress,
+        bytes32 accessKey,
+        bytes32 pubKey,
     );
     event alreadyRegistred(
         address _useraddress
@@ -81,15 +83,18 @@ contract digiLocker {
     //register user
     function registerUser(string memory _firstName,
             string memory _lastName,
-            string memory _email,
-            uint8 _utype,
-            string memory _contact) public  {
+            string memory _email, uint8 _utype,
+            string memory _contact, bytes32 accessKey,
+            bytes32 pubKey) public  {
             if (!isalreadyRegisteredUser()){
                 UserDetails memory d = UserDetails(_firstName,_lastName, _email, _contact);
-               
-                User memory newuser = User(now, userType(_utype), true, d, msg.sender);
+                User memory newuser = User(userType(_utype), true, d, 
+                    msg.sender, accessKey, pubKey
+                );
                 registerUsers[msg.sender] = newuser;
-                emit registeredUserEvent(_firstName,_lastName,_email, _contact, userType(_utype), msg.sender);
+                emit registeredUserEvent(_firstName,_lastName,
+                _email, _contact, userType(_utype), 
+                msg.sender, accessKey, pubKey);
             }
             else{
                 emit alreadyRegistred(msg.sender);

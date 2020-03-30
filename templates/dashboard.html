@@ -6,20 +6,13 @@
 
 {% block container %}
 	{% include "components/navbar_dash.html" %}
-	<main>
+	<main id = "main_id" user_address = "{{user_address}}">
 		<div class = "container">
 		<p id = "account-address">{{user_address}}</p>
 
-		<form action="" class="dropzone" id="UploadDoc"
-			method="post" enctype="multipart/form-data">
+			<button class = "btn btn-primary" type="submit">
+			<a href = "/dashboard/upload/doc">Upload document</a></button>
 
-			<button class = "btn btn-primary" type="submit">Upload document</button>
-
-			<div id="upload_files">
-				<input name="file" type="file" multiple />
-			</div>
-			
-		</form>
 		<p id = "funds"></p>
 		</div>
 	</main>

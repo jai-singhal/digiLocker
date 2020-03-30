@@ -1,4 +1,4 @@
-var contractAddress = "0x647eF53cCb4573d65737131A82Dc53601b6Cd169"
+var contractAddress = "0x42C6eC7a28C84E2E61dB8C0424EB5D9C87Fe74D7"
 
 
 function getCookie(name) {
@@ -25,3 +25,24 @@ function checkWeb3(callback) {
         callback(accounts.length !== 0);
     });
 }
+
+
+$("#logout-btn").click(function (e) {
+    e.preventDefault();
+    var request = new XMLHttpRequest();
+    let logout_url = "/api/logout/metamask";
+    request.open('GET', logout_url, true);
+    request.onload = function () {
+        if (request.status >= 200 && request.status < 400) {
+            var resp = JSON.parse(request.responseText);
+            window.location.replace(resp.redirect_url);
+        }
+        else{
+            alert("Logout failed")
+        }
+    };
+    request.onerror = function () {
+        alert("Logout failed");
+    };
+    request.send();
+});
