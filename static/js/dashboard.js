@@ -22,6 +22,8 @@ $(document).ready(function(){
             window.location.replace("/registration");
         }
     });
+
+    
     contract.methods.getDocCountByUserId().call().then(function(obj){
         console.log(obj)
         $("#total_doc").val(obj);
@@ -67,38 +69,16 @@ $('#id_upload_doc').submit(function(event) {
                             var encryptedFile = new File([encrypted], file.name, {type: file.type, lastModified: file.lastModified});
                             var dochash =  "0x" + CryptoJS.SHA256(e.target.result).toString();
                             
-                            contract.methods.uploadDocument(file.name, dochash).send().then(function(obj){
-                                var data = new FormData();
-                                data.append( 'file', encryptedFile );
-                                data.append("X-CSRFToken", getCookie('csrftoken'));
-                                data.append("total_doc", total_doc);
-                                
-                                $.ajax({
-                                    url: '/post/api/upload/doc',
-                                    data: data,
-                                    cache: false,
-                                    contentType: false,
-                                    processData: false,
-                                    type: 'POST',
-                                    success: function (res) {
-                                        if(res.success == true){
-                                            window.location.replace(res.redirect_url);
-                                        }
-                                        else{
-                                            alert(res["error"])
-                                        }
-                                        // document.getElementById('wait').innerHTML="File Upload Done";
-                                        // document.getElementById('status').innerHTML="Send this in your email: " + data +"&password="+password;
-                                    },
-                                    error: function(res){
-                                        console.log(res, "error")
-                                    }
-                                 });
+                            contract.methods.checkAlreadyUpload(dochash).call().then(function(obj){
+                                if(obj == true)
+                                    alert("This document is already uploaded!!")
+                                else
+                                    contract.methods.uploadDocument(file.name, dochash).send().then(function(obj){
+                                        uploadDocument(encryptedFile, total_doc);
+                                    })
+                            })
 
-
-                            });
                         } // end reader onload
-
                         reader.readAsDataURL(file);
 
                     } // end if
@@ -123,6 +103,37 @@ $('#id_upload_doc').submit(function(event) {
         request.send(formData);
 
     });
-
     
 })
+
+
+function uploadDocument(encryptedFile, total_doc){
+    var data = new FormData();
+    data.append( 'file', encryptedFile );
+    data.append("X-CSRFToken", getCookie('csrftoken'));
+    data.append("total_doc", total_doc);
+    
+    $.ajax({
+        url: '/post/api/upload/doc',
+        data: data,
+        cache: false,
+        contentType: false,
+        processData: false,
+        type: 'POST',
+        success: function (res) {
+            if(res.success == true){
+                window.location.replace(res.redirect_url);
+            }
+            else{
+                alert(res["error"])
+            }
+            // document.getElementById('wait').innerHTML="File Upload Done";
+            // document.getElementById('status').innerHTML="Send this in your email: " + data +"&password="+password;
+        },
+        error: function(res){
+            console.log(res, "error")
+        }
+        });
+
+
+}
