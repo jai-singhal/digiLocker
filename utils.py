@@ -33,7 +33,7 @@ def generateRSAKeypair():
     )
     return public_key, private_key
 
-def prepareMailMsg(name, from_mail, address, pub, pr, master_key):
+def prepareMailMsg(name, from_mail, address, pub, pr, master_key, MAIL_SENDER):
     msgHtml = f"""
         <html><head>
         <title>Welcome To DigiLocker</title></head>
@@ -50,7 +50,7 @@ def prepareMailMsg(name, from_mail, address, pub, pr, master_key):
     """
     msg = Message(
         recipients=[from_mail.strip(),],
-        sender = "helpdesk.digilocker@gmail.com"
+        sender = MAIL_SENDER
     )
     msg.html = msgHtml
     msg.subject = "Account Created Successfully"

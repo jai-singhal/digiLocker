@@ -31,9 +31,9 @@ def token_required(f):
                 return f(user_address, *args, **kwargs)
             except Exception as e:
                 print(e)
-                return redirect(url_for('index'))
+                return redirect("/")
 
-        return redirect(url_for('index'))
+        return redirect("/")
     return decorator
 
 @app.route("/")
@@ -114,7 +114,8 @@ def registration_postapi():
     last_name = request.form.get("last_name")
 
     pu, pr = generateRSAKeypair()
-    msg = prepareMailMsg(f"{first_name} {last_name}", email, user_address, pu, pr, master_key)
+    MAIL_SENDER = app.config["MAIL_SENDER"]
+    msg = prepareMailMsg(f"{first_name} {last_name}", email, user_address, pu, pr, master_key, MAIL_SENDER)
     mail.send(msg)
     mkey_digest = hashlib.sha256(master_key.strip().encode()).hexdigest()
 
@@ -138,8 +139,8 @@ def registration_postapi():
 def login_api():
     urandomToken = ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for i in range(32))
     token = jwt.encode({
-        'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=2),
-        'token': urandomToken
+            'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=120),
+            'token': urandomToken
         }, 
         app.config['SECRET_KEY']
     ).decode("utf-8")
