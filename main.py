@@ -15,7 +15,7 @@ import dropbox
 
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', "docx"])
 app = Flask(__name__)
-app.config['SECRET_KEY'] = b'OCML3BRawWEUeaxcuKHLpw'
+app.config['SECRET_KEY'] = app.config["SECRET_KEY"]
 app.config.from_object(settings)
 mail = Mail(app)
 dropbox_ = dropbox.Dropbox(app.config["DROPBOX_ACCESS_TOKEN"])
@@ -36,9 +36,9 @@ def token_required(f):
                 return f(user_address, *args, **kwargs)
             except Exception as e:
                 print(e)
-                return redirect("/")
+                return redirect("/", next=request.url)
 
-        return redirect("/")
+        return redirect("/", next=request.url)
     return decorator
 
 @app.route("/")
@@ -143,7 +143,7 @@ def registration_postapi():
 def login_api():
     urandomToken = ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits) for i in range(32))
     token = jwt.encode({
-        'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=60),
+        'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=2),
         'token': urandomToken
         }, 
         app.config['SECRET_KEY']

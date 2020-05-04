@@ -136,3 +136,7 @@ logs/*
 .zip
 .sql
 *.bat
+*.env
+.env/
+
+config.py
