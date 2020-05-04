@@ -13,16 +13,11 @@ from werkzeug.utils import secure_filename
 import dropbox
 
 
-ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', "docx"])
 app = Flask(__name__)
-app.config['SECRET_KEY'] = app.config["SECRET_KEY"]
+ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', "docx"])
 app.config.from_object(settings)
 mail = Mail(app)
 dropbox_ = dropbox.Dropbox(app.config["DROPBOX_ACCESS_TOKEN"])
-
-
-# API_KEY = 'your_api_key'
-# dbx_client = dropbox.Dropbox(API_KEY)
 
 
 def token_required(f):
@@ -36,9 +31,9 @@ def token_required(f):
                 return f(user_address, *args, **kwargs)
             except Exception as e:
                 print(e)
-                return redirect("/", next=request.url)
+                return redirect(url_for('index'))
 
-        return redirect("/", next=request.url)
+        return redirect(url_for('index'))
     return decorator
 
 @app.route("/")
