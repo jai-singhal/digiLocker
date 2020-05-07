@@ -7,11 +7,19 @@ var contract = new web3.eth.Contract(abi, contractAddress, {
 
 $(document).ready(function(){
     contract.methods.isalreadyRegisteredUser().call().then(function(obj){
-        alert(obj)
         if(obj == true){
             window.location.replace("/dashboard");
         }
+        else{
+            swal({
+                title: "Alert!",
+                text: "You have to register yourself first!!",
+                icon: "warning",
+              });
+        }
     });
+    $("#main-loader").hide();
+
 
 })
 
@@ -46,6 +54,11 @@ $("#registration").submit(function(e){
                 ).send().then(function(res){
                     // console.log("xx", err, res)
                     window.location.replace(resp.redirect_url);
+                    swal({
+                        title: "Success!",
+                        text: "Registration Successful!! You will recieve credentials via mail.",
+                        icon: "success",
+                    });
                 });
             }
         } else {

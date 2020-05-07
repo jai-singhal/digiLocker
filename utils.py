@@ -35,18 +35,20 @@ def generateRSAKeypair():
 
 def prepareMailMsg(name, from_mail, address, pub, pr, master_key, MAIL_SENDER):
     msgHtml = f"""
-        <html><head>
-        <title>Welcome To DigiLocker</title></head>
-        <body><table>
-        <p> Hello {name} </p>
-        <p>Congrats. Your account has been created in Digilocker. Here are the details: </p>
+        <html>
+        <head><title>Welcome To DigiLocker</title></head>
+        <body>
+        <p> Hello {name} <br />
+        Congrats. Your account has been created in Digilocker. Here are the details: </p>
+        <table>
         <tr><td>Account Address</td><td>{address}</td></tr>
         <tr><td>Master key</td><td>{master_key}</td></tr>
         </table>
         <p><br>PFA the Public key and private key
         Don't share these credentials with anyone, keep it with you<br></p>
         <p>Best<br>Digilocker Team</p>
-        </body></html>
+        </body>
+        </html>
     """
     msg = Message(
         recipients=[from_mail.strip(),],

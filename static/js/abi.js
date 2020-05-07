@@ -205,6 +205,11 @@ var abi = [
 				"internalType": "bytes32",
 				"name": "docHash",
 				"type": "bytes32"
+			},
+			{
+				"internalType": "string",
+				"name": "timestamp",
+				"type": "string"
 			}
 		],
 		"name": "uploadDocument",
@@ -237,6 +242,27 @@ var abi = [
 		],
 		"name": "uploadDocumentEvent",
 		"type": "event"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"internalType": "bytes32",
+				"name": "_bytes32",
+				"type": "bytes32"
+			}
+		],
+		"name": "bytes32ToStr",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			}
+		],
+		"payable": false,
+		"stateMutability": "pure",
+		"type": "function"
 	},
 	{
 		"constant": true,
@@ -312,9 +338,9 @@ var abi = [
 		"name": "getDocumentListbyDocId",
 		"outputs": [
 			{
-				"internalType": "bytes32",
+				"internalType": "string",
 				"name": "",
-				"type": "bytes32"
+				"type": "string"
 			},
 			{
 				"internalType": "string",
@@ -322,14 +348,14 @@ var abi = [
 				"type": "string"
 			},
 			{
-				"internalType": "uint256",
+				"internalType": "string",
 				"name": "",
-				"type": "uint256"
+				"type": "string"
 			},
 			{
-				"internalType": "bytes32",
+				"internalType": "string",
 				"name": "",
-				"type": "bytes32"
+				"type": "string"
 			},
 			{
 				"internalType": "string",
@@ -373,19 +399,19 @@ var abi = [
 				"type": "string[]"
 			},
 			{
-				"internalType": "bytes32[]",
+				"internalType": "string[]",
 				"name": "",
-				"type": "bytes32[]"
+				"type": "string[]"
 			},
 			{
-				"internalType": "bytes32[]",
+				"internalType": "string[]",
 				"name": "",
-				"type": "bytes32[]"
+				"type": "string[]"
 			},
 			{
-				"internalType": "uint256[]",
+				"internalType": "string[]",
 				"name": "",
-				"type": "uint256[]"
+				"type": "string[]"
 			}
 		],
 		"payable": false,
@@ -409,9 +435,9 @@ var abi = [
 				"type": "string"
 			},
 			{
-				"internalType": "uint256",
+				"internalType": "string",
 				"name": "",
-				"type": "uint256"
+				"type": "string"
 			}
 		],
 		"payable": false,
@@ -429,19 +455,19 @@ var abi = [
 				"type": "string[]"
 			},
 			{
-				"internalType": "bytes32[]",
+				"internalType": "string[]",
 				"name": "",
-				"type": "bytes32[]"
+				"type": "string[]"
 			},
 			{
-				"internalType": "bytes32[]",
+				"internalType": "string[]",
 				"name": "",
-				"type": "bytes32[]"
+				"type": "string[]"
 			},
 			{
-				"internalType": "uint256[]",
+				"internalType": "string[]",
 				"name": "",
-				"type": "uint256[]"
+				"type": "string[]"
 			}
 		],
 		"payable": false,

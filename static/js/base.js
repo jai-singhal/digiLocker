@@ -1,5 +1,12 @@
-var contractAddress = "0x61E7cf02B769310583011D6954f7D4694290D741"
+var contractAddress = "0x5974F119AeAEc88E2fFe3f6066294D5a844f05A6"
 
+if(typeof(String.prototype.trim) === "undefined")
+{
+    String.prototype.trim = function() 
+    {
+        return String(this).replace(/^\s+|\s+$/g, '');
+    };
+}
 
 function getCookie(name) {
     var cookieValue = null;
