@@ -1,4 +1,4 @@
-var contractAddress = "0x42C6eC7a28C84E2E61dB8C0424EB5D9C87Fe74D7"
+var contractAddress = "0x61E7cf02B769310583011D6954f7D4694290D741"
 
 
 function getCookie(name) {

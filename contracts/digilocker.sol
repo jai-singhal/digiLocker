@@ -1,4 +1,6 @@
 pragma solidity ^0.5.0;
+pragma experimental ABIEncoderV2;
+
 
 contract digiLocker {
     //structures and other variable declrn
@@ -29,7 +31,8 @@ contract digiLocker {
         bytes32 accessKey; // user master key Hash
         string pubKey; // Public key of user
     }
-    
+    uint usercount = 0;
+    address[] _glbluseraddress;
     ///////////////////////-- enums here -- ///////////////////////////////////
     enum userType { Issuer, Resident, Requester, Admin }
     enum Permission {READ, MODIFY}
@@ -56,16 +59,16 @@ contract digiLocker {
     mapping(address => User) registerUsers;
     mapping (address => Document[])  ownerDocuments;
     mapping (address => sharedDoc[])  sharedDocuments;
-    
+
     ///////////////////////-- modifier here -- ///////////////////////////////////
-    modifier isalreadyRegisteredUserModifier{
-         if((registerUsers[msg.sender]._useraddress == 0x0000000000000000000000000000000000000000)){
-             emit alreadyRegistred(msg.sender);
-         }
-         else{
-             _;
-         }
-     }
+    // modifier isalreadyRegisteredUserModifier(){
+    //     if(isalreadyRegisteredUser()){
+    //         _;
+    //     }
+    //     else{
+    //         emit alreadyRegistred(msg.sender);
+    //     }
+    // }
 
     ///////////////////////-- functions here -- ///////////////////////////////////
     function isalreadyRegisteredUser() public view returns(bool){
@@ -93,7 +96,7 @@ contract digiLocker {
             string memory _lastName,
             string memory _email, uint8 _utype,
             string memory _contact, bytes32 accessKey,
-            string memory pubKey) public isalreadyRegisteredUserModifier returns(bool) {
+            string memory pubKey) public returns(bool) {
             if (!isalreadyRegisteredUser()){
                 UserDetails memory d = UserDetails(_firstName,_lastName, _email, _contact);
                 User memory newuser = User(userType(_utype), true, d, 
@@ -103,6 +106,8 @@ contract digiLocker {
                 emit registeredUserEvent(_firstName,_lastName,
                 _email, _contact, userType(_utype), 
                 msg.sender, accessKey, pubKey);
+                _glbluseraddress.push(msg.sender);
+                usercount++;
                 return true;
             }
             else{
@@ -113,7 +118,7 @@ contract digiLocker {
  
     function checkAlreadyUpload(bytes32 docId)public view returns(bool){
         for(uint i = 0; i<ownerDocuments[msg.sender].length; i++)
-            if(ownerDocuments[msg.sender][i].docHash == docId)
+            if(ownerDocuments[msg.sender][i].docid == docId)
                 return true;
         return false;
     }
@@ -161,11 +166,67 @@ contract digiLocker {
                     ownerDocuments[msg.sender][i].timestamp
                 );
             
-        }
+        }    }
+    
+    function getOwnerDocumetList()public view returns (string[] memory,bytes32[] memory,bytes32[] memory, uint256[] memory) 
+    {
+      string[] memory _docName = new string[](ownerDocuments[msg.sender].length);
+      bytes32[] memory _docId = new bytes32[](ownerDocuments[msg.sender].length);
+      bytes32[] memory _docHash = new bytes32[](ownerDocuments[msg.sender].length);
+      uint256[] memory _timestamp = new uint256[](ownerDocuments[msg.sender].length);
+      
+      for(uint i=0;i<ownerDocuments[msg.sender].length;i++)
+      {
+         _docId[i] = ownerDocuments[msg.sender][i].docid;
+         _timestamp[i] = ownerDocuments[msg.sender][i].timestamp;
+         _docName[i] = ownerDocuments[msg.sender][i].docName;
+         _docHash[i] = ownerDocuments[msg.sender][i].docHash;
+             
+      }
+      
+      return (_docName,_docId,_docHash,_timestamp);
     }
     
-    // function getSharedDocByDocId(uint256 docId) public view returns(uint256,string docName, Permission){
-    //         return(,,);
-    // }
+    function getDocumetList(address _useradd)public view returns (string[] memory,bytes32[] memory,bytes32[] memory, uint256[] memory) 
+    {
+
+      string[] memory _docName = new string[](ownerDocuments[_useradd].length);
+      bytes32[] memory _docId = new bytes32[](ownerDocuments[_useradd].length);
+      bytes32[] memory _docHash = new bytes32[](ownerDocuments[_useradd].length);
+      uint256[] memory _timestamp = new uint256[](ownerDocuments[_useradd].length);
+      
+      for(uint i=0;i<ownerDocuments[_useradd].length;i++)
+      {
+         _docId[i] = ownerDocuments[_useradd][i].docid;
+         _timestamp[i] = ownerDocuments[_useradd][i].timestamp;
+         _docName[i] = ownerDocuments[_useradd][i].docName;
+         _docHash[i] = ownerDocuments[_useradd][i].docHash;
+             
+      }
+      
+      return (_docName,_docId,_docHash,_timestamp);
+    }
+    
+    function getDocumentListbyDocId(bytes32 _docId) public view returns(bytes32,string memory,uint256,bytes32,string memory,string memory,string memory,string memory)
+    {
+        for(uint i=0;i<usercount;i++)
+        {
+            for(uint j=0;j < ownerDocuments[_glbluseraddress[i]].length;j++)
+            {
+                
+                
+                if(ownerDocuments[_glbluseraddress[i]][j].docid == _docId)
+                {
+                    
+                    return (ownerDocuments[_glbluseraddress[i]][j].docid,ownerDocuments[_glbluseraddress[i]][j].docName,
+                    ownerDocuments[_glbluseraddress[i]][j].timestamp,ownerDocuments[_glbluseraddress[i]][j].docHash,
+                    registerUsers[_glbluseraddress[i]].details.firstName,registerUsers[_glbluseraddress[i]].details.email,
+                    registerUsers[_glbluseraddress[i]].details.lastName,registerUsers[_glbluseraddress[i]].details.contact);
+                }
+            }
+            
+        }
+        
+    }
     
 }

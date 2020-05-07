@@ -16,14 +16,15 @@ function showBalance(){
 }
 
 $(document).ready(function(){
+    displayDocuments(); 
     contract.methods.isalreadyRegisteredUser().call().then(function(obj){
         console.log(obj)
         if(obj == false){
             window.location.replace("/registration");
         }
+          
     });
 
-    
     contract.methods.getDocCountByUserId().call().then(function(obj){
         console.log(obj)
         $("#total_doc").val(obj);
@@ -107,6 +108,23 @@ $('#id_upload_doc').submit(function(event) {
 })
 
 
+function displayDocuments(){
+
+    
+    contract.methods.getUseraccessKey().call().then(function(obj,err){
+        console.log(obj)
+        //console.log(err)                   
+    });
+       contract.methods.getOwnerDocumetList().call().then(function(obj,err){
+        console.log(obj)
+        console.log(err)                   
+    }).catch(function (error) {
+        console.log("Promise Rejected"+error);
+   });
+    
+}
+
+
 function uploadDocument(encryptedFile, total_doc){
     var data = new FormData();
     data.append( 'file', encryptedFile );
@@ -122,6 +140,7 @@ function uploadDocument(encryptedFile, total_doc){
         type: 'POST',
         success: function (res) {
             if(res.success == true){
+                alert("Document Uploaded Successfully")
                 window.location.replace(res.redirect_url);
             }
             else{

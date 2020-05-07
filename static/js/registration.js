@@ -7,6 +7,7 @@ var contract = new web3.eth.Contract(abi, contractAddress, {
 
 $(document).ready(function(){
     contract.methods.isalreadyRegisteredUser().call().then(function(obj){
+        alert(obj)
         if(obj == true){
             window.location.replace("/dashboard");
         }
