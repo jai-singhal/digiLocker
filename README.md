@@ -48,4 +48,16 @@ python main.py
 
 ## Todos
 
+### Ankit
+
+- Display all the uploaded document by user address
+
+- Searching user/doc: Two different forms with 1 input each.
+    - Search by doc id:: Gets document info. 
+    - Search by user id:: Get document names, date, doc id of all docs uploaded by user
+
+- Accessing Document permission:
+ - Add button with each document(s) which should be responsible for making an POST call to python server,
+    sending, requesting useraddress, docid.
+
 These are tasks we have to do in future
