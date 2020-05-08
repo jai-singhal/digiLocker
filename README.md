@@ -50,11 +50,11 @@ python main.py
 
 ### Ankit
 
-- ~ Display all the uploaded document by user address~
+- ~~ Display all the uploaded document by user address~~
 
-- ~ Searching user/doc: Two different forms with 1 input each. ~
-    - ~ Search by doc id:: Gets document info. ~
-    - ~ Search by user id:: Get document names, date, doc id of all docs uploaded by user ~
+- ~~ Searching user/doc: Two different forms with 1 input each. ~~
+    - ~~ Search by doc id:: Gets document info. ~~
+    - ~~ Search by user id:: Get document names, date, doc id of all docs uploaded by user ~~
 
 - Create a function in solidify that check if user with address exists or not
 
