@@ -30,24 +30,28 @@ def token_required(f):
                 user_address = session.get("user_address")
                 return f(user_address, *args, **kwargs)
             except Exception as e:
-                print(e)
-                return redirect("/")
+                return f(None, *args, **kwargs)
 
-        return redirect("/")
+        return f(None, *args, **kwargs)
+
     return decorator
 
 @app.route("/")
 def index():
     return render_template("index.html")
 
-@app.route("/dashboard")
+@app.route("/dashboard", methods=['GET'])
 @token_required
 def dashboard(user_address = None):
+    if not user_address:
+        return redirect("/")
     return render_template("dashboard.html", user_address = user_address)
 
 @app.route("/registration")
 @token_required
 def registration(user_address):
+    if not user_address:
+        return redirect("/")
     return render_template("registration.html", user_address = user_address)
 
 
@@ -58,6 +62,8 @@ def registration(user_address):
 @app.route('/dashboard/upload/doc', methods=['GET'])
 @token_required
 def upload_file(user_address):
+    if not user_address:
+        return redirect("/")
     return render_template("upload_doc.html", user_address=user_address)
 
 @app.route('/post/api/upload/doc', methods=['POST'])
@@ -183,6 +189,36 @@ def logout(user_address3):
     session.pop("user_address", None)
     return {'success': True, 'redirect_url': "/"}
 
+
+@app.route("/dashboard", methods = ['POST'])
+@token_required
+def dashboardPost(user_address3):
+    uid = request.form.get("uid", None)
+    docid = request.form.get("docid", None)
+    if uid and docid:
+        flash('Please provide one')
+    if uid:
+        return redirect("/search/uid")
+    if docid:
+        return redirect("/search/doc")
+
+    flash('Please provide one')
+
+@app.route("/search/uid", methods = ["GET"])
+@token_required
+def searchUser(user_address):
+    if not user_address:
+        return redirect("/")
+    return render_template("searchUser.html", user_address = user_address)
+
+
+@app.route("/search/doc", methods = ["GET"])
+@token_required
+def searchDoc(user_address):
+    print(user_address)
+    if not user_address:
+        return redirect("/")
+    return render_template("searchDoc.html", user_address = user_address)
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", debug=True)

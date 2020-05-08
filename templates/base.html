@@ -11,7 +11,7 @@
 </head>
 
 <body>
-
+	<div id = "main_useraddress" uaddress = "{{user_address}}"></div>
 	<div id="main-loader">
 		<div class="preloader-wrapper big active">
 			<div class="spinner-layer spinner-blue-only">
@@ -29,11 +29,12 @@
 	</div>
 
 	{% block container %}
+	
 	{% endblock container %}
 
 	{% include "components/footer.html" %}
 	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-	<script type="text/javascript" src="https://cdn.jsdelivr.net/gh/ethereum/web3.js@1.0.0-beta.34/dist/web3.min.js">
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.2.7/web3.min.js">
 	</script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 	<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>

@@ -1,26 +1,8 @@
-var web3 = new Web3(window.web3.currentProvider);
-var address = $("#registration").attr("address");
-var contract = new web3.eth.Contract(abi, contractAddress, {
-    from: address,
-    gasLimit: 3000000,
-});
 
 $(document).ready(function(){
-    contract.methods.isalreadyRegisteredUser().call().then(function(obj){
-        if(obj == true){
-            window.location.replace("/dashboard");
-        }
-        else{
-            swal({
-                title: "Alert!",
-                text: "You have to register yourself first!!",
-                icon: "warning",
-              });
-        }
-    });
+    checkAlreadyRegiteredUser(true);
+
     $("#main-loader").hide();
-
-
 })
 
 

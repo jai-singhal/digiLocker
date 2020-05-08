@@ -1,54 +1,102 @@
 {% extends "base.html" %}
 
 {% block style %}
-<link href = "{{ url_for('static', filename='css/dropzone.min.css') }}">
 {% endblock style %}
 
 {% block container %}
-	{% include "components/navbar_dash.html" %}
-	<main id = "main_id" user_address = "{{user_address}}">
-		<div class = "container">
-		<p id = "account-address">{{user_address}}</p>
+{% include "components/navbar.html" %}
 
-			<button class = "btn btn-primary" type="submit">
-			<a href = "/dashboard/upload/doc">Upload document</a></button>
 
-		<p id = "funds"></p>
+
+<main id="main_id" user_address="{{user_address}}">
+	<div class="container">
+		<div class="row header">
+			<!-- <p id = "account-address">{{user_address}}</p> -->
+			<div class="float-left">
+				<p>Total docs uploaded: <strong id="total_docs"></strong></p>
+				<p>You have total fund of: <strong id="funds"></strong> ETH</p>
+			</div>
+			<div class="float-right upload_btn">
+				<a href="/dashboard/upload/doc" class="waves-effect waves-light btn">
+					Upload Document
+				</a>
+				<a class="waves-effect waves-light btn modal-trigger" href="#requestDoc">
+					Request new Document
+				</a>
+			</div>
 		</div>
-	</main>
+	</div>
 
-	<table>
-        <thead>
-          <tr>
-              <th>Serial Number</th>
-              <th>Document Name</th>
-			  <th>Uploaded Date</th>
-			  <th>Action</th>
-          </tr>
-        </thead>
+	<div class="container">
+		<table id="document_table">
+			<thead>
+			</thead>
+			<tbody>
+			</tbody>
+		</table>
+	</div>
+</main>
 
-        <tbody>
-          <tr>
-            <td>Alvin</td>
-            <td>Eclair</td>
-            <td>$0.87</td>
-          </tr>
-          <tr>
-            <td>Alan</td>
-            <td>Jellybean</td>
-            <td>$3.76</td>
-          </tr>
-          <tr>
-            <td>Jonathan</td>
-            <td>Lollipop</td>
-            <td>$7.00</td>
-          </tr>
-        </tbody>
-      </table>
+<!-- Modal Structure -->
+<div id="requestDoc" class="modal bottom-sheet">
+	<div class="modal-content">
+		<!-- <h4>Search Document</h4> -->
+
+		<div class="container">
+			<ul class="collapsible">
+				<li>
+					<div class="collapsible-header">Search by Document id</div>
+					<div class="collapsible-body">
+						<form method="POST">
+							<div class="input-field">
+								<input 
+									placeholder="Enter your document id" 
+									id="docid" type="text" class="validate"
+									name = "docid"
+								>
+								<label for="docid">Document id</label>
+							</div>
+							<button 
+								type="submit"
+								class="btn float-right" 
+								id="search_by_docid">Search</button>
+						</form>
+						
+						<br>
+					</div>
+				</li>
+				<li>
+					<div class="collapsible-header">Search by User Address</div>
+					<div class="collapsible-body">
+						<form method="POST">
+							<div class="input-field">
+								<input 
+									placeholder="Enter your User address id" 
+									id="user_address" type="text"
+									name = "uid"
+									class="validate">
+								<label for="uid">User Address</label>
+							</div>
+							<button 
+								class="btn float-right" id="search_by_useradd"
+								type="submit"
+							>Search</button>
+						</form>
+						<br>
+					</div>
+				</li>
+			</ul>
+		</div>
+	</div>
+
+	<div class="modal-footer">
+	</div>
+</div>
+
 
 {% endblock container %}
 
 {% block javascript %}
-	<script type="text/javascript" src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
 
 {% endblock javascript %}

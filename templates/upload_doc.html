@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block container %}
-{% include "components/navbar_dash.html" %}
+{% include "components/navbar.html" %}
 
 <main id = "main_id" user_address = "{{user_address}}">
     <div class="container">
@@ -35,5 +35,5 @@
 {% block javascript %}
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"></script>
  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9/sha256.js"></script>
-<script type="text/javascript" src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/upload_doc.js') }}"></script>
 {% endblock javascript %}

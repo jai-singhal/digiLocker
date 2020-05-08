@@ -1,6 +1,5 @@
 var web3 ;
 function loginWithSignature(address, signature, balance, login_url, onLoginRequestError, onLoginFail, onLoginSuccess) {
-    console.log(address, signature, login_url)
     var request = new XMLHttpRequest();
     request.open('POST', login_url, true);
     request.onload = function () {
@@ -145,7 +144,7 @@ function openInNewTab(url) {
 
 $("#auth-btn").click(function (e) {
     if(! window.web3){
-        swal.fire("Please install metamask. You will be redirected to Metamask");
+        swal("Please install metamask. You will be redirected to Metamask");
         openInNewTab("https://metamask.io/");
         return false;
     }
@@ -170,7 +169,7 @@ $("#auth-btn").click(function (e) {
 
         checkWeb3(function (loggedIn) {
             if (!loggedIn) {
-                swal.fire("Please unlock/login to your Metamask")
+                swal("Please unlock/login to your Metamask")
             }
             else{
                 var login_url = "/api/login/metamask";
@@ -191,5 +190,4 @@ $("#auth-btn").click(function (e) {
 
 $(document).ready(function(){
     $("#main-loader").hide();
-
 })

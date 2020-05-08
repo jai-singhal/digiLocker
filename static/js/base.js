@@ -1,4 +1,12 @@
-var contractAddress = "0x41Db1bd49197ecc5CbBd41A1Edc6400beb214C37"
+var contractAddress = "0x25534C00E7AF759E136D41b4eD7e92AbFe387ce5"
+
+var web3 = new Web3(window.web3.currentProvider);
+var address = window.web3.currentProvider.selectedAddress;
+
+var contract = new web3.eth.Contract(abi, contractAddress, {
+    from: address,
+    gasLimit: 3000000,
+});
 
 if(typeof(String.prototype.trim) === "undefined")
 {
@@ -53,3 +61,28 @@ $("#logout-btn").click(function (e) {
     };
     request.send();
 });
+
+
+function checkAlreadyRegiteredUser(redirect = false){
+    contract.methods.isalreadyRegisteredUser().call().then(function(obj){
+        if(obj == false){
+            window.location.replace("/registration");
+            swal({
+                title: "Alert!",
+                text: "You have to register yourself first!!",
+                icon: "warning",
+            });
+        }
+        else{
+            if(redirect){
+                window.location.replace("/dashboard");
+            }
+        }
+    }).catch(function (error) {
+        swal({
+            title: "Error!",
+            text: "Error while checking user is regitred or not" + error,
+            icon: "error",
+        });
+   });
+}

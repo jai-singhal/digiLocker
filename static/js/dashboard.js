@@ -1,181 +1,107 @@
 
-var web3 = new Web3(window.web3.currentProvider);
-var address = $("#main_id").attr("user_address");
-var contract = new web3.eth.Contract(abi, contractAddress, {
-    from: address,
-    gasLimit: 3000000,
-});
 
 function showBalance(){
     web3.eth.getBalance(address, (err, balance) => {
-        console.log(err, balance)
         var mbalance = web3.utils.fromWei(balance, "ether");
-        console.log(mbalance)
         $("#funds").html(mbalance)
-    });
+    })
+    .catch(function (error) {
+        swal({
+            title: "Error!",
+            text: "Error while fetching balance" + error,
+            icon: "error",
+        });
+   });
 }
-
-$(document).ready(function(){
-    contract.methods.isalreadyRegisteredUser().call().then(function(obj){
-        console.log(obj)
-        if(obj == false){
-            window.location.replace("/registration");
-            swal({
-                title: "Alert!",
-                text: "You have to register yourself first!!",
-                icon: "warning",
-            });
-        }
-    });
-
-    contract.methods.getDocCountByUserId().call().then(function(obj){
-        console.log(obj)
-        $("#total_doc").val(obj);
-    });
-    displayDocuments(); 
-
-    $("#main-loader").hide();
-    // showBalance()
-})
-
-
-$('#id_upload_doc').submit(function(event) {
-    event.preventDefault(); 
-    var master_key = $("#master_key").val();
-    var total_doc = $("#total_doc").val();
-
-    var _this = $(this);
-    contract.methods.getUseraccessKey().call().then(function(mkeyHash){
-        var request = new XMLHttpRequest();
-        
-        let accesskey_url = "/api/user/accesskey";
-        request.open('POST', accesskey_url, true);
-        request.onload = function () {
-
-            if (request.status >= 200 && request.status < 400) {
-                var resp = JSON.parse(request.responseText);
-                if(resp.valid == false){
-                    alert("Master key is not valid")
-                    return false;
-                }
-                else{
-                    var key = resp.ekey;
-                    var fileInput = document.getElementById('file');
-                    var file = fileInput.files[0]
-
-                    if(Math.floor(file.size/1000000) <= 5){
-                        // Read file callback!
-                        var reader = new FileReader();
-                        reader.onload = function (e) {
-                            $("#main-loader").show();
-                            var encrypted = CryptoJS.AES.encrypt(e.target.result, key,{ 
-                                    iv: address, 
-                                    padding: CryptoJS.pad.Pkcs7,
-                                    mode: CryptoJS.mode.CBC
-                            }).toString()
-
-                            var encryptedFile = new File([encrypted], file.name, {type: file.type, lastModified: file.lastModified});
-                            var dochash =  "0x" + CryptoJS.SHA256(e.target.result).toString();
-                            $("#main-loader").hide();
-                            
-                            contract.methods.checkAlreadyUpload(dochash).call().then(function(obj){
-                                if(obj == true)
-                                    alert("This document is already uploaded!!")
-                                else{
-                                    $("#main-loader").show();
-                                    var timestamp = new Date().toLocaleString();
-
-                                    contract.methods.uploadDocument(file.name.trim(), dochash, timestamp).send().then(function(obj){
-                                        uploadDocument(encryptedFile, total_doc);
-                                    })
-                                    $("#main-loader").hide();
-                                }
-                            })
-
-                        } // end reader onload
-                        reader.readAsDataURL(file);
-                    } // end if
-                    else{
-                        alert("Upload size limits to 5MB");
-                    }
-                }
-            }
-            else{
-                alert("Request failed")
-            }
-        };
-        request.onerror = function () {
-            swal({
-                title: "Alert!",
-                text: "Error while uploading!!",
-                icon: "error",
-              });
-
-        };
-        var formData = 'master_key=' + master_key + "&mkeydigest=" + mkeyHash + "&total_doc=" + total_doc;
-        // console.log(formData)
-        request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
-        request.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
-        request.send(formData);
-        $("#main-loader").hide();
-    });
-    
-})
-
 
 function displayDocuments(){
-    contract.methods.getUseraccessKey().call().then(function(obj,err){
-        console.log(obj, "Xxx")
-        // console.log("err")                   
-    });
-    contract.methods.getOwnerDocumetList().call().then(function(obj,err){
-        obj.forEach((a,b) => {
-            console.log(a,b)
-        });
-        // console.log(err)                   
-    })
-//     .catch(function (error) {
-//         console.log("Promise Rejected"+error);
-//    });
-    
-}
-
-
-function uploadDocument(encryptedFile, total_doc){
-    var data = new FormData();
-    data.append( 'file', encryptedFile );
-    data.append("X-CSRFToken", getCookie('csrftoken'));
-    data.append("total_doc", total_doc);
-    
-    $.ajax({
-        url: '/post/api/upload/doc',
-        data: data,
-        cache: false,
-        contentType: false,
-        processData: false,
-        type: 'POST',
-        success: function (res) {
-            if(res.success == true){
-                swal({
-                    title: "Success!",
-                    text: "Document Uploaded Successfully",
-                    icon: "success",
-                  });
-                window.location.replace(res.redirect_url);
-            }
-            else{
-                swal({
-                    title: "Something went wrong!",
-                    text: res["error"],
-                    icon: "error",
-                  });
-            }
-            // document.getElementById('wait').innerHTML="File Upload Done";
-            // document.getElementById('status').innerHTML="Send this in your email: " + data +"&password="+password;
-        },
-        error: function(res){
-            console.log(res, "error")
+    // contract.methods.getUseraccessKey().call().then(function(obj,err){
+    //     console.log(obj, "Xxx")
+    //     // console.log("err")                   
+    // });
+    contract.methods.getOwnerDocumetList().call().then(function(docs){
+        var documents = [];
+        var i = 0;
+        for(var k = 0; k < docs[0].length; k++){
+            documents[i] = {}
+            documents[i++].filename = docs[0][k]
         }
-    });
+            
+        i = 0;
+        for(var k = 0; k < docs[1].length; k++)
+            documents[i++].timestamp = docs[1][k]
 
+        // i = 0;
+        // for(var k = 0; k < docs[2].length; k++)
+        //     documents[i++].doc_id = docs[1][k]
+        // i = 0;
+        // for(var k = 0; k < docs[1].length; k++)
+        //     documents[i++].timestamp = docs[1][k]
+        $("#document_table thead").append(
+            `<tr>
+            <th>Serial Number</th>
+            <th>Document Name</th>
+            <th>Uploaded Date</th>
+            <th>Action</th>
+            </tr>`
+        )
+        for(var j = 0; j <documents.length; j++){
+            $("#document_table tbody").append(
+                `<tr>
+                <td>Document #${j}</td>
+                <td>${documents[j].filename}</td>
+                <td>${documents[j].timestamp}</td>
+                <td><button class = "btn btn-primary" id = "doc_${j}">Share</button></td>
+                </tr>`
+            )
+        }
+    })
+    .catch(function (error) {
+        swal({
+            title: "Error!",
+            text: "Error while fetching documents" + error,
+            icon: "error",
+        });
+   });    
 }
+
+function getDocCount(){
+    contract.methods.getDocCountByUserId().call().then(function(obj){
+        $("#total_docs").html(obj);
+
+    }).catch(function (error) {
+        swal({
+            title: "Error!",
+            text: "Error while fetching documents count" + error,
+            icon: "error",
+        });
+   });
+}
+
+
+// $("#search_by_docid").click(function(e){
+//     e.preventDefault();
+//     let doc_id = $("#docid").val();
+//     if(doc_id !== ""){
+//         searchAjaxCall(doc_id, "/search/doc")
+//     }
+
+// });
+
+// $("#search_by_useradd").click(function(e){
+//     e.preventDefault();
+//     let uid = $("#user_address").val();
+//     if(uid !== ""){
+//         searchAjaxCall(uid, "/search/user")
+//     }
+// });
+
+$(document).ready(function(){
+    checkAlreadyRegiteredUser()
+    showBalance()
+    getDocCount();
+    displayDocuments(); 
+    $("#main-loader").hide();
+    $('.modal').modal();
+    $('.collapsible').collapsible();
+})
