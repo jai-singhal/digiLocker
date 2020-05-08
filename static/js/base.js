@@ -65,6 +65,7 @@ $("#logout-btn").click(function (e) {
 
 function checkAlreadyRegiteredUser(redirect = false){
     contract.methods.isalreadyRegisteredUser().call().then(function(obj){
+        console.log(obj, "xxxx")
         if(obj == false){
             window.location.replace("/registration");
             swal({

@@ -30,6 +30,7 @@ def token_required(f):
                 user_address = session.get("user_address")
                 return f(user_address, *args, **kwargs)
             except Exception as e:
+                print("Exception occured", e)
                 return f(None, *args, **kwargs)
 
         return f(None, *args, **kwargs)
@@ -70,6 +71,7 @@ def upload_file(user_address):
 @app.route('/post/api/upload/doc', methods=['POST'])
 @token_required
 def upload_file_postapi(user_address):
+    print(user_address)
     if 'total_doc' not in request.form:
         return {"success": False, "error": "No files uploaded"}
     
@@ -84,8 +86,8 @@ def upload_file_postapi(user_address):
             savepath = f"/test_dropbox/{user_address}/{savepath}"
             res = dropbox_.files_upload(file.read(), savepath)
         except Exception as e:
+            print(e, "error")
             return {"success": False, "error": str(e)}
-            print(e)
         return {"success": True, "redirect_url": "/dashboard"}
 
 
@@ -108,7 +110,7 @@ def comparehash_digest(user_address):
         return jsonify(result)
 
     except Exception as e:
-        print(e)
+        print(e, "Exception in comparehash")
         return jsonify({'success': False})   
 
 

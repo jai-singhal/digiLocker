@@ -48,7 +48,7 @@ function displayDocuments(){
         for(var j = 0; j <documents.length; j++){
             $("#document_table tbody").append(
                 `<tr>
-                <td>Document #${j}</td>
+                <td>Document #${j+1}</td>
                 <td>${documents[j].filename}</td>
                 <td>${documents[j].timestamp}</td>
                 <td><button class = "btn btn-primary" id = "doc_${j}">Share</button></td>
