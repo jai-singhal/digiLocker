@@ -1,4 +1,4 @@
-var contractAddress = "0x5974F119AeAEc88E2fFe3f6066294D5a844f05A6"
+var contractAddress = "0x41Db1bd49197ecc5CbBd41A1Edc6400beb214C37"
 
 if(typeof(String.prototype.trim) === "undefined")
 {

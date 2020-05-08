@@ -1,5 +1,4 @@
 var web3 ;
-
 function loginWithSignature(address, signature, balance, login_url, onLoginRequestError, onLoginFail, onLoginSuccess) {
     console.log(address, signature, login_url)
     var request = new XMLHttpRequest();
@@ -63,7 +62,7 @@ function web3Login(login_url, onTokenRequestFail, onTokenSignFail, onTokenSignSu
     // 4.2 The user with an according eth address is NOT found - you are redirected to signup page
 
     if (typeof web3 === 'undefined') {
-        Swal('MetaMask is not installed');
+        swal('MetaMask is not installed');
         return false;
     }
 
@@ -82,7 +81,7 @@ function web3Login(login_url, onTokenRequestFail, onTokenSignFail, onTokenSignSu
                     console.log(err);
                     return false;
                 } else if (accounts.length === 0) {
-                    Swal('MetaMask is locked');
+                    swal('MetaMask is locked');
                     return false;
                 } else {
                     var from = accounts[0]
@@ -92,16 +91,16 @@ function web3Login(login_url, onTokenRequestFail, onTokenSignFail, onTokenSignSu
                     web3.eth.getBalance(from, (err, balance) => {
                         balance = web3.utils.fromWei(balance, "ether")
                         if (balance == 0) {
-                            Swal("Insufficient funds in your account. Total balance = 0 ETH");
+                            swal("Insufficient funds in your account. Total balance = 0 ETH");
                             return false;
                         } else {
                             web3.eth.personal.sign(msg, from, function (err, result) {
                                 if (err) {
                                     if (typeof onTokenSignFail == 'function') {
-                                        Swal(err.message);
+                                        swal(err.message);
                                         onTokenSignFail(err);
                                     }
-                                    // Swal("Failed signing message \n" + msg + "\n - " + err);
+                                    // swal("Failed signing message \n" + msg + "\n - " + err);
                                 } else {
                                     console.log("Signed message: " + result);
                                     if (typeof onTokenSignSuccess == 'function') {
@@ -146,7 +145,7 @@ function openInNewTab(url) {
 
 $("#auth-btn").click(function (e) {
     if(! window.web3){
-        Swal.fire("Please install metamask. You will be redirected to Metamask");
+        swal.fire("Please install metamask. You will be redirected to Metamask");
         openInNewTab("https://metamask.io/");
         return false;
     }
@@ -171,7 +170,7 @@ $("#auth-btn").click(function (e) {
 
         checkWeb3(function (loggedIn) {
             if (!loggedIn) {
-                Swal.fire("Please unlock/login to your Metamask")
+                swal.fire("Please unlock/login to your Metamask")
             }
             else{
                 var login_url = "/api/login/metamask";
@@ -184,8 +183,13 @@ $("#auth-btn").click(function (e) {
 
 
     } else {
-        Swal('web3 missing');
+        swal('web3 missing');
     }
 
+
+})
+
+$(document).ready(function(){
+    $("#main-loader").hide();
 
 })

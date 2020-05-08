@@ -338,9 +338,9 @@ var abi = [
 		"name": "getDocumentListbyDocId",
 		"outputs": [
 			{
-				"internalType": "string",
+				"internalType": "bytes32",
 				"name": "",
-				"type": "string"
+				"type": "bytes32"
 			},
 			{
 				"internalType": "string",
@@ -353,9 +353,9 @@ var abi = [
 				"type": "string"
 			},
 			{
-				"internalType": "string",
+				"internalType": "bytes32",
 				"name": "",
-				"type": "string"
+				"type": "bytes32"
 			},
 			{
 				"internalType": "string",
@@ -402,16 +402,6 @@ var abi = [
 				"internalType": "string[]",
 				"name": "",
 				"type": "string[]"
-			},
-			{
-				"internalType": "string[]",
-				"name": "",
-				"type": "string[]"
-			},
-			{
-				"internalType": "string[]",
-				"name": "",
-				"type": "string[]"
 			}
 		],
 		"payable": false,
@@ -449,16 +439,6 @@ var abi = [
 		"inputs": [],
 		"name": "getOwnerDocumetList",
 		"outputs": [
-			{
-				"internalType": "string[]",
-				"name": "",
-				"type": "string[]"
-			},
-			{
-				"internalType": "string[]",
-				"name": "",
-				"type": "string[]"
-			},
 			{
 				"internalType": "string[]",
 				"name": "",

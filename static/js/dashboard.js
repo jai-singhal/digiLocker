@@ -129,7 +129,9 @@ function displayDocuments(){
         // console.log("err")                   
     });
     contract.methods.getOwnerDocumetList().call().then(function(obj,err){
-        console.log(obj, "xxxsklasajk")
+        obj.forEach((a,b) => {
+            console.log(a,b)
+        });
         // console.log(err)                   
     })
 //     .catch(function (error) {
