@@ -37,8 +37,9 @@ def token_required(f):
     return decorator
 
 @app.route("/")
-def index():
-    return render_template("index.html")
+@token_required
+def index(user_address):
+    return render_template("index.html", user_address = user_address)
 
 @app.route("/dashboard", methods=['GET'])
 @token_required
@@ -195,30 +196,37 @@ def logout(user_address3):
 def dashboardPost(user_address3):
     uid = request.form.get("uid", None)
     docid = request.form.get("docid", None)
-    if uid and docid:
-        flash('Please provide one')
+    print(uid, docid)
     if uid:
-        return redirect("/search/uid")
-    if docid:
-        return redirect("/search/doc")
+        return redirect(url_for('searchUser', uid=uid))
+    elif docid:
+        return redirect(url_for('searchDoc', docid=docid))
 
-    flash('Please provide one')
 
 @app.route("/search/uid", methods = ["GET"])
 @token_required
 def searchUser(user_address):
-    if not user_address:
+    print(user_address)
+    if not user_address or not request.args['uid']:
         return redirect("/")
-    return render_template("searchUser.html", user_address = user_address)
+    return render_template(
+        "searchUser.html", 
+        user_address = user_address,
+        uid = request.args['uid']
+    )
 
 
 @app.route("/search/doc", methods = ["GET"])
 @token_required
 def searchDoc(user_address):
     print(user_address)
-    if not user_address:
+    if not user_address or not request.args['docid']:
         return redirect("/")
-    return render_template("searchDoc.html", user_address = user_address)
+    return render_template(
+        "searchDoc.html", 
+        user_address = user_address,
+        docid = request.args['docid']
+    )
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", debug=True)
