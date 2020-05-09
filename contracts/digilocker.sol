@@ -170,22 +170,23 @@ contract digiLocker {
         }
 
     
-    function getOwnerDocumetList()public view returns (string[] memory, string[] memory) {
+    function getOwnerDocumetList()public view returns (string[] memory, string[] memory,bytes32[] memory) {
         return getDocumetList(msg.sender);
     }
     
-    function getDocumetList(address _useradd)public view returns (string[] memory, string[] memory) {
+    function getDocumetList(address _useradd)public view returns (string[] memory, string[] memory,bytes32[] memory) {
 
       string[] memory _docName = new string[](ownerDocuments[_useradd].length);
       string[] memory _timestamp = new string[](ownerDocuments[_useradd].length);
+      bytes32[] memory _docsId = new bytes32[](ownerDocuments[_useradd].length);
       
       for(uint i=0;i<ownerDocuments[_useradd].length;i++){
          _timestamp[i] = ownerDocuments[_useradd][i].timestamp;
          _docName[i] = ownerDocuments[_useradd][i].docName;
-   
+         _docsId[i] = ownerDocuments[_useradd][i].docid;
       }
       
-      return (_docName,_timestamp);
+      return (_docName,_timestamp,_docsId);
     }
     
     
@@ -220,3 +221,22 @@ contract digiLocker {
         
     }
 }
+    
+    /*
+    function isUserExists(address _usraddr)public view returns(bool)
+    {
+        
+        if(registerUsers[_usraddr].valid == true){
+            return true;
+        }else{
+            return false;
+        }
+    }
+    
+    function isDocExists(bytes32 _dId)public view returns(bool)
+    {
+        
+    }
+    
+    
+}*/
