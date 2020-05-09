@@ -8,7 +8,7 @@ contract digiLocker {
     struct Document{
         bytes32 docid; //doc id
         string docName;
-        uint256 timestamp; //
+        string timestamp; //
         bytes32 docHash; //doc hash
     }
     struct sharedDoc{
@@ -39,20 +39,8 @@ contract digiLocker {
     
     
     ///////////////////////-- events here -- ///////////////////////////////////
-    event registeredUserEvent(string _firstName,
-        string _lastName,
-        string _email,
-        string _contact,
-        userType utype,
-        address _useraddress,
-        bytes32 accessKey,
-        string pubKey
-    );
-    event alreadyRegistred(
-        address _useraddress
-    );
-    event uploadDocumentEvent(string dName, bytes32 docHash, address user_addr);
-    event alreadyuploadedDocumentEvent(string dName, bytes32 docHash, address user_addr);
+    event registeredUserEvent(string _email,userType utype,address _useraddress);
+    event uploadDocumentEvent(bytes32 docid, bytes32 docHash, address user_addr);
     event sharedDocumentEvent(bytes32 docid, address sharedWith, uint32 permission);
     
     ///////////////////////-- mapping here -- ///////////////////////////////////
@@ -99,19 +87,17 @@ contract digiLocker {
             string memory pubKey) public returns(bool) {
             if (!isalreadyRegisteredUser()){
                 UserDetails memory d = UserDetails(_firstName,_lastName, _email, _contact);
-                User memory newuser = User(userType(_utype), true, d, 
+                User memory newuser = User(
+                    userType(_utype), true, d, 
                     msg.sender, accessKey, pubKey
                 );
                 registerUsers[msg.sender] = newuser;
-                emit registeredUserEvent(_firstName,_lastName,
-                _email, _contact, userType(_utype), 
-                msg.sender, accessKey, pubKey);
+                emit registeredUserEvent(_email, userType(_utype), msg.sender);
                 _glbluseraddress.push(msg.sender);
                 usercount++;
                 return true;
             }
             else{
-                emit alreadyRegistred(msg.sender);
                 return false;
             }
     }
@@ -127,14 +113,13 @@ contract digiLocker {
         return ownerDocuments[msg.sender].length;
     }
 
-    function uploadDocument(string memory docName, bytes32 docHash) public{
+    function uploadDocument(string memory docName, bytes32 docHash, string memory timestamp) public{
         bytes32 docid = keccak256(abi.encode(docHash, msg.sender));
         if(!checkAlreadyUpload(docid)){
-            Document memory d = Document(docid, docName, now, docHash);
+            Document memory d = Document(docid, docName, timestamp, docHash );
             ownerDocuments[msg.sender].push(d);
-            emit uploadDocumentEvent(docName, docHash, msg.sender);
+            emit uploadDocumentEvent(docid, docHash, msg.sender);
         }// -- Check 
-        emit alreadyuploadedDocumentEvent(docName, docHash, msg.sender); 
     }
 
     function checkAlreadyShared(bytes32 docId, address sharedWith)public view returns(bool){
@@ -150,7 +135,7 @@ contract digiLocker {
         if (!checkAlreadyShared(docid, sharedWith)){
             sharedDoc memory d = sharedDoc(docid, sharedWith, Permission(permission));
             sharedDocuments[msg.sender].push(d);
-            emit sharedDocumentEvent(docid,sharedWith, permission);  
+            emit sharedDocumentEvent(docid, sharedWith, permission);  
         }
     }
 
@@ -158,7 +143,7 @@ contract digiLocker {
         return sharedDocuments[msg.sender].length;
     }
     
-    function getOwnerDocInfoByDocId(bytes32 docId)public view returns (string memory, uint256){
+    function getOwnerDocInfoByDocId(bytes32 docId)public view returns (string memory, string memory){
         
         for(uint i = 0; i < ownerDocuments[msg.sender].length; i++){
             if(ownerDocuments[msg.sender][i].docid == docId)
@@ -166,67 +151,70 @@ contract digiLocker {
                     ownerDocuments[msg.sender][i].timestamp
                 );
             
-        }    }
-    
-    function getOwnerDocumetList()public view returns (string[] memory,bytes32[] memory,bytes32[] memory, uint256[] memory) 
-    {
-      string[] memory _docName = new string[](ownerDocuments[msg.sender].length);
-      bytes32[] memory _docId = new bytes32[](ownerDocuments[msg.sender].length);
-      bytes32[] memory _docHash = new bytes32[](ownerDocuments[msg.sender].length);
-      uint256[] memory _timestamp = new uint256[](ownerDocuments[msg.sender].length);
-      
-      for(uint i=0;i<ownerDocuments[msg.sender].length;i++)
-      {
-         _docId[i] = ownerDocuments[msg.sender][i].docid;
-         _timestamp[i] = ownerDocuments[msg.sender][i].timestamp;
-         _docName[i] = ownerDocuments[msg.sender][i].docName;
-         _docHash[i] = ownerDocuments[msg.sender][i].docHash;
-             
-      }
-      
-      return (_docName,_docId,_docHash,_timestamp);
+        }   
     }
     
-    function getDocumetList(address _useradd)public view returns (string[] memory,bytes32[] memory,bytes32[] memory, uint256[] memory) 
-    {
+    function bytes32ToStr(bytes32 _bytes32) public pure returns (string memory) {
+
+    // string memory str = string(_bytes32);
+    // TypeError: Explicit type conversion not allowed from "bytes32" to "string storage pointer"
+    // thus we should fist convert bytes32 to bytes (to dynamically-sized byte array)
+
+        bytes memory bytesArray = new bytes(32);
+        for (uint256 i; i < 32; i++) {
+            bytesArray[i] = _bytes32[i];
+        }
+        return string(bytesArray);
+        }
+
+    
+    function getOwnerDocumetList()public view returns (string[] memory, string[] memory) {
+        return getDocumetList(msg.sender);
+    }
+    
+    function getDocumetList(address _useradd)public view returns (string[] memory, string[] memory) {
 
       string[] memory _docName = new string[](ownerDocuments[_useradd].length);
-      bytes32[] memory _docId = new bytes32[](ownerDocuments[_useradd].length);
-      bytes32[] memory _docHash = new bytes32[](ownerDocuments[_useradd].length);
-      uint256[] memory _timestamp = new uint256[](ownerDocuments[_useradd].length);
+      string[] memory _timestamp = new string[](ownerDocuments[_useradd].length);
       
-      for(uint i=0;i<ownerDocuments[_useradd].length;i++)
-      {
-         _docId[i] = ownerDocuments[_useradd][i].docid;
+      for(uint i=0;i<ownerDocuments[_useradd].length;i++){
          _timestamp[i] = ownerDocuments[_useradd][i].timestamp;
          _docName[i] = ownerDocuments[_useradd][i].docName;
-         _docHash[i] = ownerDocuments[_useradd][i].docHash;
-             
+   
       }
       
-      return (_docName,_docId,_docHash,_timestamp);
+      return (_docName,_timestamp);
     }
     
-    function getDocumentListbyDocId(bytes32 _docId) public view returns(bytes32,string memory,uint256,bytes32,string memory,string memory,string memory,string memory)
-    {
-        for(uint i=0;i<usercount;i++)
-        {
-            for(uint j=0;j < ownerDocuments[_glbluseraddress[i]].length;j++)
-            {
-                
+    
+    function getDocumentListbyDocId(bytes32 _docId) public view returns(
+        bytes32, 
+        string memory, 
+        string memory, 
+        bytes32, 
+        string memory, 
+        string memory, 
+        string memory, 
+        string memory){
+        for(uint i=0;i<usercount;i++){
+            for(uint j=0;j < ownerDocuments[_glbluseraddress[i]].length;j++){
                 
                 if(ownerDocuments[_glbluseraddress[i]][j].docid == _docId)
-                {
                     
-                    return (ownerDocuments[_glbluseraddress[i]][j].docid,ownerDocuments[_glbluseraddress[i]][j].docName,
-                    ownerDocuments[_glbluseraddress[i]][j].timestamp,ownerDocuments[_glbluseraddress[i]][j].docHash,
-                    registerUsers[_glbluseraddress[i]].details.firstName,registerUsers[_glbluseraddress[i]].details.email,
-                    registerUsers[_glbluseraddress[i]].details.lastName,registerUsers[_glbluseraddress[i]].details.contact);
-                }
+                    return (
+                        ownerDocuments[_glbluseraddress[i]][j].docid,
+                        ownerDocuments[_glbluseraddress[i]][j].docName,
+                        ownerDocuments[_glbluseraddress[i]][j].timestamp,
+                        ownerDocuments[_glbluseraddress[i]][j].docHash,
+                        registerUsers[_glbluseraddress[i]].details.firstName,
+                        registerUsers[_glbluseraddress[i]].details.email,
+                        registerUsers[_glbluseraddress[i]].details.lastName,
+                        registerUsers[_glbluseraddress[i]].details.contact
+                    );
+                
             }
             
         }
         
     }
-    
 }
