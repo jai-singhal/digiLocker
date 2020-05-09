@@ -4,8 +4,7 @@ function showBalance(){
     web3.eth.getBalance(address, (err, balance) => {
         var mbalance = web3.utils.fromWei(balance, "ether");
         $("#funds").html(mbalance)
-    })
-    .catch(function (error) {
+    }).catch(function (error) {
         swal({
             title: "Error!",
             text: "Error while fetching balance" + error,

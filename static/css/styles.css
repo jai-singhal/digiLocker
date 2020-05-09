@@ -42,3 +42,6 @@ main {
   max-height: 60% !important;
   box-shadow: 20px 10px 20px rgba(0, 0, 0, 0.1), 0 7px 7px rgba(0, 0, 0, 0.08) !important;
 }
+#document_table{
+  margin-bottom: 50px;
+}

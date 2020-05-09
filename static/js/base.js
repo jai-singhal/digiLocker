@@ -6,8 +6,12 @@ var address = null;
 
 $(document).ready(function(){
     address = window.web3.currentProvider;
-    if(address === undefined){
-        window.location.replace("/")
+    console.log(address)
+    if(address === undefined || !address.selectedAddress){
+        if(window.location.pathname !== "/"){
+            logout()
+            window.location.replace("/")
+        }
     }
     else{
         address = address.selectedAddress;
@@ -54,8 +58,7 @@ function checkWeb3(callback) {
 }
 
 
-$("#logout-btn").click(function (e) {
-    e.preventDefault();
+function logout(){
     var request = new XMLHttpRequest();
     let logout_url = "/api/logout/metamask";
     request.open('GET', logout_url, true);
@@ -72,6 +75,11 @@ $("#logout-btn").click(function (e) {
         alert("Logout failed");
     };
     request.send();
+}
+
+$("#logout-btn").click(function (e) {
+    e.preventDefault();
+    logout();
 });
 
 
