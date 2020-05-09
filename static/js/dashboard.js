@@ -87,13 +87,20 @@ function getDocCount(){
 
 // });
 
-// $("#search_by_useradd").click(function(e){
-//     e.preventDefault();
-//     let uid = $("#user_address").val();
-//     if(uid !== ""){
-//         searchAjaxCall(uid, "/search/user")
-//     }
-// });
+/*$("#search_by_useradd").click(function(e){
+     e.preventDefault();
+     let uid = $("#user_address").val();
+     //if(uid !== ""){
+       //  searchAjaxCall(uid, "/search/user")
+     //}
+     
+        console.log(uid)
+        contract.methods.getDocumetList(uid).call().then(function(obj){
+                console.log(obj)
+        });
+
+    
+ });*/
 
 $(document).ready(function(){
     checkAlreadyRegiteredUser()

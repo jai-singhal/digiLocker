@@ -5,11 +5,32 @@
 
 {% block container %}
 {% include "components/navbar.html" %}
-{{uid}}
+
+<div id="_useraddress">{{uid}}</div>
+
+<div class="container">
+    <div class="row header">
+        <!-- <p id = "account-address">{{user_address}}</p> -->
+        <div class="float-left">
+            <p>User Address: <strong>{{uid}}</strong></p>
+            <p>Total Document Uploaded: <strong id="funds"></strong></p>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <table id="document_table">
+        <thead>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+        
 
 {% endblock container %}
 
 {% block javascript %}
-<script type="text/javascript" src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/search_by_user.js') }}"></script>
 
 {% endblock javascript %}

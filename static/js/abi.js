@@ -25,56 +25,6 @@ var abi = [
 		"type": "event"
 	},
 	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"internalType": "bytes32",
-				"name": "docid",
-				"type": "bytes32"
-			},
-			{
-				"indexed": false,
-				"internalType": "address",
-				"name": "sharedWith",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint32",
-				"name": "permission",
-				"type": "uint32"
-			}
-		],
-		"name": "sharedDocumentEvent",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"internalType": "bytes32",
-				"name": "docid",
-				"type": "bytes32"
-			},
-			{
-				"indexed": false,
-				"internalType": "bytes32",
-				"name": "docHash",
-				"type": "bytes32"
-			},
-			{
-				"indexed": false,
-				"internalType": "address",
-				"name": "user_addr",
-				"type": "address"
-			}
-		],
-		"name": "uploadDocumentEvent",
-		"type": "event"
-	},
-	{
 		"constant": false,
 		"inputs": [
 			{
@@ -124,6 +74,31 @@ var abi = [
 		"payable": false,
 		"stateMutability": "nonpayable",
 		"type": "function"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "bytes32",
+				"name": "docid",
+				"type": "bytes32"
+			},
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "sharedWith",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint32",
+				"name": "permission",
+				"type": "uint32"
+			}
+		],
+		"name": "sharedDocumentEvent",
+		"type": "event"
 	},
 	{
 		"constant": false,
@@ -180,6 +155,31 @@ var abi = [
 		"payable": false,
 		"stateMutability": "nonpayable",
 		"type": "function"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "bytes32",
+				"name": "docid",
+				"type": "bytes32"
+			},
+			{
+				"indexed": false,
+				"internalType": "bytes32",
+				"name": "docHash",
+				"type": "bytes32"
+			},
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "user_addr",
+				"type": "address"
+			}
+		],
+		"name": "uploadDocumentEvent",
+		"type": "event"
 	},
 	{
 		"constant": true,
