@@ -129,20 +129,29 @@ contract digiLocker {
         return false;
     }
 
-    function checkAlreadyShared(bytes32 docId, address sharedWith)public view returns(bool){
+    function checkAlreadyShared(bytes32 docId, string memory email_)public view returns(bool){
         for(uint i = 0; i<sharedDocuments[msg.sender].length; i++)
             if(sharedDocuments[msg.sender][i].docid == docId &&
-                sharedDocuments[msg.sender][i].sharedWith == sharedWith)
+                sharedDocuments[msg.sender][i].sharedWith == emailAddressMapping[email_])
                 return true;
             
         return false;
     }
 
     function shareDocumentwithUser(bytes32 docid, string memory email, uint32 permission) public{
-        if (!checkAlreadyShared(docid, emailAddressMapping[email])){
+        if (!checkAlreadyShared(docid, email)){
             sharedDoc memory d = sharedDoc(docid, emailAddressMapping[email], Permission(permission));
             sharedDocuments[msg.sender].push(d);
             emit sharedDocumentEvent(docid, emailAddressMapping[email], permission);  
+        }
+    }
+
+    function isValidSharableUser(string memory email_) public view returns(bool){
+        if(emailAddressMapping[email_] == 0x0000000000000000000000000000000000000000){
+            return false;
+        }
+        else{
+            return true;
         }
     }
 
@@ -216,6 +225,8 @@ contract digiLocker {
       
       return (_docName,_timestamp, _docid);
     }
+    
+    
     
     
     function getDocumentListbyDocId(bytes32 _docId) public view returns(

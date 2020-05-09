@@ -19,7 +19,6 @@ function displayDocuments(){
     //     // console.log("err")                   
     // });
     contract.methods.getOwnerDocumetList().call().then(function(docs){
-        console.log(docs)
         var i = 0;
         for(var k = 0; k < docs[0].length; k++){
             documents[i] = {}
@@ -36,7 +35,7 @@ function displayDocuments(){
         // i = 0;
         // for(var k = 0; k < docs[1].length; k++)
         //     documents[i++].timestamp = docs[3][k]
-        $("#document_table thead").append(
+        $("#document_table thead").html(
             `<tr>
             <th>Serial Number</th>
             <th>Document Name</th>
@@ -95,9 +94,8 @@ $(document).on('click', '.shared_with', function() {
     var doc_name = _this.attr("doc_name");
     $(".doc_name_modal").html(doc_name)
     var userAddrrs = [];
-    contract.methods.shareDocumentwithUser(doc_id, address, 0).call().then(function(obj){
-        console.log(obj) 
-
+    contract.methods.getUserAddressofSharedDoc(doc_id).call().then(function(obj){
+        var i =0;
         for(var k = 0; k < obj[0].length; k++){
             userAddrrs[i] = {}
             userAddrrs[i++].address = obj[0][k]
@@ -105,9 +103,9 @@ $(document).on('click', '.shared_with', function() {
             
         i = 0;
         for(var k = 0; k < obj[1].length; k++)
-        userAddrrs[i++].permission = docs[1][k]
+            userAddrrs[i++].permission = obj[1][k]
 
-        $("#shared_doc_table thead").append(
+        $("#shared_doc_table thead").html(
             `<tr>
             <th>Serial Number</th>
             <th>User Address</th>
@@ -115,17 +113,24 @@ $(document).on('click', '.shared_with', function() {
             </tr>`
         )
         for(var j = 0; j < userAddrrs.length; j++){
-            $("#document_table tbody").append(
+            var ptype;
+            if(userAddrrs[j].permission == 0)
+                ptype = "Read"
+            else
+                ptype = "Modify"
+            $("#shared_doc_table tbody").append(
                 `<tr>
                 <td>Document #${j+1}</td>
                 <td>${userAddrrs[j].address}</td>
-                <td>${userAddrrs[j].permission}</td>
+                <td>${ptype}</td>
                 </tr>`
             )
         }
     }); 
 });
 
+
+// TO share the doc, open the modal and submit the form
 $(document).on('click', '.sharedoc', function() { 
     $('#shareDocModel').modal("open"); 
     var _this = $(this);
@@ -135,35 +140,56 @@ $(document).on('click', '.sharedoc', function() {
     
     $('#shareThisDoc').submit(function(e){
         e.preventDefault();
-        var email = $("share_email_").val();
-        var permission = $("select_permission").val();
-        console.log(email, permission)
-        contract.methods.shareDocumentwithUser(
-            doc_id, email, permission
-        ).send().then(function(res){
-            // console.log("xx", err, res)
-            window.location.replace(resp.redirect_url);
+        var email = $("#share_email_").val();
+        var permission = 0;
+
+        contract.methods.isValidSharableUser(email).call().then(function(res){
+            if(res){
+                contract.methods.checkAlreadyShared(doc_id, email).call().then(function(res){
+                    if(!res){
+                        contract.methods.shareDocumentwithUser(
+                            doc_id, email, permission
+                        ).send(res).then(function(res){
+                            $('#shareDocModel').modal("close"); 
+                            swal({
+                                title: "Success!",
+                                text: "Shared with " + email,
+                                icon: "success",
+                            });
+                        }).catch(function (error) {
+                            swal({
+                                title: "Error!",
+                                text: "Error while checking user validity " + error,
+                                icon: "error",
+                            });
+                        });
+                    }
+                    else{
+                        swal({
+                            title: "Error!",
+                            text: "This email is already shared with this document",
+                            icon: "error",
+                        });
+                    }
+                });
+            }
+            else{
+                swal({
+                    title: "Error!",
+                    text: "Not a valid email. This email is not a valid or not regsitered!!",
+                    icon: "error",
+                });
+            }
+        }).catch(function (error) {
             swal({
-                title: "Success!",
-                text: "Shared with " + email,
-                icon: "success",
+                title: "Error!",
+                text: "Error while sharing doc " + error,
+                icon: "error",
             });
-        });
-        $('#shareDocModel').modal("close"); 
+       });
+
     })
 });
-
-
-
-// $(".shared_with").click(function(){
-//     $('#sharedDocumentsModel').openModal(); 
-//     var _this = $(this);
-//     var doc_id = _this.attr("doc_id");
-//     console.log(doc_id, address)
-//     contract.methods.shareDocumentwithUser(doc_id, address, 0).call().then(function(obj){
-//         console.log(obj)
-//     });
-// })
 
 
 $(document).ready(function(){
@@ -174,7 +200,4 @@ $(document).ready(function(){
     $("#main-loader").hide();
     $('.modal').modal();
     $('.collapsible').collapsible();
-
-
-
 })
