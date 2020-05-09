@@ -47,6 +47,8 @@ contract digiLocker {
     mapping(address => User) registerUsers;
     mapping (address => Document[])  ownerDocuments;
     mapping (address => sharedDoc[])  sharedDocuments;
+    mapping (string => address)  emailAddressMapping;
+    
 
     ///////////////////////-- modifier here -- ///////////////////////////////////
     // modifier isalreadyRegisteredUserModifier(){
@@ -91,6 +93,9 @@ contract digiLocker {
                     userType(_utype), true, d, 
                     msg.sender, accessKey, pubKey
                 );
+                
+                emailAddressMapping[_email] = msg.sender;
+                
                 registerUsers[msg.sender] = newuser;
                 emit registeredUserEvent(_email, userType(_utype), msg.sender);
                 _glbluseraddress.push(msg.sender);
@@ -133,11 +138,11 @@ contract digiLocker {
         return false;
     }
 
-    function shareDocumentwithUser(bytes32 docid, address sharedWith, uint32 permission) public{
-        if (!checkAlreadyShared(docid, sharedWith)){
-            sharedDoc memory d = sharedDoc(docid, sharedWith, Permission(permission));
+    function shareDocumentwithUser(bytes32 docid, string memory email, uint32 permission) public{
+        if (!checkAlreadyShared(docid, emailAddressMapping[email])){
+            sharedDoc memory d = sharedDoc(docid, emailAddressMapping[email], Permission(permission));
             sharedDocuments[msg.sender].push(d);
-            emit sharedDocumentEvent(docid, sharedWith, permission);  
+            emit sharedDocumentEvent(docid, emailAddressMapping[email], permission);  
         }
     }
 
