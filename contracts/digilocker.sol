@@ -141,6 +141,25 @@ contract digiLocker {
         }
     }
 
+    function getUserAddressofSharedDoc(bytes32 docid) public view returns (address[] memory, uint[] memory){
+
+        uint count = 0;
+        for(uint i = 0; i < sharedDocuments[msg.sender].length; i++){
+            if(sharedDocuments[msg.sender][i].docid == docid) count++;
+        }
+        address[] memory sharedWithAddress = new address[](count);
+        uint[] memory sharedWithPermission = new uint[](count);
+        uint k = 0;
+        for(uint i = 0; i < sharedDocuments[msg.sender].length; i++){
+            if(sharedDocuments[msg.sender][i].docid == docid){
+                sharedWithAddress[k] = sharedDocuments[msg.sender][i].sharedWith;
+                sharedWithPermission[k] = uint(sharedDocuments[msg.sender][i].permission);
+                k++;
+            }
+        }
+        return (sharedWithAddress, sharedWithPermission);
+    }
+
     function getTotalSharedDocsByOthers() public view returns(uint256){
         return sharedDocuments[msg.sender].length;
     }
@@ -170,23 +189,27 @@ contract digiLocker {
         }
 
     
-    function getOwnerDocumetList()public view returns (string[] memory, string[] memory,bytes32[] memory) {
+    function getOwnerDocumetList()public view returns (
+        string[] memory, string[] memory, bytes32[] memory) {
         return getDocumetList(msg.sender);
     }
     
-    function getDocumetList(address _useradd)public view returns (string[] memory, string[] memory,bytes32[] memory) {
+    function getDocumetList(address _useradd)public view returns (
+        string[] memory, string[] memory, bytes32[] memory) {
 
       string[] memory _docName = new string[](ownerDocuments[_useradd].length);
       string[] memory _timestamp = new string[](ownerDocuments[_useradd].length);
-      bytes32[] memory _docsId = new bytes32[](ownerDocuments[_useradd].length);
+      bytes32[] memory _docid = new bytes32[](ownerDocuments[_useradd].length);
+
       
       for(uint i=0;i<ownerDocuments[_useradd].length;i++){
          _timestamp[i] = ownerDocuments[_useradd][i].timestamp;
          _docName[i] = ownerDocuments[_useradd][i].docName;
-         _docsId[i] = ownerDocuments[_useradd][i].docid;
+         _docid[i] = ownerDocuments[_useradd][i].docid;
+   
       }
       
-      return (_docName,_timestamp,_docsId);
+      return (_docName,_timestamp, _docid);
     }
     
     
@@ -221,22 +244,3 @@ contract digiLocker {
         
     }
 }
-    
-    /*
-    function isUserExists(address _usraddr)public view returns(bool)
-    {
-        
-        if(registerUsers[_usraddr].valid == true){
-            return true;
-        }else{
-            return false;
-        }
-    }
-    
-    function isDocExists(bytes32 _dId)public view returns(bool)
-    {
-        
-    }
-    
-    
-}*/

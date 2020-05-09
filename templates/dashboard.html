@@ -21,7 +21,7 @@
 					Upload Document
 				</a>
 				<a class="waves-effect waves-light btn modal-trigger" href="#requestDoc">
-					Request new Document
+					Search Document
 				</a>
 			</div>
 		</div>
@@ -49,19 +49,13 @@
 					<div class="collapsible-body">
 						<form method="POST">
 							<div class="input-field">
-								<input 
-									placeholder="Enter your document id" 
-									id="docid" type="text" class="validate"
-									name = "docid"
-								>
+								<input placeholder="Enter your document id" id="docid" type="text" class="validate"
+									name="docid">
 								<label for="doc">Document id</label>
 							</div>
-							<button 
-								type="submit"
-								class="btn float-right" 
-								id="search_by_docid">Search</button>
+							<button type="submit" class="btn float-right" id="search_by_docid">Search</button>
 						</form>
-						
+
 						<br>
 					</div>
 				</li>
@@ -70,17 +64,11 @@
 					<div class="collapsible-body">
 						<form method="POST">
 							<div class="input-field">
-								<input 
-									placeholder="Enter your User address id" 
-									id="user_address" type="text"
-									name = "uid"
+								<input placeholder="Enter your User address id" id="user_address" type="text" name="uid"
 									class="validate">
 								<label for="user_address">User Address</label>
 							</div>
-							<button 
-								class="btn float-right" id="search_by_useradd"
-								type="submit"
-							>Search</button>
+							<button class="btn float-right" id="search_by_useradd" type="submit">Search</button>
 						</form>
 						<br>
 					</div>
@@ -90,6 +78,58 @@
 	</div>
 
 	<div class="modal-footer">
+	</div>
+</div>
+
+
+
+<!-- Modal Structure -->
+<div id="sharedDocumentsModel" class="modal">
+	<div class="modal-content">
+		<h5 class="doc_name_modal"></h5>
+		<br>
+		<div class="container">
+			<table id="shared_doc_table">
+				<thead>
+				</thead>
+				<tbody>
+				</tbody>
+			</table>
+		</div>
+	</div>
+	<div class="modal-footer">
+		<a href="#!" class="modal-close waves-effect waves-green btn-flat">Agree</a>
+	</div>
+</div>
+
+
+<div id="shareDocModel" class="modal">
+	<div class="modal-content">
+		<h5 class="doc_name_modal"></h5>
+		<br>
+		<div class="container">
+			<form id="shareThisDoc">
+				<div class="input-field">
+					<input placeholder="Enter email of user you want to share document with" id="share_email_"
+						type="email" name="email" class="validate">
+					<label for="share_email_">Share with</label>
+				</div>
+				<div class="input-field">
+					<label>Permission</label>
+					<br />
+					<br />
+					<select class="browser-default" id="select_permission">
+						<option value="" disabled selected>Choose your option</option>
+						<option value="0">Read</option>
+						<option value="1">Modify</option>
+					</select>
+				</div>
+				<br>
+				<button type = "submit" class="btn float-right">Share</button>
+				<br>
+
+			</form>
+		</div>
 	</div>
 </div>
 

@@ -1,9 +1,11 @@
-var contractAddress = "0xda9957189356155E443A399f06560c742Fb8CE61"
+var contractAddress = "0xF74adb2cdCDFA672C7aA8B5e9DD182b584299633"
 
 var web3 = new Web3(window.web3.currentProvider);
 var contract = null;
 var address = null;
-
+/**
+ * TODO: 
+ */
 $(document).ready(function(){
     address = window.web3.currentProvider;
     console.log(address)
