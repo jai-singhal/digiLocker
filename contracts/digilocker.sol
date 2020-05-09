@@ -113,13 +113,15 @@ contract digiLocker {
         return ownerDocuments[msg.sender].length;
     }
 
-    function uploadDocument(string memory docName, bytes32 docHash, string memory timestamp) public{
+    function uploadDocument(string memory docName, bytes32 docHash, string memory timestamp) public returns(bool){
         bytes32 docid = keccak256(abi.encode(docHash, msg.sender));
         if(!checkAlreadyUpload(docid)){
             Document memory d = Document(docid, docName, timestamp, docHash );
             ownerDocuments[msg.sender].push(d);
             emit uploadDocumentEvent(docid, docHash, msg.sender);
+            return true;
         }// -- Check 
+        return false;
     }
 
     function checkAlreadyShared(bytes32 docId, address sharedWith)public view returns(bool){
