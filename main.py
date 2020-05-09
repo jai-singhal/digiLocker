@@ -208,9 +208,14 @@ def dashboardPost(user_address3):
 @app.route("/search/uid", methods = ["GET"])
 @token_required
 def searchUser(user_address):
-    print(user_address)
-    if not user_address or not request.args['uid']:
+
+    if not request.args.get("uid", None):
+        return redirect("/dashboard")
+
+    if not user_address:
         return redirect("/")
+
+
     return render_template(
         "searchUser.html", 
         user_address = user_address,
@@ -221,9 +226,13 @@ def searchUser(user_address):
 @app.route("/search/doc", methods = ["GET"])
 @token_required
 def searchDoc(user_address):
-    print(user_address)
-    if not user_address or not request.args['docid']:
+    if not request.args.get('docid', None):
+        return redirect("/dashboard")
+
+    if not user_address:
         return redirect("/")
+
+
     return render_template(
         "searchDoc.html", 
         user_address = user_address,

@@ -1,8 +1,7 @@
 
 $(document).ready(function(){
-    checkAlreadyRegiteredUser(true);
-
     $("#main-loader").hide();
+    checkAlreadyRegiteredUser(true);
 })
 
 
@@ -58,7 +57,6 @@ $("#registration").submit(function(e){
     var formData = 'first_name=' + fname + '&last_name=' + lname;
     formData += "&email=" + email + "&contact_no=" + cno + "&master_key=" + mkey;
     formData += "&user_address=" + address;
-    console.log(formData)
     request.send(formData);
 
 })

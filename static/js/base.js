@@ -1,12 +1,24 @@
 var contractAddress = "0x25534C00E7AF759E136D41b4eD7e92AbFe387ce5"
 
 var web3 = new Web3(window.web3.currentProvider);
-var address = window.web3.currentProvider.selectedAddress;
+var contract = null;
+var address = null;
 
-var contract = new web3.eth.Contract(abi, contractAddress, {
-    from: address,
-    gasLimit: 3000000,
-});
+$(document).ready(function(){
+    address = window.web3.currentProvider;
+    if(address === undefined){
+        window.location.replace("/")
+    }
+    else{
+        address = address.selectedAddress;
+    }
+    contract = new web3.eth.Contract(abi, contractAddress, {
+        from: address,
+        gasLimit: 3000000,
+    });
+})
+
+
 
 if(typeof(String.prototype.trim) === "undefined")
 {
@@ -66,7 +78,7 @@ $("#logout-btn").click(function (e) {
 function checkAlreadyRegiteredUser(redirect = false){
     contract.methods.isalreadyRegisteredUser().call().then(function(obj){
         console.log(obj, "xxxx")
-        if(obj == false){
+        if(obj == false && !redirect){
             window.location.replace("/registration");
             swal({
                 title: "Alert!",
@@ -74,11 +86,11 @@ function checkAlreadyRegiteredUser(redirect = false){
                 icon: "warning",
             });
         }
-        else{
-            if(redirect){
-                window.location.replace("/dashboard");
-            }
+        else if(obj == true && redirect){
+            window.location.replace("/dashboard");
         }
+
+        
     }).catch(function (error) {
         swal({
             title: "Error!",
