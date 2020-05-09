@@ -32,7 +32,7 @@ function displayDocumentsList(){
             <td>Document #${j+1}</td>
             <td>${documents[j].filename}</td>
             <td>${documents[j].timestamp}</td>
-            <td><button class = "btn btn-primary" id = "doc_${j}">Share</button></td>
+            <td><button class = "btn btn-primary" id = "doc_${j}">Request</button></td>
             </tr>`
         )
     }
@@ -47,7 +47,18 @@ function displayDocumentsList(){
    }); 
 }
 
+function getDocCount(){
+    contract.methods.getDocCountByUserId().call().then(function(obj){
+        $("#total_docs").html(obj);
 
+    }).catch(function (error) {
+        swal({
+            title: "Error!",
+            text: "Error while fetching documents count" + error,
+            icon: "error",
+        });
+   });
+}
 
 
 
@@ -55,6 +66,7 @@ $(document).ready(function(){
     //checkAlreadyRegiteredUser()
     //showBalance()
     //getDocCount();
+    getDocCount();
     displayDocumentsList();
     
     

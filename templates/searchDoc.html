@@ -6,11 +6,31 @@
 {% block container %}
 {% include "components/navbar.html" %}
 
-{{docid}}
+<div id="_docId" hidden>{{docid}}</div>
+<div class="container">
+    <div class="row header">
+        <!-- <p id = "account-address">{{user_address}}</p> -->
+        <div class="float-left">
+            <p>Document ID: <strong>{{docid}}</strong></p>
+            <p>Total Document Uploaded: <strong id="funds"></strong></p>
+        </div>
+     </div>
+</div>
 
+<div class="container">
+    <table id="document_table">
+        <thead>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+
+<!--<div class="container"><button class = "btn waves-effect waves-light" id = "${docs[0]}">Raise Request To Access</button>
+</div>-->
 {% endblock container %}
 
 {% block javascript %}
-<script type="text/javascript" src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/search_by_docid.js') }}"></script>
 
 {% endblock javascript %}
