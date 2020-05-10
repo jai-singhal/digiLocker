@@ -1,4 +1,4 @@
-pragma solidity ^0.5.0;
+ solidity ^0.5.0;
 pragma experimental ABIEncoderV2;
 
 
@@ -227,8 +227,6 @@ contract digiLocker {
     }
     
     
-    
-    
     function getDocumentListbyDocId(bytes32 _docId) public view returns(
         bytes32, 
         string memory, 
@@ -259,4 +257,13 @@ contract digiLocker {
         }
         
     }
+
+    function getEmailIdByAddrss()public view returns(string memory)
+    {
+        return (registerUsers[msg.sender].details.email);
+    }
+    
+    
 }
+
+    
