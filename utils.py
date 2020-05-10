@@ -96,12 +96,14 @@ def prepareRequestMail(
         <head><title>Approval Request for {doc_name}</title>
         </head>
         <body>
-        <p> Hello {owner_name} <br />
+        <p> Hello {owner_name}, <br /> <br />
         The request has been raised by email : {requester_email} 
             ({requester_address}) for your document <strong>{doc_name}</strong>. 
         <br /><br />
         Please click on below button to permit the read access of the owned 
         document.
+        <br/>
+        <br/>
         <a class = "btn" href="{approval_url}"
             style = "text-decoration: none;
             color: #fff;
