@@ -1,11 +1,8 @@
 {% extends "base.html" %}
-
 {% block style %}
 {% endblock style %}
-
 {% block container %}
 {% include "components/navbar.html" %}
-
 <div id="_docId" hidden>{{docid}}</div>
 <div class="container">
     <div class="row header">
@@ -13,9 +10,8 @@
         <div class="float-left">
             <p>Document ID: <strong>{{docid}}</strong></p>
         </div>
-     </div>
+    </div>
 </div>
-
 <div class="container">
     <table id="document_table">
         <thead>
@@ -24,30 +20,27 @@
         </tbody>
     </table>
 </div>
-
 <div id="shareDocModel" class="modal">
-	<div class="modal-content">
-		<h5 class="doc_name_modal"></h5>
-		<br>
-		<div class="container">
-			<form id="shareThisDoc">
-				<div class="input-field">
-					<p><strong>On click of Raise Request, Read request for the document is notified to Resident.</strong></p>
-				<!--	<label for="share_email_">Share with</label> -->
-				</div>
-				<br>
-				<button type = "submit" class="btn float-right">Raise Request</bu>
-				<br>
-
-			</form>
-		</div>
-	</div>
+    <div class="modal-content">
+        <h5 class="doc_name_modal"></h5>
+        <br>
+        <div class="container">
+            <form id="shareThisDoc">
+                <div class="input-field">
+                    <p><strong>
+                        On click of Raise Request, Read request for the document is notified to owner of document. You will get notfied by email once owner aprooves your request </strong></p>
+                </div>
+                <br>
+                <div class="modal-footer">
+                    <button type="submit" class="btn float-right modal-close waves-effect waves-green btn-flat">Raise Request</br>
+                    </button>
+                </div>
+                <br>
+            </form>
+        </div>
+    </div>
 </div>
-
-
 {% endblock container %}
-
 {% block javascript %}
 <script type="text/javascript" src="{{ url_for('static', filename='js/search_by_docid.js') }}"></script>
-
 {% endblock javascript %}

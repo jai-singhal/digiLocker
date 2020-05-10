@@ -50,17 +50,42 @@ python main.py
 
 ### Ankit
 
-- ~~ Display all the uploaded document by user address~~
+Soldity functions
+1. Get the index of doc_id in array.
 
-- ~~ Searching user/doc: Two different forms with 1 input each. ~~
-    - ~~ Search by doc id:: Gets document info. ~~
-    - ~~ Search by user id:: Get document names, date, doc id of all docs uploaded by user ~~
 
-- Create a function in solidify that check if user with address exists or not
+## /aproove/doc
+ input from user: masterkey
 
-- Create a function in solidify that check if doc with id exists or not
+ params(fetched from blockchain): 
+ 	public key of requester(fetched from blockchain), doc_no(why? => modulo, to get the approprate key from PKBDF2)
 
-- Get the number of verifer that verified that document
+Functionality:
+- encrypt masterkey with public key of requester.(opposite of encrytion std.)
+- Send the mail to requester with following params
+	- ecrypted masterkey
+	- doc id,
+	- doc name
+	- owner name
+	- requester email, name, adddress
+
+Requestor will get the email, 
+	WITH URL params( 
+	requester_address
+	docid
+	ecrypted masterkey
+	owner_address
+	doc hash
+	)
+
+## /aprooved/doc/?{params}
+
+- Ask requester its private key(why? to decrypt the master key doc key)
+- Compare doc hash with the blockchain doc hash
+- Decrypt the encrypted doc
+- Download the document
+
+
 
 - Accessing Document permission:
  - Add button with each document(s) which should be responsible for making an POST call to python server,

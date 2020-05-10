@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block style %}
+{% endblock style %}
+{% block container %}
+{% include "components/navbar.html" %}
+Doc aprooval
+{{requester_address}}
+{{owner_address}}
+{{doc_id}}
+
+<div class="container">
+	<center><a class="btn btn-lg">Aproove Read access</a></center>
+
+
+</div>
+
+{% endblock container %}
+{% block javascript %}
+<script type="text/javascript">
+	$("#main-loader").hide();
+</script>
+{% endblock javascript %}

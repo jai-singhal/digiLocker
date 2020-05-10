@@ -18,6 +18,7 @@ ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', "docx"])
 app.config.from_object(settings)
 mail = Mail(app)
 dropbox_ = dropbox.Dropbox(app.config["DROPBOX_ACCESS_TOKEN"])
+SERVER_BASE_ADDRESS = app.config["SERVER_BASE_ADDRESS"]
 
 
 def token_required(f):
@@ -238,6 +239,56 @@ def searchDoc(user_address):
         user_address = user_address,
         docid = request.args['docid']
     )
+
+@app.route("/post/api/send/request/mail", methods = ["POST"])
+@token_required
+def sendRequestMail(user_address):
+    try:
+        MAIL_SENDER = app.config["MAIL_SENDER"]
+        doc_id = request.form.get("doc_id")
+        requester_email = request.form.get("requester_email")
+        doc_name = request.form.get("doc_name")
+        requester_address = request.form.get("requester_address")
+        owner_address = request.form.get("owner_address")
+        owner_email = request.form.get("owner_email")
+        owner_name = request.form.get("owner_name")
+        
+        print(request.form)
+
+        approval_url = f"{SERVER_BASE_ADDRESS}/aproove/doc?requester={requester_address}&owner={owner_address}&doc_id={doc_id}"
+        msg = prepareRequestMail(
+            owner_name, 
+            owner_email, 
+            requester_email, 
+            doc_name, 
+            approval_url,
+            owner_address,
+            requester_address,
+            MAIL_SENDER
+        )
+        mail.send(msg)
+        return {'success': True, 'redirect_url': "/dashboard"}
+    except Exception as e:
+        return {'success': False, "error": str(e)}
+
+
+
+@app.route("/aproove/doc/", methods = ["GET"])
+@token_required
+def approoveDoc(user_address):
+    requester_address = request.args.get('requester')
+    owner_address = request.args.get('owner')
+    doc_id = request.args.get('doc_id')
+
+    return render_template(
+        "doc_aprooval.html", 
+        user_address = user_address,
+        requester_address = requester_address,
+        owner_address = owner_address,
+        doc_id = doc_id,
+
+    )
+
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", debug=True)

@@ -1,4 +1,4 @@
-var contractAddress = "0x1af7A175FdF81EdC7d6e8F2CF94cd736E30181cD"
+var contractAddress = "0x16E032EC4090321f288f9362ef6159473DF93cD7"
 
 var web3 = new Web3(window.web3.currentProvider);
 var contract = null;

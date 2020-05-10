@@ -14,6 +14,7 @@ function showBalance(){
 }
 
 function displayDocuments(){
+
     // contract.methods.getUseraccessKey().call().then(function(obj,err){
     //     console.log(obj, "Xxx")
     //     // console.log("err")                   
@@ -44,6 +45,14 @@ function displayDocuments(){
             <th>Action</th>
             </tr>`
         )
+        if(documents.length == 0)
+            $("#document_table tbody").html(
+                "<br><center style = 'color:red'>\
+                <h6>You haven't uploaded any document yet.</h6></center>"
+            )
+        else
+            $("#document_table tbody").html("")
+
         for(var j = 0; j < documents.length; j++){
             $("#document_table tbody").append(
                 `<tr>
@@ -65,14 +74,13 @@ function displayDocuments(){
                 </tr>`
             )
         }
-    })
-    .catch(function (error) {
+    }).catch(function (error) {
         swal({
             title: "Error!",
             text: "Error while fetching documents" + error,
             icon: "error",
         });
-   });    
+   });  
 }
 
 function getDocCount(){
@@ -93,8 +101,8 @@ $(document).on('click', '.shared_with', function() {
     var doc_id = _this.attr("doc_id");
     var doc_name = _this.attr("doc_name");
     $(".doc_name_modal").html(doc_name)
-    var userAddrrs = [];
     contract.methods.getUserAddressofSharedDoc(doc_id).call().then(function(obj){
+        var userAddrrs = [];
         var i =0;
         for(var k = 0; k < obj[0].length; k++){
             userAddrrs[i] = {}
@@ -105,6 +113,12 @@ $(document).on('click', '.shared_with', function() {
         for(var k = 0; k < obj[1].length; k++)
             userAddrrs[i++].permission = obj[1][k]
 
+      if(userAddrrs.length == 0)
+            $("#shared_doc_table").html(
+                "<br><center style = 'color:red'>\
+                <h6>This document is not shared with anyone.</h6></center>"
+            )
+
         $("#shared_doc_table thead").html(
             `<tr>
             <th>Serial Number</th>
@@ -112,6 +126,10 @@ $(document).on('click', '.shared_with', function() {
             <th>Permisson</th>
             </tr>`
         )
+  
+        
+        $("#shared_doc_table tbody").html("");
+
         for(var j = 0; j < userAddrrs.length; j++){
             var ptype;
             if(userAddrrs[j].permission == 0)

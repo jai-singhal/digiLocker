@@ -77,3 +77,58 @@ def getKey(total_doc, masterKey, user_address):
     keys = binascii.hexlify(keys)
     key = keys[total_doc*128:(total_doc+1)*128]
     return key.decode()
+
+
+
+def prepareRequestMail(        
+        owner_name, 
+        owner_email, 
+        requester_email, 
+        doc_name, 
+        approval_url,
+        owner_address,
+        requester_address,
+        MAIL_SENDER
+    ):
+    msgHtml = f"""
+        <!DOCTYPE html>
+        <html>
+        <head><title>Approval Request for {doc_name}</title>
+        </head>
+        <body>
+        <p> Hello {owner_name} <br />
+        The request has been raised by email : {requester_email} 
+            ({requester_address}) for your document <strong>{doc_name}</strong>. 
+        <br /><br />
+        Please click on below button to permit the read access of the owned 
+        document.
+        <a class = "btn" href="{approval_url}"
+            style = "text-decoration: none;
+            color: #fff;
+            background-color: #26a69a;
+            text-align: center;
+            letter-spacing: .5px;
+            padding: 20px;
+            font-size: 14px;
+            outline: 0;
+            border: none;
+            border-radius: 2px;
+            line-height: 36px;
+            text-transform: uppercase;"
+        >
+        Click to aproove the request
+        </a>
+        <br />
+        <br />
+        <p>Best<br>Digilocker Team</p>
+        </body>
+        </html>
+    """
+    msg = Message(
+        recipients=[owner_email.strip(),],
+        sender = MAIL_SENDER
+    )
+    msg.html = msgHtml
+    msg.subject = f"Read access Request for document: {doc_name} by {requester_email}"
+    return msg
+    
