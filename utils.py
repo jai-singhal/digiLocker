@@ -38,14 +38,14 @@ def prepareMailMsg(name, from_mail, address, pub, pr, master_key, MAIL_SENDER):
         <html>
         <head><title>Welcome To DigiLocker</title></head>
         <body>
-        <p> Hello {name} <br />
+        <p> Hello {name} <br /><br/>
         Congrats. Your account has been created in Digilocker. Here are the details: </p>
         <table>
-        <tr><td>Account Address</td><td>{address}</td></tr>
-        <tr><td>Master key</td><td>{master_key}</td></tr>
+        <tr><td>Account Address: </td><td><strong>{address}</strong></td></tr>
+        <tr><td>Master key: </td><td><strong>{master_key}</strong></td></tr>
         </table>
-        <p><br>PFA the Public key and private key
-        Don't share these credentials with anyone, keep it with you<br></p>
+        <p><br>PFA the Public key and private key.<br/>
+        Don't share these credentials with anyone, keep it with you.<br></p>
         <p>Best<br>Digilocker Team</p>
         </body>
         </html>
