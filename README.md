@@ -70,12 +70,13 @@ Functionality:
 	- requester email, name, adddress
 
 Requestor will get the email, 
-	WITH URL params( 
-	requester_address
-	docid
-	ecrypted masterkey
-	owner_address
-	doc hash
+		WITH URL params( 
+		requester_address
+		docid
+		doc_name
+		ecrypted masterkey
+		owner_address
+		doc hash
 	)
 
 ## /aprooved/doc/?{params}
@@ -84,9 +85,10 @@ Requestor will get the email,
 - Compare doc hash with the blockchain doc hash
 - Decrypt the encrypted doc
 - Download the document
+- Doc location = BASE_URL/{{owner_address}}/{{doc_name}}.
 
 
-
+## Other
 - Accessing Document permission:
  - Add button with each document(s) which should be responsible for making an POST call to python server,
     sending, requesting useraddress, docid.

@@ -262,7 +262,11 @@ contract digiLocker {
     {
         return (registerUsers[msg.sender].details.email);
     }
-    
+    function getAddressByEmail(string memory _email)public view returns(address )
+    {
+        
+        return emailAddressMapping[_email];
+    } 
     
 }
 
