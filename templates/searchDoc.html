@@ -12,7 +12,6 @@
         <!-- <p id = "account-address">{{user_address}}</p> -->
         <div class="float-left">
             <p>Document ID: <strong>{{docid}}</strong></p>
-            <p>Total Document Uploaded: <strong id="funds"></strong></p>
         </div>
      </div>
 </div>
@@ -26,8 +25,26 @@
     </table>
 </div>
 
-<!--<div class="container"><button class = "btn waves-effect waves-light" id = "${docs[0]}">Raise Request To Access</button>
-</div>-->
+<div id="shareDocModel" class="modal">
+	<div class="modal-content">
+		<h5 class="doc_name_modal"></h5>
+		<br>
+		<div class="container">
+			<form id="shareThisDoc">
+				<div class="input-field">
+					<p><strong>On click of Raise Request, Read request for the document is notified to Resident.</strong></p>
+				<!--	<label for="share_email_">Share with</label> -->
+				</div>
+				<br>
+				<button type = "submit" class="btn float-right">Raise Request</bu>
+				<br>
+
+			</form>
+		</div>
+	</div>
+</div>
+
+
 {% endblock container %}
 
 {% block javascript %}
