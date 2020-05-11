@@ -271,7 +271,7 @@ def sendRequestMailToResident(user_address):
         owner_email = request.form.get("owner_email")
         owner_name = request.form.get("owner_name")
         
-        approval_url = f"{SERVER_BASE_ADDRESS}/aproove/doc?requester={requester_address}&owner={owner_address}&doc_id={doc_id}"
+        approval_url = f"{SERVER_BASE_ADDRESS}/resident/aproove/doc?requester={requester_address}&owner={owner_address}&doc_id={doc_id}"
         msg = prepareRequestMail(
             owner_name, 
             owner_email, 
@@ -288,7 +288,7 @@ def sendRequestMailToResident(user_address):
         return jsonify({'success': False, "error": str(e), "status_code": 400})
 
 
-@app.route("/post/api/send/request/mail", methods = ["POST"])
+@app.route("/post/api/send/aproove/mail", methods = ["POST"])
 @token_required
 def sendAproovedMailToRequestor(user_address):
     if not user_address:
@@ -311,7 +311,7 @@ def sendAproovedMailToRequestor(user_address):
             owner_email, 
             requester_email, 
             doc_name, 
-            f"{SERVER_BASE_ADDRESS}/resindent/aproove/doc?requester={requester_address}&owner={owner_address}&doc_id={doc_id}",
+            f"{SERVER_BASE_ADDRESS}/requestor/aproove/doc?requester={requester_address}&owner={owner_address}&doc_id={doc_id}",
             owner_address,
             requester_address,
             MAIL_SENDER
@@ -325,8 +325,11 @@ def sendAproovedMailToRequestor(user_address):
 @app.route("/resindent/aproove/doc/", methods = ["GET"])
 @token_required
 def approoveDoc(user_address):
-    if not request.args.get('docid', None):
-        return redirect("/dashboard", status = 401)
+    if not user_address:
+        return redirect("/", code = 401)
+
+    if not request.args.get('doc_id', None):
+        return redirect("/dashboard", code = 400)
     
     requester_address = request.args.get('requester')
     owner_address = request.args.get('owner')
