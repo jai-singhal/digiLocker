@@ -3,20 +3,39 @@
 {% endblock style %}
 {% block container %}
 {% include "components/navbar.html" %}
-Doc aprooval
-{{requester_address}}
-{{owner_address}}
-{{doc_id}}
 
-<div class="container">
-	<center><a class="btn btn-lg">Aproove Read access</a></center>
+<div id="_reqaddress" hidden>{{requester_address}}</div>
+<div id="_ownerraddress" hidden>{{owner_address}}</div>
+<div id="_useraddress" hidden>{{doc_id}}</div>
+	
+	<div class="container">
+        <div class="row">
+            <form class="col s12" id = "registration" address = "{{user_address}}">
+               
+                <div class="row">
+                    <div class="input-field col s12">
+                        <input id="master_key" type="password" class="validate">
+                        <label for="master_key">Master Key</label>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="input-field col s12">
+                        <input id="master_key_confirm" type="password" class="validate">
+                        <label for="master_key_confirm">Confirm Master Key</label>
+                    </div>
+                </div>
+
+		<center><a class="btn waves-effect waves-light" type="submit" name="action">Approve Read Request</a></center>
+
+        </form>
+    </div>
 
 
-</div>
 
 {% endblock container %}
 {% block javascript %}
-<script type="text/javascript">
+<script type="text/javascript" src="{{ url_for('static', filename='js/doc_aprooval.js') }}">
 	$("#main-loader").hide();
 </script>
 {% endblock javascript %}
