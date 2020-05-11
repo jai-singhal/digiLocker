@@ -258,16 +258,44 @@ contract digiLocker {
         
     }
 
-    function getEmailIdByAddrss()public view returns(string memory)
+    function getEmailIdByAddrss()public view returns(string memory,string memory,string memory)
     {
-        return (registerUsers[msg.sender].details.email);
+        return (registerUsers[msg.sender].details.email,
+                registerUsers[msg.sender].details.firstName,
+                registerUsers[msg.sender].details.lastName);
     }
-    function getAddressByEmail(string memory _email)public view returns(address )
+    
+    function getAddressByEmail(string memory _email)public view returns(address)
     {
         
         return emailAddressMapping[_email];
-    } 
+    }
     
+    //To find owners details
+    function getEmailIdByUsrAddr(address _usraddrs)public view returns(string memory,string memory,string memory)
+    {
+        return (registerUsers[_usraddrs].details.email,
+                registerUsers[_usraddrs].details.firstName,
+                registerUsers[_usraddrs].details.lastName);
+    }   
+    
+    function getDocIndex(bytes32 _docid_,address _uaddr_)public view returns(uint256){
+       
+       for(uint i=0;i < ownerDocuments[_uaddr_].length ;i++)
+       {
+           
+           if(ownerDocuments[_uaddr_][i].docid == _docid_)
+           {
+               
+               return i;
+           }
+       }
+        
+    }
+    
+    function getPublicKey(address _uaddr_)public view returns(string memory){
+        
+        
+        
+    }
 }
-
-    
