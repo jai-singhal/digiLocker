@@ -255,7 +255,7 @@ def searchDoc(user_address):
 
 @app.route("/post/api/send/request/mail", methods = ["POST"])
 @token_required
-def sendRequestMail(user_address):
+def sendRequestMailToResident(user_address):
     if not user_address:
         return jsonify({
             'success': False, 
@@ -290,7 +290,7 @@ def sendRequestMail(user_address):
 
 @app.route("/post/api/send/request/mail", methods = ["POST"])
 @token_required
-def sendMailToReciever(user_address):
+def sendAproovedMailToRequestor(user_address):
     if not user_address:
         return jsonify({
             'success': False, 
@@ -306,13 +306,12 @@ def sendMailToReciever(user_address):
         owner_email = request.form.get("owner_email")
         owner_name = request.form.get("owner_name")
         
-        approval_url = f"{SERVER_BASE_ADDRESS}/aproove/doc?requester={requester_address}&owner={owner_address}&doc_id={doc_id}"
         msg = prepareRequestMail(
             owner_name, 
             owner_email, 
             requester_email, 
             doc_name, 
-            approval_url,
+            f"{SERVER_BASE_ADDRESS}/resindent/aproove/doc?requester={requester_address}&owner={owner_address}&doc_id={doc_id}",
             owner_address,
             requester_address,
             MAIL_SENDER
@@ -323,7 +322,7 @@ def sendMailToReciever(user_address):
         return jsonify({'success': False, "error": str(e), "status_code": 400})
 
 
-@app.route("/aproove/doc/", methods = ["GET"])
+@app.route("/resindent/aproove/doc/", methods = ["GET"])
 @token_required
 def approoveDoc(user_address):
     if not request.args.get('docid', None):
