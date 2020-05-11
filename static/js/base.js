@@ -1,4 +1,4 @@
-var contractAddress = "0x16E032EC4090321f288f9362ef6159473DF93cD7"
+var contractAddress = "0xc0b9c71d5c79583B590491fA9109073461C34286"
 
 var web3 = new Web3(window.web3.currentProvider);
 var contract = null;
@@ -8,7 +8,6 @@ var address = null;
  */
 $(document).ready(function(){
     address = window.web3.currentProvider;
-    console.log(address)
     if(address === undefined || !address.selectedAddress){
         if(window.location.pathname !== "/"){
             logout()
@@ -22,6 +21,15 @@ $(document).ready(function(){
         from: address,
         gasLimit: 3000000,
     });
+
+    // check the account change
+    window.ethereum.on('accountsChanged', function (accounts) {
+        swal("The account change is observed. Reload?")
+        .then((value) => {
+            location.reload();
+        });
+    })
+
 })
 
 
@@ -87,13 +95,15 @@ $("#logout-btn").click(function (e) {
 
 function checkAlreadyRegiteredUser(redirect = false){
     contract.methods.isalreadyRegisteredUser().call().then(function(obj){
-        console.log(obj, "xxxx")
         if(obj == false && !redirect){
-            window.location.replace("/registration");
             swal({
                 title: "Alert!",
-                text: "You have to register yourself first!!",
+                text: "User is not registered!!. Redirecting to home page.",
                 icon: "warning",
+            })
+            .then((value) => {
+                logout();
+                window.location.replace("/");
             });
         }
         else if(obj == true && redirect){

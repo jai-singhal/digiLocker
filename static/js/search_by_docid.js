@@ -1,28 +1,34 @@
 function getDocumentDetails() {
-
-    var docid = document.getElementById("_docId").innerHTML;
+    const urlParams = new URLSearchParams(window.location.search);
+    const docid = urlParams.get('docid');
     console.log(docid)
-
-    contract.methods.getDocumentListbyDocId(docid).call().then(function(docs) {
-        console.log(docs)
-
-        var docId = docs[0];
-        var docName = docs[1];
-        var docHash = docs[3];
-        var name = docs[4];
-        var email = docs[5];
-        var lastName = docs[6]
-        var contactDetails = docs[7]
-
-        $("#document_table thead").append(
-            `<tr><th>Document Name</th><td>${docs[1]}</td></tr>
-            <tr><th>Uploaded Date</th><td>${docs[2]}</td></tr>
-            <tr><th>Uploaded By User Name</th><td id = "owner_name">${docs[4]+" "+docs[6]}  </td></tr>
-            <tr><th>Uploaded By Email Address</th><td id = "owner_email">${docs[5]}</td></tr>
-            <tr><th>Contact Details</th><td>${docs[7]}</tr>
-            <tr><td><button class = "btn btn-primary sharedoc" doc_id=${docs[0]} doc_name=${docs[1]}>Raise Request To Access</button></td></tr>`
-        )
-    });
+    try{
+        contract.methods.getDocumentListbyDocId(docid).call().then(function(docs) {
+            $("#document_table thead").append(
+                `<tr><th>Document Name</th><td>${docs[1]}</td></tr>
+                <tr><th>Uploaded Date</th><td>${docs[2]}</td></tr>
+                <tr><th>Uploaded By User Name</th><td id = "owner_name">${docs[4]+" "+docs[6]}  </td></tr>
+                <tr><th>Uploaded By Email Address</th><td id = "owner_email">${docs[5]}</td></tr>
+                <tr><th>Contact Details</th><td>${docs[7]}</tr>
+                <tr><td><button class = "btn btn-primary sharedoc" doc_id=${docs[0]} doc_name=${docs[1]}>Raise Request To Access</button></td></tr>`
+            );
+        }).catch(function (error) {
+            swal({
+                title: "Error!",
+                text: "Error while fetching the doc " + error,
+                icon: "error",
+            });
+       });
+    }
+    catch(err) {
+        swal({
+            title: "Error!",
+            text: "No doc with following doc id exists",
+            icon: "error",
+        }).then((value) => {
+            window.location.replace("/dashboard");
+        });
+    }
 
 }
 
@@ -138,8 +144,8 @@ function sendRequestMailAjax(doc_id, email, doc_name){
 
 $(document).ready(function() {
     //checkByEmailUserId();
-    getDocumentDetails();
     $("#main-loader").hide();
+    getDocumentDetails();
     $('.modal').modal();
     $('.collapsible').collapsible();
 })

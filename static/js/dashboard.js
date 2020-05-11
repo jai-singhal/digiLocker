@@ -174,6 +174,7 @@ $(document).on('click', '.sharedoc', function() {
                                 text: "Shared with " + email,
                                 icon: "success",
                             });
+                            
                         }).catch(function (error) {
                             swal({
                                 title: "Error!",
@@ -208,35 +209,6 @@ $(document).on('click', '.sharedoc', function() {
 
     })
 });
-
-/*$(document).on('click','.search_by_email_uid',function()
-{
-
-    var x = document.getElementById("user_address").value;
-    console.log(x)
-
-    var atposition=x.indexOf("@");  
-    var dotposition=x.lastIndexOf(".");  
-
-    if(atposition<1 || dotposition<atposition+2 || dotposition+2>=x.length)
-    {
-        var toAddr="";
-        contract.methods.getAddressByEmail(x).call().then(function(result){
-                console.log(result)
-                toAddr = result;
-        });
-    
-        document.getElementById("user_address").value = toAddr;
-        document.getElementById("myForm").submit();
-    }
-    else
-    {
-        var y = document.getElementById("user_address").value;
-        console.log(y)
-        document.getElementById("myForm").submit();
-    }
-   
-});*/
 
 $(document).ready(function(){
     checkAlreadyRegiteredUser()
