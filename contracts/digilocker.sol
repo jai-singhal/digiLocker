@@ -295,7 +295,7 @@ contract digiLocker {
     
     function getPublicKey(address _uaddr_)public view returns(string memory){
         
-        
+        return registerUsers[_uaddr_].pubKey;
         
     }
 }
