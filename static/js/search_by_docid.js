@@ -35,8 +35,8 @@ $(document).on('click', '.sharedoc', function() {
     var email = "";
     contract.methods.getEmailIdByAddrss().call().then(function(_email) {
         console.log(_email)
-        if (_email != null || _email != "") {
-            email = _email;
+        if (_email[0] != null || _email[0] != "") {
+            email = _email[0];
         }
     });
 
@@ -56,9 +56,9 @@ $(document).on('click', '.sharedoc', function() {
                     } else {
                         swal({
                             title: "Warning!",
-                            text: "You have already have read \
+                            text: "You already have read \
                                 permission for this document. \
-                                Or you already raised the request for this document",
+                                Or you already raised the request for this documen.t",
                             icon: "warning",
                         });
                     }
@@ -135,7 +135,9 @@ function sendRequestMailAjax(doc_id, email, doc_name){
     });
 }
 
+
 $(document).ready(function() {
+    //checkByEmailUserId();
     getDocumentDetails();
     $("#main-loader").hide();
     $('.modal').modal();
