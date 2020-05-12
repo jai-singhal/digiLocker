@@ -244,7 +244,7 @@ function sendRequestMailAjax(doc_id, email, doc_name){
             };
 
             request.onerror = function () {
-                console.log("Registration failed - there was an error");
+                console.log("Error while raising the request(sending mail to owner) - while searching by user id/email id");
             };
             request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
             request.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
