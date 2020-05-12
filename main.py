@@ -63,6 +63,16 @@ def upload_file(user_address):
         return redirect("/", code=401)
     return render_template("upload_doc.html", user_address=user_address)
 
+//For that new page :Ankit
+@app.route('/requester/doc/access',methods=['GET'])
+@token_required
+def access_doc(user_address):
+    if not user_address:
+        return redirect("/", code=401)
+    return render_template("requester_decrypt.html", user_address=user_address)
+
+
+
 @app.route('/post/api/upload/doc', methods=['POST'])
 @token_required
 def upload_file_postapi(user_address):
