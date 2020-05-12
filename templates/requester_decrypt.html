@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block style %}
+{% endblock style %}
+{% block container %}
+{% include "components/navbar.html" %}
+
+	
+	<div class="container">
+        <div class="row">
+            <form class="col s12" id = "registration" address = "{{user_address}}">
+               
+                <div class="row">
+                    <div class="input-field col s12">
+                        <input id="master_key" type="password" class="validate">
+                        <label for="master_key">Enter your private key</label>
+                    </div>
+                </div>
+
+        		<center><a class="btn waves-effect waves-light" type="submit" name="action">Perform Decryption</a></center>
+
+            </form>
+        </div>
+</div>
+
+
+
+{% endblock container %}
+{% block javascript %}
+<script type="text/javascript" src="{{ url_for('static', filename='js/requester_decryption.js') }}"></script>
+{% endblock javascript %}
