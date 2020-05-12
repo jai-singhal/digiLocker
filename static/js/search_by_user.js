@@ -1,4 +1,5 @@
 
+var _glbladrress = "";
 
 function displayDocumentsList(){
 
@@ -13,25 +14,26 @@ function displayDocumentsList(){
         console.log(result)
         x = result;
         console.log(x)
-        
-    contract.methods.getDocumetList(x).call().then(function(docs){
-    console.log(docs)
-    var documents = [];   
-    var i = 0;
-    for(var k = 0; k < docs[0].length; k++){
-        documents[i] = {}
-        documents[i++].filename = docs[0][k]
-    }    
+        _glbladrress = result;
+        console.log(_glbladrress)
+        contract.methods.getDocumetList(x).call().then(function(docs){
+        console.log(docs)
+        var documents = [];   
+         var i = 0;
+         for(var k = 0; k < docs[0].length; k++){
+         documents[i] = {}
+         documents[i++].filename = docs[0][k]
+         }    
     
-    i = 0;
-    for(var k = 0; k < docs[1].length; k++)
-        documents[i++].timestamp = docs[1][k]
+        i = 0;
+        for(var k = 0; k < docs[1].length; k++)
+             documents[i++].timestamp = docs[1][k]
     
-    i = 0;
-    for(var k = 0; k < docs[2].length; k++)
-        documents[i++].doc_id = docs[2][k]
+         i = 0;
+          for(var k = 0; k < docs[2].length; k++)
+             documents[i++].doc_id = docs[2][k]
 
-    $("#document_table thead").append(
+     $("#document_table thead").append(
         `<tr>
         <th>Serial Number</th>
         <th>Document Name</th>
@@ -189,6 +191,11 @@ function sendRequestMailAjax(doc_id, email, doc_name){
     var data ={};
     var owner_address_ = document.getElementById("_useraddress").innerHTML;
     
+    if(owner_address_.indexOf("@")>1)
+    {
+        owner_address_ = _glbladrress;
+        console.log(_glbladrress,owner_address_)
+    }
     console.log(owner_address_)
     var owner_email = "";
     var owner_name = "";

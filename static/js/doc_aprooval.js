@@ -31,9 +31,11 @@ function getPublicKey(){
                 console.log(req)
                 req_full_name = req[1]+" "+req[2];
                 req_email = req[0];
-           
+                
+                $(document).on('click', '.btn', function() { 
                 sendRequestMailAjax(req_email,req_full_name,requester_address,
                     owner_name,owner_address,owner_email,doc_id,doc_name,req_pub_key)
+                });
 
                });
                
