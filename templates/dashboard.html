@@ -10,12 +10,31 @@
 
 <main id="main_id" user_address="{{user_address}}">
 	<div class="container">
-		<div class="row header">
-			<!-- <p id = "account-address">{{user_address}}</p> -->
-			<div class="float-left">
-				<p>Total docs uploaded: <strong id="total_docs"></strong></p>
-				<p>You have total fund of: <strong id="funds"></strong> ETH</p>
+
+		<ul class="collapsible">
+			<li>
+			  <div class="collapsible-header">
+				User Address : <strong>{{ user_address}}</strong>
+			 </div>
+			  <div class="collapsible-body"><span><p>You have total fund of: <strong id="funds"></strong> ETH</p></span></div>
+			</li>
+			<li>
+			  <div class="collapsible-header">Total Document Uploaded :  <strong id="total_docs"></strong></div>
+			  <div class="collapsible-body">
+				  
+					<div class="container">
+						<table id="document_table">
+							<thead>
+							</thead>
+							<tbody>
+							</tbody>
+						</table>
+					</div>
 			</div>
+			</li>
+			
+		</ul>
+		<div class="row header">
 			<div class="float-right upload_btn">
 				<a href="/dashboard/upload/doc" class="waves-effect waves-light btn">
 					Upload Document
@@ -27,14 +46,7 @@
 		</div>
 	</div>
 
-	<div class="container">
-		<table id="document_table">
-			<thead>
-			</thead>
-			<tbody>
-			</tbody>
-		</table>
-	</div>
+	
 </main>
 
 <!-- Modal Structure -->

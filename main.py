@@ -64,8 +64,6 @@ def upload_file(user_address):
     return render_template("upload_doc.html", user_address=user_address)
 
 
-
-
 @app.route('/post/api/upload/doc', methods=['POST'])
 @token_required
 def upload_file_postapi(user_address):
