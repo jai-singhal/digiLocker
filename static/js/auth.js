@@ -40,6 +40,9 @@ function loginWithSignature(address, signature, balance, login_url, onLoginReque
         from: address,
         gasLimit: 3000000,
     });
+    
+    sessionStorage.setItem('address', contractAddress);
+    sessionStorage.setItem('contract', JSON.stringify(contract));
 
     contract.methods.isalreadyRegisteredUser().call().then(function(obj){
         var formData = 'address=' + address + '&signature=' + signature + "&newuser=" + obj;
@@ -144,8 +147,9 @@ function openInNewTab(url) {
 
 $("#auth-btn").click(function (e) {
     if(! window.web3){
-        swal("Please install metamask. You will be redirected to Metamask");
-        openInNewTab("https://metamask.io/");
+        swal("Please install metamask. You will be redirected to Metamask").then((value) => {
+            openInNewTab("https://metamask.io/");
+        });
         return false;
     }
     e.preventDefault();

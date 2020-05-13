@@ -210,7 +210,29 @@ $(document).on('click', '.sharedoc', function() {
     })
 });
 
+function checkAlreadyRegiteredUser(){
+    contract.methods.isalreadyRegisteredUser().call().then(function(obj){
+        if(obj == false){
+            swal({
+                title: "Alert!",
+                text: "User is not registered!!. Redirecting to home page.",
+                icon: "warning",
+            })
+            .then((value) => {
+                logout();
+            });
+        }
+    }).catch(function (error) {
+        swal({
+            title: "Error!",
+            text: "Error while checking user is regitred or not" + error,
+            icon: "error",
+        });
+   });
+}
+
 $(document).ready(function(){
+    contract = getContact()
     checkAlreadyRegiteredUser()
     showBalance()
     getDocCount();

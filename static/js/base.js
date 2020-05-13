@@ -7,31 +7,46 @@ var address = null;
  * TODO: 
  */
 $(document).ready(function(){
-    address = window.web3.currentProvider;
-    if(address === undefined || !address.selectedAddress){
-        if(window.location.pathname !== "/"){
-            logout()
-            window.location.replace("/")
-        }
-    }
-    else{
-        address = address.selectedAddress;
-    }
-    contract = new web3.eth.Contract(abi, contractAddress, {
-        from: address,
-        gasLimit: 3000000,
-    });
-
     // check the account change
+    getContact();
+
     window.ethereum.on('accountsChanged', function (accounts) {
         swal("The account change is observed. Reload?")
         .then((value) => {
             location.reload();
         });
     })
-
 })
 
+function getContact(){
+    let addr__ = sessionStorage.getItem('address');
+    if(!addr__)
+        address = window.web3.currentProvider.selectedAddress;
+    else
+        address = addr__
+    // if(address === undefined || !address.){
+    //     if(window.location.pathname !== "/"){
+    //         // logout()
+    //     }
+    // }
+    // else{
+    //     address = address.selectedAddress;
+    // }
+    console.log(address)
+
+    let contr__ = JSON.parse(sessionStorage.getItem('contract'));
+
+    if(!contr__){
+        contract = new web3.eth.Contract(abi, contractAddress, {
+            from: address,
+            gasLimit: 3000000,
+        });
+    }
+    else
+        contract = contr__;
+
+    return contract;
+}
 
 
 if(typeof(String.prototype.trim) === "undefined")
@@ -75,6 +90,7 @@ function logout(){
     request.onload = function () {
         if (request.status >= 200 && request.status < 400) {
             var resp = JSON.parse(request.responseText);
+            sessionStorage.clear();
             window.location.replace(resp.redirect_url);
         }
         else{
@@ -92,30 +108,3 @@ $("#logout-btn").click(function (e) {
     logout();
 });
 
-
-function checkAlreadyRegiteredUser(redirect = false){
-    contract.methods.isalreadyRegisteredUser().call().then(function(obj){
-        if(obj == false && !redirect){
-            swal({
-                title: "Alert!",
-                text: "User is not registered!!. Redirecting to home page.",
-                icon: "warning",
-            })
-            .then((value) => {
-                logout();
-                window.location.replace("/");
-            });
-        }
-        else if(obj == true && redirect){
-            window.location.replace("/dashboard");
-        }
-
-        
-    }).catch(function (error) {
-        swal({
-            title: "Error!",
-            text: "Error while checking user is regitred or not" + error,
-            icon: "error",
-        });
-   });
-}

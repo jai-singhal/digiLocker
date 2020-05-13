@@ -1,7 +1,22 @@
 
+function checkAlreadyRegiteredUser_(){
+    contract.methods.isalreadyRegisteredUser().call().then(function(obj){
+        if(obj == true){
+            window.location.replace("/dashboard");
+        }
+    }).catch(function (error) {
+        swal({
+            title: "Error!",
+            text: "Error while checking user is regitred or not" + error,
+            icon: "error",
+        });
+   });
+}
+
 $(document).ready(function(){
     $("#main-loader").hide();
-    checkAlreadyRegiteredUser(true);
+    contract = getContact();
+    checkAlreadyRegiteredUser_();
 })
 
 

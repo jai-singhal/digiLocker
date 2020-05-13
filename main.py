@@ -63,7 +63,7 @@ def upload_file(user_address):
         return redirect("/", code=401)
     return render_template("upload_doc.html", user_address=user_address)
 
-//For that new page :Ankit
+# For that new page :Ankit Ok
 @app.route('/requester/doc/access',methods=['GET'])
 @token_required
 def access_doc(user_address):
@@ -194,16 +194,17 @@ def login_postapi():
         session["user_address"] = address
         recovered_addr = recover_to_addr(token, signature)
         if address != recovered_addr:
-            return {
+            return jsonify({
                 'success': False, 
                 'redirect_url': "/",
-                'error': "Address verification failed"
-            }
+                'error': "Address verification failed",
+                "status_code": 200
+            })
         else:
             if is_registered == "false":
-                return {'success': True, 'redirect_url': "/registration"}
+                return jsonify({'success': True, 'redirect_url': "/registration", "status_code": 200})
             else:
-                return {'success': True, 'redirect_url': "/dashboard"}
+                return jsonify({'success': True, 'redirect_url': "/dashboard", "status_code": 200})
 
 
 
