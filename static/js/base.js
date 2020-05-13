@@ -1,35 +1,53 @@
-var contractAddress = "0xc0b9c71d5c79583B590491fA9109073461C34286"
+var contractAddress = "0x2a04c6E8123a065B35c5b722da1285b1A9F7349F"
 
 var web3 = new Web3(window.web3.currentProvider);
 var contract = null;
 var address = null;
+
+function stateChange () {
+    address = window.web3.currentProvider;
+    console.log("Try again")
+    if (!address.selectedAddress) {
+        window.location.reload();
+        setTimeout(stateChange, 700); // try again in 300 milliseconds
+    }
+  }
+  
+function getContract(){
+    if(!contract){
+        address = window.web3.currentProvider;
+        if(!address.selectedAddress && window.location.pathname !== "/")
+            stateChange()
+        address = address.selectedAddress;
+        console.log(address, "final")
+        contract = new web3.eth.Contract(abi, contractAddress, {
+            from: address,
+            gasLimit: 3000000,
+        });
+    }
+    return contract;
+}
+
+setInterval(function() {
+    window.ethereum.on('accountsChanged', function (accounts) {
+        swal("The account change is observed. Reload?")
+        .then((value) => {
+            if(value){
+                logout();
+            }
+        });
+    })
+  }, 100);
+
+
 /**
  * TODO: 
  */
 $(document).ready(function(){
     address = window.web3.currentProvider;
-    if(address === undefined || !address.selectedAddress){
-        if(window.location.pathname !== "/"){
-            logout()
-            window.location.replace("/")
-        }
-    }
-    else{
-        address = address.selectedAddress;
-    }
-    contract = new web3.eth.Contract(abi, contractAddress, {
-        from: address,
-        gasLimit: 3000000,
-    });
-
-    // check the account change
-    window.ethereum.on('accountsChanged', function (accounts) {
-        swal("The account change is observed. Reload?")
-        .then((value) => {
-            location.reload();
-        });
-    })
-
+    console.log(address)
+    address = address.selectedAddress;
+    getContract();
 })
 
 
@@ -93,9 +111,10 @@ $("#logout-btn").click(function (e) {
 });
 
 
-function checkAlreadyRegiteredUser(redirect = false){
+function checkAlreadyRegiteredUser(){
+    contract = getContract()
     contract.methods.isalreadyRegisteredUser().call().then(function(obj){
-        if(obj == false && !redirect){
+        if(obj == false){
             swal({
                 title: "Alert!",
                 text: "User is not registered!!. Redirecting to home page.",
@@ -103,14 +122,8 @@ function checkAlreadyRegiteredUser(redirect = false){
             })
             .then((value) => {
                 logout();
-                window.location.replace("/");
             });
         }
-        else if(obj == true && redirect){
-            window.location.replace("/dashboard");
-        }
-
-        
     }).catch(function (error) {
         swal({
             title: "Error!",
