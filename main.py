@@ -63,7 +63,7 @@ def upload_file(user_address):
         return redirect("/", code=401)
     return render_template("upload_doc.html", user_address=user_address)
 
-//For that new page :Ankit
+# For that new page :Ankit
 @app.route('/requester/doc/access',methods=['GET'])
 @token_required
 def access_doc(user_address):
