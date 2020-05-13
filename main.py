@@ -63,13 +63,6 @@ def upload_file(user_address):
         return redirect("/", code=401)
     return render_template("upload_doc.html", user_address=user_address)
 
-# For that new page :Ankit
-@app.route('/requester/doc/access',methods=['GET'])
-@token_required
-def access_doc(user_address):
-    if not user_address:
-        return redirect("/", code=401)
-    return render_template("requester_decrypt.html", user_address=user_address)
 
 
 
@@ -112,17 +105,19 @@ def comparehash_digest(user_address):
     try:
         master_key = request.form['master_key']
         mkeydigest = request.form['mkeydigest']
-        total_doc = request.form['total_doc']
+        is_upload = int(request.form['upload'])
         mkey_digest_new = hashlib.sha256(master_key.strip().encode()).hexdigest()
-        result = dict()
         if "0x" + mkey_digest_new == mkeydigest:
             result={"valid": True, 'success': True, "status_code": 200}
         else:
             result={"valid": False, 'success': True, "status_code": 200}   
-
-        ekey = getKey(int(total_doc), master_key, user_address)
-        result["ekey"] = ekey
-        return jsonify(result)
+        if is_upload:
+            total_doc = request.form['total_doc']
+            ekey = getKey(int(total_doc), master_key, user_address)
+            result["ekey"] = ekey
+            return jsonify(result)
+        else:
+            return jsonify(result)
 
     except Exception as e:
         print(e, "Exception in comparehash")
@@ -309,26 +304,30 @@ def sendAproovedMailToRequestor(user_address):
     try:
         MAIL_SENDER = app.config["MAIL_SENDER"]
         doc_id = request.form.get("doc_id")
-        requester_email = request.form.get("requester_email")
         doc_name = request.form.get("doc_name")
+        requester_email = request.form.get("requester_email")
         requester_address = request.form.get("requester_address")
         owner_address = request.form.get("owner_address")
         owner_email = request.form.get("owner_email")
         owner_name = request.form.get("owner_name")
-        
-        msg = prepareRequestMail(
+        master_key = request.form.get("master_key")
+        req_pub_key = request.form.get("req_pub_key")
+        print(request.form)
+
+        msg = prepareAproovedMail(
             owner_name, 
             owner_email, 
             requester_email, 
             doc_name, 
-            f"{SERVER_BASE_ADDRESS}/requestor/aproove/doc?requester={requester_address}&owner={owner_address}&doc_id={doc_id}",
+            f"{SERVER_BASE_ADDRESS}/requestor/doc/access?requester={requester_address}&owner={owner_address}&doc_id={doc_id}",
             owner_address,
             requester_address,
             MAIL_SENDER
         )
         mail.send(msg)
-        return jsonify({'success': True, 'redirect_url': "/dashboard", "status_code": 200})
+        return jsonify({'success': True, "status_code": 200})
     except Exception as e:
+        print(e)
         return jsonify({'success': False, "error": str(e), "status_code": 400})
 
 
@@ -353,6 +352,14 @@ def approoveDoc(user_address):
         doc_id = doc_id,
 
     )
+
+
+@app.route('/requestor/doc/access',methods=['GET'])
+@token_required
+def access_doc(user_address):
+    if not user_address:
+        return redirect("/", code=401)
+    return render_template("requester_decrypt.html", user_address=user_address)
 
 
 # @app.errorhandler(404)

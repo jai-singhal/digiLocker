@@ -95,4 +95,18 @@ Requestor will get the email,
 
 
 
+
+{
+	"jai<uaddr>": {
+		{iron(addr), docid1, permission},
+		{iron(addr), docid2, perm2}
+		{h2019, doc8, p}
+	}
+
+}
+
+
+returns [iron_email, iron_email, h2019_email], [docid1, docid2, doc8], [docid1_name, docid2_name, doc8_name], [p1, p2, p3]
+
+
 These are tasks we have to do in future

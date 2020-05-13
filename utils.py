@@ -134,3 +134,58 @@ def prepareRequestMail(
     msg.subject = f"Read access Request for document: {doc_name} by {requester_email}"
     return msg
     
+
+
+def prepareAproovedMail(        
+        owner_name, 
+        owner_email, 
+        requester_email, 
+        doc_name, 
+        approval_url,
+        owner_address,
+        requester_address,
+        MAIL_SENDER
+    ):
+    print(requester_email)
+    msgHtml = f"""
+        <!DOCTYPE html>
+        <html>
+        <head><title>{owner_name} shared document with you</title>
+        </head>
+        <body>
+        <p> Hello {owner_name}, <br /> <br />
+        {owner_email} has shared a document {doc_name}  with you 
+        <br /><br />
+        Please click on below button to access the document.
+        <br/>
+        <br/>
+        <a class = "btn" href="{approval_url}"
+            style = "text-decoration: none;
+            color: #fff;
+            background-color: #26a69a;
+            text-align: center;
+            letter-spacing: .5px;
+            padding: 20px;
+            font-size: 14px;
+            outline: 0;
+            border: none;
+            border-radius: 2px;
+            line-height: 36px;
+            text-transform: uppercase;"
+        >
+        Click to aproove the request
+        </a>
+        <br />
+        <br />
+        <p>Best<br>Digilocker Team</p>
+        </body>
+        </html>
+    """
+    msg = Message(
+        recipients=[requester_email.strip(),],
+        sender = MAIL_SENDER
+    )
+    msg.html = msgHtml
+    msg.subject = f"{owner_name} shared document with you"
+    return msg
+    

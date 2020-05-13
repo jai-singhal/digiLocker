@@ -33,9 +33,9 @@ function getPublicKey(){
                 req_email = req[0];
                 
                 $(document).on('click', '.btn', function() { 
-                sendRequestMailAjax(req_email,req_full_name,requester_address,
-                    owner_name,owner_address,owner_email,doc_id,doc_name,req_pub_key)
-                });
+                    sendRequestMailAjax(req_email,req_full_name,requester_address,
+                        owner_name,owner_address,owner_email,doc_id,doc_name,req_pub_key)
+                    });
 
                });
                
@@ -48,8 +48,7 @@ function getPublicKey(){
 }
 
 function sendRequestMailAjax(req_email,req_full_name,requester_address,
-    owner_name,owner_address,owner_email,doc_id,doc_name,req_pub_key)
-{
+    owner_name,owner_address,owner_email,doc_id,doc_name,req_pub_key){
 
     var data = {
         "doc_id": doc_id,
@@ -57,11 +56,10 @@ function sendRequestMailAjax(req_email,req_full_name,requester_address,
         "req_email": req_email,
         "req_full_name": req_full_name,
         "requester_address": requester_address,
-        "owner_name": owner_name,
         "owner_address": owner_address,
         "owner_email": owner_email,
         "req_pub_key ": req_pub_key, 
-        "encryp_master_key": "asd",
+        "master_key": "asd",
     }
     console.log(data)
 

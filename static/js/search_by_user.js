@@ -154,7 +154,7 @@ $(document).on('click', '.sharedoc', function() {
                 contract.methods.checkAlreadyShared(doc_id, email).call().then(function(res){
                     if(!res){
                         console.log(res)
-                        sendRequestMailAjax(doc_id,email,doc_name);
+                        sendRequestMailAjaxUser(doc_id,email,doc_name);
                     }else{
                         swal({
                             title: "Warning!",
@@ -186,7 +186,7 @@ $(document).on('click', '.sharedoc', function() {
 });
 
 //what if emailid is used to search the document this case is yet to handle
-function sendRequestMailAjax(doc_id, email, doc_name){
+function sendRequestMailAjaxUser(doc_id, email, doc_name){
     //Need owners email address : user id we have already
     var data ={};
     var owner_address_ = document.getElementById("_useraddress").innerHTML;

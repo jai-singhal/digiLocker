@@ -126,6 +126,7 @@ $('#id_upload_doc').submit(function(event) {
 
         };
         var formData = 'master_key=' + master_key + "&mkeydigest=" + mkeyHash + "&total_doc=" + total_doc;
+        formData += "&upload=" + '1';
         // console.log(formData)
         request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
         request.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
