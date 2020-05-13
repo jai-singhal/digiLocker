@@ -16,7 +16,7 @@ function stateChange () {
 function getContract(){
     if(!contract){
         address = window.web3.currentProvider;
-        if(!address.selectedAddress)
+        if(!address.selectedAddress && window.location.pathname !== "/")
             stateChange()
         address = address.selectedAddress;
         console.log(address, "final")
@@ -44,20 +44,10 @@ setInterval(function() {
  * TODO: 
  */
 $(document).ready(function(){
-
     address = window.web3.currentProvider;
     console.log(address)
-    // if(address === undefined || !address.selectedAddress){
-    //     if(window.location.pathname !== "/"){
-    //         logout()
-    //     }
-    // }
-    // else{
     address = address.selectedAddress;
-    // }
-
     getContract();
-    // check the account change
 })
 
 
