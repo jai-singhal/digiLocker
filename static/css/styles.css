@@ -7,6 +7,8 @@ body {
 main {
   flex: 1 0 auto;
   min-height: 500px;
+  margin-top: 50px;
+  margin-bottom: 100px;
 
 }
 
@@ -54,4 +56,5 @@ footer{
   background-color: red;
   color: white;
   text-align: center;
+  z-index: 5555;
 }

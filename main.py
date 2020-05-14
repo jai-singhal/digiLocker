@@ -104,60 +104,76 @@ def comparehash_digest(user_address):
             'success': False, 
             "status_code": 401
         })
-    # try:
-    master_key = request.form['master_key']
-    mkeydigest = request.form['mkeydigest']
-    is_upload = int(request.form['upload'])
-    print(request.form)
-    mkey_digest_new = hashlib.sha256(master_key.strip().encode()).hexdigest()
-    if "0x" + mkey_digest_new == mkeydigest:
-        result={"valid": True, 'success': True, "status_code": 200}
-    else:
-        result={"valid": False, 'success': True, "status_code": 200}   
-    if is_upload:
-        total_doc = request.form['total_doc']
-        ekey = getKey(int(total_doc), master_key, user_address)
-        result["ekey"] = ekey
-        return jsonify(result)
-    else:
-        return jsonify(result)
+    try:
+        master_key = request.form['master_key']
+        mkeydigest = request.form['mkeydigest']
+        is_upload = int(request.form['upload'])
 
-    # except Exception as e:
-    # print(e, "Exception in comparehash")
-    # return jsonify({'success': False, "status_code": 400})   
+        mkey_digest_new = hashlib.sha256(master_key.strip().encode()).hexdigest()
+        if "0x" + mkey_digest_new == mkeydigest:
+            result={"valid": True, 'success': True, "status_code": 200}
+        else:
+            result={"valid": False, 'success': True, "status_code": 200} 
+
+        if is_upload:
+            total_doc = request.form['total_doc']
+            ekey = getKey(int(total_doc), master_key, user_address)
+            result["ekey"] = ekey
+            return jsonify(result)
+        else:
+            return jsonify(result)
+
+    except Exception as e:
+        print(e, "Exception in comparehash")
+        return jsonify({'success': False, "status_code": 400})   
 
 
-@app.route("/api/register/metamask", methods = ['POST'])
+@app.route("/api/user/registration/", methods = ['POST'])
 @token_required
 def registration_postapi(user_address):
-    if not user_address:
-        return jsonify({
-            'success': False, 
-            "status_code": 401
-        })
+    try:
+        user_address__ = request.form.get("user_address")
+        print(user_address, user_address__)
+        if not user_address:
+            return jsonify({
+                'success': False, 
+                "status_code": 401
+            })
 
-    email = request.form.get("email")
-    master_key = request.form.get("master_key")
-    user_address = request.form.get("user_address")
-    first_name = request.form.get("first_name")
-    last_name = request.form.get("last_name")
+        email = request.form.get("email")
+        first_name = request.form.get("first_name")
+        utype = request.form.get("utype")
+        MAIL_SENDER = app.config["MAIL_SENDER"]
 
-    pu, pr = generateRSAKeypair()
-    MAIL_SENDER = app.config["MAIL_SENDER"]
-    msg = prepareMailMsg(f"{first_name} {last_name}", email, user_address, pu, pr, master_key, MAIL_SENDER)
-    mail.send(msg)
-    mkey_digest = hashlib.sha256(master_key.strip().encode()).hexdigest()
+        if utype == "1":
+            master_key = request.form.get("master_key")
+            last_name = request.form.get("last_name")
+            # TODO: ADD MORE PARAMS IN HASH
+            mkey_digest = hashlib.sha256((master_key.strip()).encode()).hexdigest()
 
-    if True:
-        return {
-            'success': True, 
-            'redirect_url': "/dashboard",
-            "master_key_hash": mkey_digest,
-            'error': "Address verification done",
-            "pu": pu.decode(),
-            "status_code": 200
-        }
-    else:
+            msg = prepareMailMsg(f"{first_name} {last_name}", email, user_address, None, None, master_key, MAIL_SENDER)
+            mail.send(msg)  
+
+            return {
+                'success': True, 
+                'redirect_url': "/dashboard",
+                "master_key_hash": mkey_digest,
+                'error': "Address verification done",
+                "status_code": 200
+            }
+
+        elif utype == "2":
+            pu, pr = generateRSAKeypair()
+            msg = prepareMailMsg(f"{first_name}", email, user_address, pu, pr, None, MAIL_SENDER)
+            mail.send(msg)  
+            return {
+                'success': True, 
+                'redirect_url': "/dashboard",
+                "pu": pu.decode(),
+                "status_code": 200
+            }
+    except Exception as e:
+        print("resgister", e)
         return {
             'success': False, 
             'redirect_url': "/",

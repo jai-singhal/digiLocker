@@ -34,6 +34,11 @@ def generateRSAKeypair():
     return public_key, private_key
 
 def prepareMailMsg(name, from_mail, address, pub, pr, master_key, MAIL_SENDER):
+    msg = Message(
+        recipients=[from_mail.strip(),],
+        sender = MAIL_SENDER
+    )
+
     msgHtml = f"""
         <html>
         <head><title>Welcome To DigiLocker</title></head>
@@ -42,30 +47,38 @@ def prepareMailMsg(name, from_mail, address, pub, pr, master_key, MAIL_SENDER):
         Congrats. Your account has been created in Digilocker. Here are the details: </p>
         <table>
         <tr><td>Account Address: </td><td><strong>{address}</strong></td></tr>
+    """
+    if master_key:
+        msgHtml += f"""
         <tr><td>Master key: </td><td><strong>{master_key}</strong></td></tr>
-        </table>
+        """
+    msgHtml += "</table>"
+
+    if pub and pr:
+        msgHtml += """
         <p><br>PFA the Public key and private key.<br/>
+        """
+        msg.attach(
+        "pub.key",
+        'application/octect-stream',
+            pub
+        )
+        msg.attach(
+            "pr.key",
+            'application/octect-stream',
+            pr
+        )
+
+    msgHtml += """
         Don't share these credentials with anyone, keep it with you.<br></p>
         <p>Best<br>Digilocker Team</p>
         </body>
         </html>
-    """
-    msg = Message(
-        recipients=[from_mail.strip(),],
-        sender = MAIL_SENDER
-    )
+        """
+
     msg.html = msgHtml
     msg.subject = "Account Created Successfully"
-    msg.attach(
-        "pub.key",
-        'application/octect-stream',
-        pub
-    )
-    msg.attach(
-        "pr.key",
-        'application/octect-stream',
-        pr
-    )
+
     return msg
 
 

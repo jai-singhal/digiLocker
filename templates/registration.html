@@ -5,51 +5,107 @@
 
 <main>
     <div class="container">
-        <div class="row">
-            <form class="col s12" id = "registration" address = "{{user_address}}">
-                <div class="row">
-                    <div class="input-field col s6">
-                        <input placeholder="First Name" id="first_name" type="text" class="validate">
-                        <label for="first_name">First Name</label>
-                    </div>
-                    <div class="input-field col s6">
-                        <input id="last_name" type="text" class="validate">
-                        <label for="last_name">Last Name</label>
-                    </div>
+        <ul class="collapsible">
+            <li>
+                <div class="collapsible-header">Register as Resident</div>
+                <div class="collapsible-body">
+                    <form class="col s12" id="resident_registration" address="{{user_address}}">
+                        <div class="row">
+                            <div class="input-field col s6">
+                                <input placeholder="First Name" id="first_name" type="text" class="validate">
+                                <label for="first_name">First Name</label>
+                            </div>
+                            <div class="input-field col s6">
+                                <input id="last_name" type="text" class="validate">
+                                <label for="last_name">Last Name</label>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="input-field col s12">
+                                <input id="email" type="email" class="validate" placeholder="Enter your email">
+                                <label for="email">Email</label>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="input-field col s12">
+                                <input id="confirm_email" type="email" class="validate"
+                                    placeholder="Re enter your email">
+                                <label for="email">Confirm Email</label>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="input-field col s12">
+                                <input id="master_key" type="password" class="validate">
+                                <label for="master_key">Master Key</label>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="input-field col s12">
+                                <input id="master_key_confirm" type="password" class="validate">
+                                <label for="master_key_confirm">Confirm Master Key</label>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="input-field col s12">
+                                <input id="contact_no" type="text" class="validate">
+                                <label for="contact_no">Contact Number</label>
+                            </div>
+                        </div>
+
+                        <button class="btn waves-effect waves-light" type="submit" name="action">Register
+                        </button>
+
+                    </form>
                 </div>
+            </li>
+            <li>
+                <div class="collapsible-header">Register as Organization/Institution</div>
 
-                <div class="row">
-                    <div class="input-field col s12">
-                        <input id="email" type="email" class="validate">
-                        <label for="email">Email</label>
-                    </div>
+                <div class="collapsible-body">
+                    <form class="col s12" id="requestor_registration" address="{{user_address}}">
+                        <div class="row">
+                            <div class="input-field col s12">
+                                <input placeholder="Organization name" id="org_name" type="text" class="validate">
+                                <label for="Organization_name">Name of your Organization/Institution</label>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="input-field col s12">
+                                <input id="org_email" type="email" class="validate"
+                                    placeholder="Enter your organization email">
+                                <label for="email">Organization email</label>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="input-field col s12">
+                                <input id="confirm_org_email" type="email" class="validate"
+                                    placeholder="Re enter your organization email">
+                                <label for="email">Confirm Email</label>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="input-field col s12">
+                                <input id="org_contact_no" type="text" class="validate">
+                                <label for="org_contact_no">Contact Number</label>
+                            </div>
+                        </div>
+
+                        <button class="btn waves-effect waves-light" type="submit" name="action">Register
+                        </button>
+
+                    </form>
                 </div>
+            </li>
+        </ul>
 
-                <div class="row">
-                    <div class="input-field col s12">
-                        <input id="master_key" type="password" class="validate">
-                        <label for="master_key">Master Key</label>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="input-field col s12">
-                        <input id="master_key_confirm" type="password" class="validate">
-                        <label for="master_key_confirm">Confirm Master Key</label>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="input-field col s12">
-                        <input id="contact_no" type="text" class="validate">
-                        <label for="contact_no">Contact Number</label>
-                    </div>
-                </div>
-
-        <button class="btn waves-effect waves-light" type="submit" name="action">Register
-        </button>
-
-        </form>
     </div>
 </main>
 

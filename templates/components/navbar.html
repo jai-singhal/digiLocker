@@ -5,7 +5,7 @@
             <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
             <ul class="right hide-on-med-and-down">
                 {% if user_address %}
-                    <li><a href="/dashboard">Go to Dashboard</a></li>
+                    <li id = "dash_btn"><a href="/dashboard">Go to Dashboard</a></li>
                     <li id="logout-btn" btn-for = "logout"><a class="waves-effect waves-light btn" href = "#">Logout</a></li>
                 {% else %}
                     <li id="auth-btn" btn-for = "login"><a class="waves-effect waves-light btn" href = "">Login</a></li>
