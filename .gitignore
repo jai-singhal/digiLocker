@@ -140,3 +140,4 @@ logs/*
 .env/
 
 config.py
+static/js/abi.js

@@ -1,3 +1,5 @@
+var contractAddress = "0x87f5d8F37E93AEFd05457Bb42dC20Ab4dD3D962a"
+
 var abi = [
 	{
 		"anonymous": false,
