@@ -167,7 +167,7 @@ $(document).on('click', '.sharedoc', function () {
         var email = $("#share_email_").val();
         var mkey = $("#share_mkey_").val();
 
-        var permission = 0;
+        var permission = 0; //read by default: TODO
 
         contract.methods.isValidSharableUser(email).call().then(function (res1) {
             if (res1) {
@@ -188,22 +188,19 @@ $(document).on('click', '.sharedoc', function () {
                                         });
                                     }
                                     else{
-                                        console.log(doc_id, email, doc_name)
-                                        sendShareMailAjax(doc_id, email, doc_name);
-
-                                        // contract.methods.shareDocumentwithUser(
-                                        //     doc_id, email, permission).send().then(function (res3) {
-                                        //         $('#shareDocModel').modal("close");
-                                        //         $('#share_email_').val("");
-                                        //         $('#share_mkey_').val("");
-                                        //         sendShareMailAjax(doc_id, email, doc_name);
-                                        //     }).catch(function (error) {
-                                        //         swal({
-                                        //             title: "Error!",
-                                        //             text: "Error while checking user validity " + error,
-                                        //             icon: "error",
-                                        //         });
-                                        // });
+                                        contract.methods.shareDocumentwithUser(
+                                            doc_id, email, permission).send().then(function (res3) {
+                                                $('#shareDocModel').modal("close");
+                                                $('#share_email_').val("");
+                                                $('#share_mkey_').val("");
+                                                sendShareMailAjax(doc_id, email, doc_name);
+                                            }).catch(function (error) {
+                                                swal({
+                                                    title: "Error!",
+                                                    text: "Error while checking user validity " + error,
+                                                    icon: "error",
+                                                });
+                                        });
 
                                     }
                                 }
