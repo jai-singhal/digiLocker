@@ -1,5 +1,5 @@
 var documents = [];
-
+var docList = [];
 function showBalance() {
     web3.eth.getBalance(address, (err, balance) => {
         var mbalance = web3.utils.fromWei(balance, "ether");
@@ -245,6 +245,7 @@ $(document).on('click', '.sharedoc', function () {
 
 function sendShareMailAjax(doc_id, email, doc_name) {
 
+    
     contract.methods.getAddressByEmail(email).call().then(function (requester_address) {
         contract.methods.getEmailIdByUsrAddr(address).call().then(function (owner_email_name) {
             contract.methods.getPublicKey(requester_address).call().then(function (req_pub_key) {
@@ -302,10 +303,86 @@ function sendShareMailAjax(doc_id, email, doc_name) {
 }
 
 
+function getSharedDocList(){
+
+var total_doc_shared ="";
+var user_address =    document.getElementById("main_id").getAttribute("user_address")
+
+contract.methods.getSharedDocList(user_address).call().then(function(docs){
+
+console.log(docs)
+var i = 0;
+for (var k = 0; k < docs[0].length; k++) {
+    docList[i] = {}
+    docList[i++].docId = docs[0][k]
+}
+
+i=0;
+for (var k = 0; k < docs[0].length; k++) {
+    
+    docList[i++].docName = docs[1][k]
+}
+
+i=0;
+for (var k = 0; k < docs[0].length; k++) {
+    docList[i++].sharedWith = docs[2][k]
+}
+
+i=0;
+for (var k = 0; k < docs[0].length; k++) {
+    docList[i++].permission = docs[3][k]
+}
+
+//console.log(docList)
+$("#document_table1 thead").html(
+            `<tr>
+            <th>Document Id</th>
+            <th>Document Name</th>
+            <th>Shared with</th>
+            <th>Permission</th>
+            </tr>`
+        )
+
+if (docList.length == 0)
+{
+        $("#document_table1 tbody").html(
+            "<br><center style = 'color:red'>\
+            <h6>You haven't uploaded any document yet.</h6></center>"
+        )
+}else
+{
+    $("#total_doc_shared").html(docList.length)
+    $("#document_table1 tbody").html("")
+}
+
+for (var j = 0; j < docList.length; j++) {
+
+    var ptype;
+    if (docList[j].permission == 0)
+                ptype = "Read"
+            else
+                ptype = "Modify"
+
+    $("#document_table1 tbody").append(
+        `<tr>
+        <td width="100">Document#${j+1}</td>
+        <td width="50">${docList[j].docName}</td>
+        <td width="150">${docList[j].sharedWith}</td>
+        <td width="50">${ptype}</td>
+        </tr>`
+    )
+}
+
+
+});
+}
+
+
 $(document).ready(function () {
     checkAlreadyRegiteredUser()
     showBalance()
     getDocCount();
+    getSharedDocList();
     displayDocuments();
     $("#main-loader").hide();
     $('.modal').modal();

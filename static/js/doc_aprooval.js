@@ -107,8 +107,21 @@ function sendRequestMailAjax(req_email,req_full_name,requester_address,
 }
 
 
+function checkLoggedInUser(){
+
+    var owner_address = document.getElementById("_owneraddress").innerHTML;
+    contract.methods.getRegisteredUser().call().then(function(output){
+    console.log(owner_address)
+    console.log(output)  
+    if(output[1])  
+
+    });
+
+}
+
 $(document).ready(function() {
-    
+
+    checkLoggedInUser();    
     getPublicKey();
     $("#main-loader").hide();
    
