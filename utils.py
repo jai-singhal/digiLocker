@@ -146,7 +146,6 @@ def prepareAproovedMail(
         requester_address,
         MAIL_SENDER
     ):
-    print(requester_email)
     msgHtml = f"""
         <!DOCTYPE html>
         <html>

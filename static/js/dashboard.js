@@ -56,7 +56,7 @@ function displayDocuments() {
         for (var j = 0; j < documents.length; j++) {
             $("#document_table tbody").append(
                 `<tr>
-                <td>Document #${j+1}</td>
+                <td>Doc #${j+1}</td>
                 <td>${documents[j].filename}</td>
                 <td>${documents[j].timestamp}</td>
                 <td>
@@ -114,36 +114,41 @@ $(document).on('click', '.shared_with', function () {
             userAddrrs[i++].permission = obj[1][k]
 
         if (userAddrrs.length == 0)
-            $("#shared_doc_table").html(
+            $("#shared_doc_table tbody").html(
                 "<br><center style = 'color:red'>\
                 <h6>This document is not shared with anyone.</h6></center>"
             )
-
-        $("#shared_doc_table thead").html(
-            `<tr>
-            <th>Serial Number</th>
-            <th>User Address</th>
-            <th>Permisson</th>
-            </tr>`
-        )
-
-
-        $("#shared_doc_table tbody").html("");
-
-        for (var j = 0; j < userAddrrs.length; j++) {
-            var ptype;
-            if (userAddrrs[j].permission == 0)
-                ptype = "Read"
-            else
-                ptype = "Modify"
-            $("#shared_doc_table tbody").append(
+        else{
+            $("#shared_doc_table thead").html(
                 `<tr>
-                <td>Document #${j+1}</td>
-                <td>${userAddrrs[j].address}</td>
-                <td>${ptype}</td>
+                <th>Serial Number</th>
+                <th>User Address</th>
+                <th>Permisson</th>
                 </tr>`
             )
+            $("#shared_doc_table tbody").html("");
+            for (var j = 0; j < userAddrrs.length; j++) {
+                var ptype;
+                if (userAddrrs[j].permission == 0)
+                    ptype = "Read"
+                else
+                    ptype = "Modify"
+                $("#shared_doc_table tbody").append(
+                    `<tr>
+                    <td>#${j+1}</td>
+                    <td>${userAddrrs[j].address}</td>
+                    <td>${ptype}</td>
+                    </tr>`
+                )
+            }
         }
+        
+    }).catch(function (error) {
+        swal({
+            title: "Error!",
+            text: "Error while fetching docs " + error,
+            icon: "error",
+        });
     });
 });
 
@@ -162,7 +167,7 @@ $(document).on('click', '.sharedoc', function () {
         var email = $("#share_email_").val();
         var mkey = $("#share_mkey_").val();
 
-        var permission = 0;
+        var permission = 0; //read by default: TODO
 
         contract.methods.isValidSharableUser(email).call().then(function (res1) {
             if (res1) {
@@ -173,9 +178,9 @@ $(document).on('click', '.sharedoc', function () {
                             let accesskey_url = "/api/user/accesskey";
                             request.open('POST', accesskey_url, true);
                             request.onload = function () {
-                                if (request.status >= 200 && request.status < 400) {
+                                if (request.status == 200) {
                                     var resp = JSON.parse(request.responseText);
-                                    if(resp.valid == false){
+                                    if(resp.valid == false || resp.success == false){
                                         swal({
                                             title: "Alert!",
                                             text: "Master key is not valid",
@@ -185,17 +190,19 @@ $(document).on('click', '.sharedoc', function () {
                                     else{
                                         contract.methods.shareDocumentwithUser(
                                             doc_id, email, permission).send().then(function (res3) {
-                                                $('#shareDocModel').modal("close");
+                                                $("#main-loader").show();
+                                                sendShareMailAjax(doc_id, email, doc_name);
+                                                $("#main-loader").hide();
                                                 $('#share_email_').val("");
                                                 $('#share_mkey_').val("");
-                                                sendShareMailAjax(doc_id, email, doc_name);
-                                             }).catch(function (error) {
+                                                $('#shareDocModel').modal("close");
+                                            }).catch(function (error) {
                                                 swal({
                                                     title: "Error!",
                                                     text: "Error while checking user validity " + error,
                                                     icon: "error",
                                                 });
-                                            });
+                                        });
 
                                     }
                                 }
@@ -251,7 +258,7 @@ function sendShareMailAjax(doc_id, email, doc_name) {
             contract.methods.getPublicKey(requester_address).call().then(function (req_pub_key) {
                 var data = {
                     "master_key": $("#share_mkey_").val(),
-                    "req_pub_key ": req_pub_key, 
+                    "req_pub_key": req_pub_key, 
                     "doc_id": doc_id,
                     "doc_name": doc_name,
                     "requester_address": requester_address,
@@ -264,7 +271,7 @@ function sendShareMailAjax(doc_id, email, doc_name) {
                 var request = new XMLHttpRequest();
                 request.open('POST', "/post/api/send/aproove/mail", true);
                 request.onload = function () {
-                    if (request.status >= 200 && request.status < 400) {
+                    if (request.status == 200) {
                         // Success!
                         var resp = JSON.parse(request.responseText);
                         if (resp.success) {
@@ -295,7 +302,6 @@ function sendShareMailAjax(doc_id, email, doc_name) {
                         formData += `${key}=${data[key]}&`
                     }
                 }
-                console.log(formData)
                 request.send(formData);
             });
         });
