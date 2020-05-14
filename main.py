@@ -7,8 +7,12 @@ import datetime
 from functools import wraps
 import settings
 import hashlib
+import binascii
 from flask_mail import Mail
 from werkzeug.utils import secure_filename
+from base64 import b64decode,b64encode
+from Crypto.Cipher import PKCS1_v1_5 as Cipher_PKCS1_v1_5
+from Crypto.PublicKey import RSA
 # from werkzeug import secure_filename
 import dropbox
 
@@ -100,26 +104,27 @@ def comparehash_digest(user_address):
             'success': False, 
             "status_code": 401
         })
-    try:
-        master_key = request.form['master_key']
-        mkeydigest = request.form['mkeydigest']
-        is_upload = int(request.form['upload'])
-        mkey_digest_new = hashlib.sha256(master_key.strip().encode()).hexdigest()
-        if "0x" + mkey_digest_new == mkeydigest:
-            result={"valid": True, 'success': True, "status_code": 200}
-        else:
-            result={"valid": False, 'success': True, "status_code": 200}   
-        if is_upload:
-            total_doc = request.form['total_doc']
-            ekey = getKey(int(total_doc), master_key, user_address)
-            result["ekey"] = ekey
-            return jsonify(result)
-        else:
-            return jsonify(result)
+    # try:
+    master_key = request.form['master_key']
+    mkeydigest = request.form['mkeydigest']
+    is_upload = int(request.form['upload'])
+    print(request.form)
+    mkey_digest_new = hashlib.sha256(master_key.strip().encode()).hexdigest()
+    if "0x" + mkey_digest_new == mkeydigest:
+        result={"valid": True, 'success': True, "status_code": 200}
+    else:
+        result={"valid": False, 'success': True, "status_code": 200}   
+    if is_upload:
+        total_doc = request.form['total_doc']
+        ekey = getKey(int(total_doc), master_key, user_address)
+        result["ekey"] = ekey
+        return jsonify(result)
+    else:
+        return jsonify(result)
 
-    except Exception as e:
-        print(e, "Exception in comparehash")
-        return jsonify({'success': False, "status_code": 400})   
+    # except Exception as e:
+    # print(e, "Exception in comparehash")
+    # return jsonify({'success': False, "status_code": 400})   
 
 
 @app.route("/api/register/metamask", methods = ['POST'])
@@ -310,14 +315,22 @@ def sendAproovedMailToRequestor(user_address):
         owner_name = request.form.get("owner_name")
         master_key = request.form.get("master_key")
         req_pub_key = request.form.get("req_pub_key")
-        print(request.form)
+
+        pubKeyObj =  RSA.importKey(req_pub_key)  
+        cipher = Cipher_PKCS1_v1_5.new(pubKeyObj) 
+        encrypted_mkey = cipher.encrypt(master_key.encode())
+        encrypted_mkey = binascii.hexlify(encrypted_mkey).decode()
+
+        access_url = f"{SERVER_BASE_ADDRESS}/requestor/doc/access"
+        access_url +=  f"?requester={requester_address}&owner={owner_address}"
+        access_url += f"&doc_id={doc_id}&ekey={encrypted_mkey}"
 
         msg = prepareAproovedMail(
             owner_name, 
             owner_email, 
             requester_email, 
             doc_name, 
-            f"{SERVER_BASE_ADDRESS}/requestor/doc/access?requester={requester_address}&owner={owner_address}&doc_id={doc_id}",
+            access_url,
             owner_address,
             requester_address,
             MAIL_SENDER
@@ -325,7 +338,7 @@ def sendAproovedMailToRequestor(user_address):
         mail.send(msg)
         return jsonify({'success': True, "status_code": 200})
     except Exception as e:
-        print(e)
+        print(e, "in mail send")
         return jsonify({'success': False, "error": str(e), "status_code": 400})
 
 
@@ -357,6 +370,8 @@ def approoveDoc(user_address):
 def access_doc(user_address):
     if not user_address:
         return redirect("/", code=401)
+
+    print(request.args)
     return render_template("requester_decrypt.html", user_address=user_address)
 
 
