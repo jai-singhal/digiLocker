@@ -301,7 +301,6 @@ function sendShareMailAjax(doc_id, email, doc_name) {
                         formData += `${key}=${data[key]}&`
                     }
                 }
-                console.log(formData)
                 request.send(formData);
             });
         });
