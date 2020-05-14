@@ -1,9 +1,10 @@
 var documents = [];
 var docList = [];
+
 function showBalance() {
     web3.eth.getBalance(address, (err, balance) => {
         var mbalance = web3.utils.fromWei(balance, "ether");
-        $("#funds").html(mbalance)
+        $(".funds").html(mbalance)
     }).catch(function (error) {
         swal({
             title: "Error!",
@@ -13,7 +14,7 @@ function showBalance() {
     });
 }
 
-function displayDocuments() {
+function displayResidentUploadedDocs() {
 
     // contract.methods.getUseraccessKey().call().then(function(obj,err){
     //     console.log(obj, "Xxx")
@@ -118,7 +119,7 @@ $(document).on('click', '.shared_with', function () {
                 "<br><center style = 'color:red'>\
                 <h6>This document is not shared with anyone.</h6></center>"
             )
-        else{
+        else {
             $("#shared_doc_table thead").html(
                 `<tr>
                 <th>Serial Number</th>
@@ -142,7 +143,7 @@ $(document).on('click', '.shared_with', function () {
                 )
             }
         }
-        
+
     }).catch(function (error) {
         swal({
             title: "Error!",
@@ -173,35 +174,34 @@ $(document).on('click', '.sharedoc', function () {
             if (res1) {
                 contract.methods.checkAlreadyShared(doc_id, email).call().then(function (res2) {
                     if (!res2) {
-                        contract.methods.getUseraccessKey().call().then(function(mkeyHash){
+                        contract.methods.getUseraccessKey().call().then(function (mkeyHash) {
                             var request = new XMLHttpRequest();
                             let accesskey_url = "/api/user/accesskey";
                             request.open('POST', accesskey_url, true);
                             request.onload = function () {
                                 if (request.status == 200) {
                                     var resp = JSON.parse(request.responseText);
-                                    if(resp.valid == false || resp.success == false){
+                                    if (resp.valid == false || resp.success == false) {
                                         swal({
                                             title: "Alert!",
                                             text: "Master key is not valid",
                                             icon: "error",
                                         });
-                                    }
-                                    else{
+                                    } else {
                                         contract.methods.shareDocumentwithUser(
                                             doc_id, email, permission).send().then(function (res3) {
-                                                $("#main-loader").show();
-                                                sendShareMailAjax(doc_id, email, doc_name);
-                                                $("#main-loader").hide();
-                                                $('#share_email_').val("");
-                                                $('#share_mkey_').val("");
-                                                $('#shareDocModel').modal("close");
-                                            }).catch(function (error) {
-                                                swal({
-                                                    title: "Error!",
-                                                    text: "Error while checking user validity " + error,
-                                                    icon: "error",
-                                                });
+                                            $("#main-loader").show();
+                                            sendShareMailAjax(doc_id, email, doc_name);
+                                            $("#main-loader").hide();
+                                            $('#share_email_').val("");
+                                            $('#share_mkey_').val("");
+                                            $('#shareDocModel').modal("close");
+                                        }).catch(function (error) {
+                                            swal({
+                                                title: "Error!",
+                                                text: "Error while checking user validity " + error,
+                                                icon: "error",
+                                            });
                                         });
 
                                     }
@@ -212,7 +212,7 @@ $(document).on('click', '.sharedoc', function () {
                                     title: "Alert!",
                                     text: "Error while uploading!!",
                                     icon: "error",
-                                  });
+                                });
                             };
                             var formData = 'master_key=' + mkey + "&mkeydigest=" + mkeyHash;
                             formData += "&upload=" + '0';
@@ -241,6 +241,9 @@ $(document).on('click', '.sharedoc', function () {
                 title: "Error!",
                 text: "Error while sharing doc " + error,
                 icon: "error",
+            }).then((value) => {
+                if(value)
+                    logout();
             });
         });
 
@@ -248,17 +251,13 @@ $(document).on('click', '.sharedoc', function () {
 });
 
 
-
-
 function sendShareMailAjax(doc_id, email, doc_name) {
-
-    
     contract.methods.getAddressByEmail(email).call().then(function (requester_address) {
         contract.methods.getEmailIdByUsrAddr(address).call().then(function (owner_email_name) {
             contract.methods.getPublicKey(requester_address).call().then(function (req_pub_key) {
                 var data = {
                     "master_key": $("#share_mkey_").val(),
-                    "req_pub_key": req_pub_key, 
+                    "req_pub_key": req_pub_key,
                     "doc_id": doc_id,
                     "doc_name": doc_name,
                     "requester_address": requester_address,
@@ -279,6 +278,13 @@ function sendShareMailAjax(doc_id, email, doc_name) {
                                 title: "Success!",
                                 text: "Shared with " + email,
                                 icon: "success",
+                            });
+                        }
+                        else{
+                            swal({
+                                title: "Error!",
+                                text: "Error" + resp.error,
+                                icon: "error",
                             });
                         }
                     } else {
@@ -308,39 +314,34 @@ function sendShareMailAjax(doc_id, email, doc_name) {
     });
 }
 
+function getSharedDocListForRequestor() {
+    // address -> requester
+    contract.methods.getSharedDocList(address).call().then(function (docs) {
+        console.log(docs)
+        var i = 0;
+        for (var k = 0; k < docs[0].length; k++) {
+            docList[i] = {}
+            docList[i++].docId = docs[0][k]
+        }
 
-function getSharedDocList(){
+        i = 0;
+        for (var k = 0; k < docs[0].length; k++) {
 
-var total_doc_shared ="";
-var user_address =    document.getElementById("main_id").getAttribute("user_address")
+            docList[i++].docName = docs[1][k]
+        }
 
-contract.methods.getSharedDocList(user_address).call().then(function(docs){
+        i = 0;
+        for (var k = 0; k < docs[0].length; k++) {
+            docList[i++].sharedWith = docs[2][k]
+        }
 
-console.log(docs)
-var i = 0;
-for (var k = 0; k < docs[0].length; k++) {
-    docList[i] = {}
-    docList[i++].docId = docs[0][k]
-}
+        i = 0;
+        for (var k = 0; k < docs[0].length; k++) {
+            docList[i++].permission = docs[3][k]
+        }
 
-i=0;
-for (var k = 0; k < docs[0].length; k++) {
-    
-    docList[i++].docName = docs[1][k]
-}
-
-i=0;
-for (var k = 0; k < docs[0].length; k++) {
-    docList[i++].sharedWith = docs[2][k]
-}
-
-i=0;
-for (var k = 0; k < docs[0].length; k++) {
-    docList[i++].permission = docs[3][k]
-}
-
-//console.log(docList)
-$("#document_table1 thead").html(
+        //console.log(docList)
+        $("#document_table1 thead").html(
             `<tr>
             <th>Document Id</th>
             <th>Document Name</th>
@@ -349,47 +350,69 @@ $("#document_table1 thead").html(
             </tr>`
         )
 
-if (docList.length == 0)
-{
-        $("#document_table1 tbody").html(
-            "<br><center style = 'color:red'>\
-            <h6>You haven't uploaded any document yet.</h6></center>"
-        )
-}else
-{
-    $("#total_doc_shared").html(docList.length)
-    $("#document_table1 tbody").html("")
-}
+        if (docList.length == 0) {
+            $("#document_table1 tbody").html(
+                "<br><center style = 'color:red'>\
+            <h6>No document is shared with you.</h6></center>"
+            )
+        } else {
+            $("#total_doc_shared").html(docList.length)
+            $("#document_table1 tbody").html("")
+        }
 
-for (var j = 0; j < docList.length; j++) {
+        for (var j = 0; j < docList.length; j++) {
 
-    var ptype;
-    if (docList[j].permission == 0)
+            var ptype;
+            if (docList[j].permission == 0)
                 ptype = "Read"
             else
                 ptype = "Modify"
 
-    $("#document_table1 tbody").append(
-        `<tr>
+            $("#document_table1 tbody").append(
+                `<tr>
         <td width="100">Document#${j+1}</td>
         <td width="50">${docList[j].docName}</td>
         <td width="150">${docList[j].sharedWith}</td>
         <td width="50">${ptype}</td>
         </tr>`
-    )
-}
-
-
-});
+            )
+        }
+    });
 }
 
 
 $(document).ready(function () {
-    checkAlreadyRegiteredUser()
-    showBalance()
-    getDocCount();
-    getSharedDocList();
-    displayDocuments();
+    checkAlreadyRegiteredUser();
+
+    contract.methods.getUserType().call().then(function(utype){
+        $("main").css("display", "block");
+
+        if(utype == 1){ // resident
+            $("#requestorDashboard").remove();
+            getDocCount();
+            displayResidentUploadedDocs();
+        }
+        else if(utype == 2){ // requestor
+            $("#residentDashboard").remove();
+            getSharedDocListForRequestor();
+        }
+        else{
+            console.log(utype)
+            swal({
+                title: "Error!",
+                text: "Not logined",
+                icon: "error",
+            });
+        }
+        showBalance();
+
+    }).catch(function (error) {
+        swal({
+            title: "Error!",
+            text: "Error while fetching user type: " + error,
+            icon: "error",
+        });
+   });
     $("#main-loader").hide();
     $('.modal').modal();
     $('.collapsible').collapsible();

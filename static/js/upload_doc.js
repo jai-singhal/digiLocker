@@ -35,7 +35,7 @@ function uploadDocument(encryptedFile, total_doc){
                     icon: "success",
                   }).then((value) => {
                         window.location.replace(res.redirect_url);
-                });
+                    });
             }
             else{
                 swal({

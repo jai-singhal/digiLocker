@@ -8,154 +8,63 @@
 
 
 
-<main id="main_id" user_address="{{user_address}}">
-	<div class="container">
-
-		<ul class="collapsible">
-			<li>
-			  <div class="collapsible-header">
-				User Address : <strong>{{ user_address}}</strong>
-			 </div>
-			  <div class="collapsible-body"><span><p>You have total fund of: <strong id="funds"></strong> ETH</p>
-			  <p>Total Document Shared by me: <strong id="total_doc_shared"></strong></p> 
-			  </span>
-				<div>
-					<table id="document_table1">
-						<thead>
-						</thead>
-						<tbody>
-						</tbody>
-					</table>
-				</div>
-			
-			 </div>
-			
-			</li>
-			<li>
-			  <div class="collapsible-header">Total Document Uploaded :  <strong id="total_docs"></strong></div>
-			  <div class="collapsible-body">
-				  
-					<div class="container">
-						<table id="document_table">
-							<thead>
-							</thead>
-							<tbody>
-							</tbody>
-						</table>
-					</div>
-			</div>
-			</li>
-			
-		</ul>
+<main id="main_id" user_address="{{user_address}}" style = "display:none;">
+	
+	<!-- This dashboard is displayed to Resident -->
+	<div class="container" id="residentDashboard">
 		<div class="row header">
+			<div class="float-left">
+				<p>Total docs uploaded: <strong id="total_docs"></strong></p>
+				<p>You have total fund of: <strong class="funds"></strong> ETH</p>
+			</div>
 			<div class="float-right upload_btn">
 				<a href="/dashboard/upload/doc" class="waves-effect waves-light btn">
 					Upload Document
 				</a>
+			</div>
+		</div>
+		<table id="document_table">
+			<thead>
+			</thead>
+			<tbody>
+			</tbody>
+		</table>
+	</div>
+	<!-- ********************************************************** -->
+
+
+	<!-- This dashboard is displayed to Organization/requestor -->
+	<div class="container" id="requestorDashboard">
+		<div class="row header">
+			<div class="float-left">
+				<p>You have total fund of: <strong class="funds"></strong> ETH</p>
+			</div>
+			<div class="float-right upload_btn">
 				<a class="waves-effect waves-light btn modal-trigger" href="#requestDoc">
 					Search Document
 				</a>
 			</div>
 		</div>
-	</div>
 
-	
+		<div class="row">
+			<div>
+				<table id="document_table1">
+					<thead>
+					</thead>
+					<tbody>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+	<!-- ********************************************************** -->
+
 </main>
 
-<!-- Modal Structure -->
-<div id="requestDoc" class="modal bottom-sheet">
-	<div class="modal-content">
-		<!-- <h4>Search Document</h4> -->
 
-		<div class="container">
-			<ul class="collapsible">
-				<li>
-					<div class="collapsible-header">Search by Document id</div>
-					<div class="collapsible-body">
-						<form method="POST">
-							<div class="input-field">
-								<input placeholder="Enter your document id" id="docid" type="text" class="validate"
-									name="docid">
-								<label for="doc">Document id</label>
-							</div>
-							<button type="submit" class="btn float-right" id="search_by_docid">Search</button>
-						</form>
-
-						<br>
-					</div>
-				</li>
-				<li>
-					<div class="collapsible-header">Search by User Address/Email Id</div>
-					<div class="collapsible-body">
-						<form method="POST" id="myForm">
-							<div class="input-field">
-								<input placeholder="Enter your User address id" id="user_address" type="text" name="uid"
-									class="validate">
-								<label for="user_address">User Address</label>
-							</div>
-							<button class="btn float-right search_by_email_uid" id="search_by_useradd" type="submit">Search</button>
-						</form>
-						<br>
-					</div>
-				</li>
-			</ul>
-		</div>
-	</div>
-
-	<div class="modal-footer">
-	</div>
-</div>
-
-
-
-<!-- Modal Structure -->
-<div id="sharedDocumentsModel" class="modal">
-	<div class="modal-content">
-		<h5 class="doc_name_modal"></h5>
-		<br>
-		<div class="container-fluid">
-			<table id="shared_doc_table">
-				<thead>
-				</thead>
-				<tbody>
-				</tbody>
-			</table>
-		</div>
-	</div>
-	<div class="modal-footer">
-		<a href="#!" class="modal-close waves-effect btn waves-green btn-flat">Close</a>
-	</div>
-</div>
-
-
-<div id="shareDocModel" class="modal">
-	<div class="modal-content">
-		<h5 class="doc_name_modal"></h5>
-		<br>
-		<div class="container">
-			<form id="shareThisDoc">
-				<div class="input-field">
-					<input placeholder="Enter email of user you want to share document with" id="share_email_"
-						type="email" name="email" class="validate">
-					<label for="share_email_">Share with</label>
-				</div>
-
-				<div class="input-field">
-					<input placeholder="Enter your master key" id="share_mkey_"
-						type="password" name="password" class="validate">
-					<label for="share_pass_">Master key</label>
-				</div>
-
-				<br>
-					<div class="modal-footer">
-						<button type = "submit" class="btn float-right">Share</br>
-					</div>
-				<br>
-
-			</form>
-		</div>
-	</div>
-</div>
+{% include "components/modal_searchdoc.html" %}
+{% include "components/modal_shareddoc.html" %}
+{% include "components/modal_sharethisdoc.html" %}
 
 
 {% endblock container %}

@@ -331,7 +331,7 @@ def sendAproovedMailToRequestor(user_address):
         owner_name = request.form.get("owner_name")
         master_key = request.form.get("master_key")
         req_pub_key = request.form.get("req_pub_key")
-
+        print(request.form)
         pubKeyObj =  RSA.importKey(req_pub_key)  
         cipher = Cipher_PKCS1_v1_5.new(pubKeyObj) 
         encrypted_mkey = cipher.encrypt(master_key.encode())

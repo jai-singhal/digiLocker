@@ -13,7 +13,7 @@ contract digiLocker {
     }
     struct sharedDoc{
         bytes32 docid;
-        address sharedWith;
+        address docOwner;
         Permission permission;
     }
     struct UserDetails{
@@ -129,11 +129,9 @@ contract digiLocker {
     }
 
     function shareDocumentwithUser(bytes32 docid, string memory email, uint32 permission) public{
-        if (!checkAlreadyShared(docid, email)){
-            sharedDoc memory d = sharedDoc(docid, emailAddressMapping[email], Permission(permission));
-            sharedDocuments[msg.sender].push(d);
-            emit sharedDocumentEvent(docid, emailAddressMapping[email], permission);  
-        }
+        sharedDoc memory d = sharedDoc(docid, emailAddressMapping[email], Permission(permission));
+        sharedDocuments[msg.sender].push(d);
+        emit sharedDocumentEvent(docid, emailAddressMapping[email], permission);  
     }
 
     function isValidSharableUser(string memory email_) public view returns(bool){

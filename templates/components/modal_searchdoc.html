@@ -1,0 +1,46 @@
+
+<!-- Modal Structure -->
+<div id="requestDoc" class="modal bottom-sheet">
+	<div class="modal-content">
+		<!-- <h4>Search Document</h4> -->
+		<div class="container">
+			<ul class="collapsible">
+				<li>
+					<div class="collapsible-header">Search by Document id</div>
+					<div class="collapsible-body">
+						<form method="POST">
+							<div class="input-field">
+								<input placeholder="Enter your document id" id="docid" type="text" class="validate"
+									name="docid">
+								<label for="doc">Document id</label>
+							</div>
+							<button type="submit" class="btn float-right" id="search_by_docid">Search</button>
+						</form>
+
+						<br>
+					</div>
+				</li>
+				<li>
+					<div class="collapsible-header">Search by User Address/Email Id</div>
+					<div class="collapsible-body">
+						<form method="POST" id="myForm">
+							<div class="input-field">
+								<input placeholder="Enter your User address id" id="user_address" type="text" name="uid"
+									class="validate">
+								<label for="user_address">User Address</label>
+							</div>
+							<button class="btn float-right search_by_email_uid" id="search_by_useradd"
+								type="submit">Search</button>
+						</form>
+						<br>
+					</div>
+				</li>
+			</ul>
+		</div>
+	</div>
+
+	<div class="modal-footer">
+	</div>
+</div>
+
+

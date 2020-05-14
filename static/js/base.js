@@ -3,7 +3,6 @@ var contractAddress = "0x87f5d8F37E93AEFd05457Bb42dC20Ab4dD3D962a"
 var web3 = new Web3(window.web3.currentProvider);
 var contract = null;
 var address = null;
-var userType = null;
 
 function stateChange () {
     address = window.web3.currentProvider;
@@ -134,15 +133,3 @@ function checkAlreadyRegiteredUser(){
    });
 }
 
-
-function getUserType(){
-    contract.methods.getUserType().call().then(function(utype){
-        userType = utype;
-    }).catch(function (error) {
-        swal({
-            title: "Error!",
-            text: "Error while fetching user type: " + error,
-            icon: "error",
-        });
-   });
-}
