@@ -50,16 +50,6 @@ contract digiLocker {
     mapping (string => address)  emailAddressMapping;
     
 
-    ///////////////////////-- modifier here -- ///////////////////////////////////
-    // modifier isalreadyRegisteredUserModifier(){
-    //     if(isalreadyRegisteredUser()){
-    //         _;
-    //     }
-    //     else{
-    //         emit alreadyRegistred(msg.sender);
-    //     }
-    // }
-
     ///////////////////////-- functions here -- ///////////////////////////////////
     function isalreadyRegisteredUser() public view returns(bool){
         if(registerUsers[msg.sender]._useraddress == 0x0000000000000000000000000000000000000000){
@@ -72,6 +62,11 @@ contract digiLocker {
     // temp function
     function getUseraccessKey() public view returns(bytes32){
        return (registerUsers[msg.sender].accessKey);
+    }
+    
+    function getUserType() public view returns(uint)
+    {
+        return uint(registerUsers[msg.sender].utype);
     }
     
     function getRegisteredUser() public view returns(bytes32, address, string memory){
@@ -87,8 +82,7 @@ contract digiLocker {
             string memory _email, uint8 _utype,
             string memory _contact, bytes32 accessKey,
             string memory pubKey) public returns(bool) {
-            if (!isalreadyRegisteredUser()){
-                UserDetails memory d = UserDetails(_firstName,_lastName, _email, _contact);
+            UserDetails memory d = UserDetails(_firstName,_lastName, _email, _contact);
                 User memory newuser = User(
                     userType(_utype), true, d, 
                     msg.sender, accessKey, pubKey
@@ -101,10 +95,6 @@ contract digiLocker {
                 _glbluseraddress.push(msg.sender);
                 usercount++;
                 return true;
-            }
-            else{
-                return false;
-            }
     }
  
     function checkAlreadyUpload(bytes32 docId)public view returns(bool){
@@ -120,13 +110,12 @@ contract digiLocker {
 
     function uploadDocument(string memory docName, bytes32 docHash, string memory timestamp) public returns(bool){
         bytes32 docid = keccak256(abi.encode(docHash, msg.sender));
-        if(!checkAlreadyUpload(docid)){
+        
             Document memory d = Document(docid, docName, timestamp, docHash );
             ownerDocuments[msg.sender].push(d);
             emit uploadDocumentEvent(docid, docHash, msg.sender);
             return true;
-        }// -- Check 
-        return false;
+        
     }
 
     function checkAlreadyShared(bytes32 docId, string memory email_)public view returns(bool){
@@ -298,4 +287,54 @@ contract digiLocker {
         return registerUsers[_uaddr_].pubKey;
         
     }
+    
+    function getSharedDocList(address _uaddr_)public view returns(bytes32[] memory,string[] memory, string[] memory,uint[] memory){
+        
+      string[] memory _docName = new string[](sharedDocuments[_uaddr_].length);
+      address[] memory _sharedWith = new address[](sharedDocuments[_uaddr_].length);
+      string[] memory _email = new string[](sharedDocuments[_uaddr_].length);
+      bytes32[] memory _docid = new bytes32[](sharedDocuments[_uaddr_].length);
+      uint[] memory sharedWithPermission = new uint[](sharedDocuments[_uaddr_].length);
+        
+        for(uint i=0;i<sharedDocuments[_uaddr_].length;i++)
+        {
+            _docid[i] = sharedDocuments[_uaddr_][i].docid;
+            _sharedWith[i] =  sharedDocuments[_uaddr_][i].sharedWith ;
+            sharedWithPermission[i] = uint(sharedDocuments[_uaddr_][i].permission);
+        }
+
+        for(uint j=0;j<_docid.length;j++)
+        {
+          _docName[j] = getDocumentName(_docid[j]);
+            
+        }
+        
+        for(uint k=0;k < _sharedWith.length;k++){
+            
+         _email[k] =    registerUsers[_sharedWith[k]].details.email;
+            
+        }
+        
+        return (_docid,_docName,_email,sharedWithPermission);
+        
+    }   
+    
+    
+    function getDocumentName(bytes32 _docId) internal view returns(string memory)
+    {
+        for(uint i=0;i<usercount;i++){
+            
+            for(uint j=0;j < ownerDocuments[_glbluseraddress[i]].length;j++)
+            {
+                
+                if(ownerDocuments[_glbluseraddress[i]][j].docid == _docId)
+                    
+                    return (ownerDocuments[_glbluseraddress[i]][j].docName);
+                
+            }
+            
+        }
+        
+    }
+    
 }

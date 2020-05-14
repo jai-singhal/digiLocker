@@ -113,7 +113,10 @@ function checkLoggedInUser(){
     contract.methods.getRegisteredUser().call().then(function(output){
     console.log(owner_address)
     console.log(output)  
-    if(output[1])  
+    if(output[1]== owner_address)  
+    {
+        console.log()
+    }
 
     });
 
