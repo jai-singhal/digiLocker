@@ -190,10 +190,12 @@ $(document).on('click', '.sharedoc', function () {
                                     else{
                                         contract.methods.shareDocumentwithUser(
                                             doc_id, email, permission).send().then(function (res3) {
-                                                $('#shareDocModel').modal("close");
+                                                $("#main-loader").show();
+                                                sendShareMailAjax(doc_id, email, doc_name);
+                                                $("#main-loader").hide();
                                                 $('#share_email_').val("");
                                                 $('#share_mkey_').val("");
-                                                sendShareMailAjax(doc_id, email, doc_name);
+                                                $('#shareDocModel').modal("close");
                                             }).catch(function (error) {
                                                 swal({
                                                     title: "Error!",
@@ -268,7 +270,7 @@ function sendShareMailAjax(doc_id, email, doc_name) {
                 var request = new XMLHttpRequest();
                 request.open('POST', "/post/api/send/aproove/mail", true);
                 request.onload = function () {
-                    if (request.status >= 200 && request.status < 400) {
+                    if (request.status == 200) {
                         // Success!
                         var resp = JSON.parse(request.responseText);
                         if (resp.success) {
