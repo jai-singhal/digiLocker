@@ -50,21 +50,22 @@ def index(user_address):
 @token_required
 def dashboard(user_address = None):
     if not user_address:
-        return redirect("/", code=401)
+        print(request.path)
+        return redirect(url_for('index',  next= request.path))
     return render_template("dashboard.html", user_address = user_address)
 
 @app.route("/registration")
 @token_required
 def registration(user_address):
     if not user_address:
-        return redirect("/", code=401)
+        return redirect(url_for('index',  next= request.path))
     return render_template("registration.html", user_address = user_address)
 
 @app.route('/dashboard/upload/doc', methods=['GET'])
 @token_required
 def upload_file(user_address):
     if not user_address:
-        return redirect("/", code=401)
+        return redirect(url_for('index',  next= request.path))
     return render_template("upload_doc.html", user_address=user_address)
 
 
@@ -250,7 +251,7 @@ def logout(user_address):
 @token_required
 def dashboardPost(user_address):
     if not user_address:
-        return redirect("/", code=401)
+        return redirect(url_for('index',  next= request.path))
 
     uid = request.form.get("uid", None)
     docid = request.form.get("docid", None)
@@ -265,7 +266,7 @@ def dashboardPost(user_address):
 @token_required
 def searchUser(user_address):
     if not user_address:
-        return redirect("/", code=401)
+        return redirect(url_for('index',  next= request.path))
 
     if not request.args.get("uid", None):
         return redirect("/dashboard", code= 400)
@@ -281,7 +282,7 @@ def searchUser(user_address):
 @token_required
 def searchDoc(user_address):
     if not user_address:
-        return redirect("/", code = 401)
+        return redirect(url_for('index',  next= request.path))
 
     if not request.args.get('docid', None):
         return redirect("/dashboard", code = 400)
@@ -377,14 +378,21 @@ def sendAproovedMailToRequestor(user_address):
 @token_required
 def approoveDoc(user_address):
     if not user_address:
-        return redirect("/", code = 401)
+        flash("You must login into the system")
+        return redirect(url_for('index', next= "/".join(request.url.split('/')[3:])))
 
-    if not request.args.get('doc_id', None):
+    requester_address = request.args.get('requester', None)
+    owner_address = request.args.get('owner', None)
+    doc_id = request.args.get('doc_id', None)
+
+    if not requester_address or not owner_address or not doc_id:
         return redirect("/dashboard", code = 400)
-    
-    requester_address = request.args.get('requester')
-    owner_address = request.args.get('owner')
-    doc_id = request.args.get('doc_id')
+
+    if owner_address != user_address:
+        session.pop("x-access-tokens", None)
+        session.pop("user_address", None)
+        flash("You was logined with different account. Login with current account")
+        return redirect(url_for('index', next= "/".join(request.url.split('/')[3:])))
 
     return render_template(
         "doc_aprooval.html", 
@@ -400,19 +408,12 @@ def approoveDoc(user_address):
 @token_required
 def access_doc(user_address):
     if not user_address:
-        return redirect("/", code=401)
+        flash("You must login into the system")
+        return redirect(url_for('index', next= "/".join(request.url.split('/')[3:])))
 
     print(request.args)
     return render_template("requester_decrypt.html", user_address=user_address)
 
-
-# @app.errorhandler(404)
-# def page_not_found(e):
-#     return "Page not found, {}".format(e)
-
-# @app.errorhandler(401)
-# def redirect(url, code):
-#     return "Redirecting... {}".format(url)
 
 
 if __name__ == '__main__':

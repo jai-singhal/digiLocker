@@ -107,24 +107,28 @@ function sendRequestMailAjax(req_email,req_full_name,requester_address,
 }
 
 
-function checkLoggedInUser(){
+// function checkLoggedInUser(){
 
-    var owner_address = document.getElementById("_owneraddress").innerHTML;
-    contract.methods.getRegisteredUser().call().then(function(output){
-    console.log(owner_address)
-    console.log(output)  
-    if(output[1]== owner_address)  
-    {
-        console.log()
-    }
+//     var owner_address = document.getElementById("_owneraddress").innerHTML;
+//     contract.methods.getRegisteredUser().call().then(function(output){
+//     //console.log(owner_address)
+    
+//     if(output[1]== owner_address)  {
+//         console.log(" Allow user - to approve")
+//     }
+//     else
+//     {
+//         console.log("Invalid User")
+//         // window.location.replace("/dashboard");
+//     }
 
-    });
+//     });
 
-}
+// }
 
 $(document).ready(function() {
 
-    checkLoggedInUser();    
+    // checkLoggedInUser();    
     getPublicKey();
     $("#main-loader").hide();
    
