@@ -58,3 +58,10 @@ footer{
   text-align: center;
   z-index: 5555;
 }
+
+.required {
+  color: red;
+  margin-left: 2.5px;
+  font-size: 18px;
+  font-weight: 500;
+}
