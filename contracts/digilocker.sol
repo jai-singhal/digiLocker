@@ -60,10 +60,13 @@ contract digiLocker {
         }
     }
     // temp function
-
-    function getUserType() public view returns(int){
-        if(!isalreadyRegisteredUser()) return -1;
-        return int(registerUsers[msg.sender].utype);
+    function getUseraccessKey() public view returns(bytes32){
+       return (registerUsers[msg.sender].accessKey);
+    }
+    
+    function getUserType() public view returns(uint)
+    {
+        return uint(registerUsers[msg.sender].utype);
     }
     
     function getRegisteredUser() public view returns(bytes32, address, string memory){
@@ -86,6 +89,7 @@ contract digiLocker {
                 );
                 
                 emailAddressMapping[_email] = msg.sender;
+                
                 registerUsers[msg.sender] = newuser;
                 emit registeredUserEvent(_email, userType(_utype), msg.sender);
                 _glbluseraddress.push(msg.sender);
@@ -100,11 +104,6 @@ contract digiLocker {
         return false;
     }
 
-    function getUseraccessKey() public view returns(bytes32){
-        return registerUsers[msg.sender].accessKey;
-    }
-    
-
     function getDocCountByUserId() public view returns(uint256){
         return ownerDocuments[msg.sender].length;
     }
@@ -112,10 +111,12 @@ contract digiLocker {
 
     function uploadDocument(string memory docName, bytes32 docHash, string memory timestamp) public returns(bool){
         bytes32 docid = keccak256(abi.encode(docHash, msg.sender));
-        Document memory d = Document(docid, docName, timestamp, docHash );
-        ownerDocuments[msg.sender].push(d);
-        emit uploadDocumentEvent(docid, docHash, msg.sender);
-        return true;
+        
+            Document memory d = Document(docid, docName, timestamp, docHash );
+            ownerDocuments[msg.sender].push(d);
+            emit uploadDocumentEvent(docid, docHash, msg.sender);
+            return true;
+        
     }
 
     function checkAlreadyShared(bytes32 docId,address _owner,address _requester)public view returns(bool){
@@ -123,6 +124,8 @@ contract digiLocker {
             if(sharedDocuments[_requester][i].docid == docId &&
                 sharedDocuments[_requester][i].docOwner == _owner)
                 return true;
+          
+       
     }
 
     function shareDocumentwithUser(bytes32 docid, address  _owner, uint32 permission,address _requester) public{
@@ -142,31 +145,33 @@ contract digiLocker {
         }
     }
 
-    function getUserAddressofSharedDoc(bytes32 docid) public view returns (address[] memory, uint[] memory){
-
-        uint count = 0;
-
-        for(uint i=0;i<usercount;i++){
-            for(uint j=0;j < ownerDocuments[_glbluseraddress[i]].length;j++){
-            }     
-        }
+    function getUserAddressofSharedDoc(bytes32 docid) public view returns (address[] memory, uint[] memory,string[] memory){
 
         
-        /*for(uint i = 0; i < sharedDocuments[msg.sender].length; i++){
-            if(sharedDocuments[msg.sender][i].docid == docid) count++;
-        }
-        address[] memory sharedWithAddress = new address[](count);
-        uint[] memory sharedWithPermission = new uint[](count);
-        uint k = 0;
-        for(uint i = 0; i < sharedDocuments[msg.sender].length; i++){
-            if(sharedDocuments[msg.sender][i].docid == docid && sharedDocuments){
-                sharedWithAddress[k] = sharedDocuments[msg.sender][i].sharedWith;
-                sharedWithPermission[k] = uint(sharedDocuments[msg.sender][i].permission);
-                k++;
+        address[] memory requesterAddress = new address[](usercount);
+        string[] memory requesterEmail = new string[](usercount);
+        uint[] memory sharedWithPermission = new uint[](usercount);
+        
+        uint k=0;
+        for(uint j=0;j<usercount;j++){
+            
+            if(uint(registerUsers[_glbluseraddress[j]].utype)== 2)
+            {
+              for(uint i = 0; i < sharedDocuments[_glbluseraddress[j]].length; i++)
+             {
+                if(sharedDocuments[_glbluseraddress[j]][i].docid == docid && sharedDocuments[_glbluseraddress[j]][i].docOwner == msg.sender) 
+                {
+                 requesterAddress[k] = _glbluseraddress[j];  
+                 requesterEmail[k]  = registerUsers[_glbluseraddress[j]].details.email;
+                 sharedWithPermission[k] = uint(sharedDocuments[_glbluseraddress[j]][i].permission);
+                 k++;
+                }    
+             }
             }
-        }*/
-
-        return (sharedWithAddress, sharedWithPermission);
+        
+        }
+        
+        return (requesterAddress,sharedWithPermission,requesterEmail);
     }
 
     function getTotalSharedDocsByOthers() public view returns(uint256){
@@ -253,11 +258,11 @@ contract digiLocker {
         
     }
 
-    function getEmailIdByAddrss()public view returns(string memory,string memory,string memory,address)
+    function getEmailIdByAddrss()public view returns(string memory,string memory,string memory)
     {
         return (registerUsers[msg.sender].details.email,
                 registerUsers[msg.sender].details.firstName,
-                registerUsers[msg.sender].details.lastName,msg.sender);
+                registerUsers[msg.sender].details.lastName);
     }
     
     function getAddressByEmail(string memory _email)public view returns(address)

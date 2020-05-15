@@ -115,6 +115,7 @@ $(document).on('click', '.shared_with', function () {
     var doc_name = _this.attr("doc_name");
     $(".doc_name_modal").html(doc_name)
     contract.methods.getUserAddressofSharedDoc(doc_id).call().then(function (obj) {
+        console.log(obj)
         var userAddrrs = [];
         var i = 0;
         for (var k = 0; k < obj[0].length; k++) {
