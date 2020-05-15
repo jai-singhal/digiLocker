@@ -10,6 +10,12 @@
         <div class="float-left">
             <p>Document ID: <strong>{{docid}}</strong></p>
         </div>
+        
+        <div class="float-right upload_btn">
+            <a class="waves-effect waves-light btn modal-trigger" href="#requestDoc">
+                Search Document
+            </a>
+        </div>
     </div>
 </div>
 <div class="container">
@@ -40,6 +46,9 @@
         </div>
     </div>
 </div>
+
+{% include "components/modal_searchdoc.html" %}
+
 {% endblock container %}
 {% block javascript %}
 <script type="text/javascript" src="{{ url_for('static', filename='js/search_by_docid.js') }}"></script>

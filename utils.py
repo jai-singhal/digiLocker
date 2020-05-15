@@ -166,9 +166,9 @@ def prepareAproovedMail(
         </head>
         <body>
         <p> Hello {owner_name}, <br /> <br />
-        {owner_email} has shared a document {doc_name}  with you 
+        {owner_email} has shared a document {doc_name}  with you. You can now download the document.
         <br /><br />
-        Please click on below button to access the document.
+        Please click on below button to download the document.
         <br/>
         <br/>
         <a class = "btn" href="{approval_url}"
@@ -185,10 +185,17 @@ def prepareAproovedMail(
             line-height: 36px;
             text-transform: uppercase;"
         >
-        Click to aproove the request
+        Click to Download
         </a>
         <br />
         <br />
+
+        <p>
+        On clicking the above link, you will be asked for your private Key
+         to download the document.
+        </p>
+        <br>
+
         <p>Best<br>Digilocker Team</p>
         </body>
         </html>

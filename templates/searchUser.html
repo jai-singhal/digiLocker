@@ -10,11 +10,16 @@
 
 <div class="container">
     <div class="row header">
-        <!-- <p id = "account-address">{{user_address}}</p> -->
         <div class="float-left">
             <p>User Address: <strong>{{uid}}</strong></p>
-         <!--   <p>Total Document Uploaded: <strong id="total_docs"></strong></p>-->
         </div>
+
+        <div class="float-right upload_btn">
+            <a class="waves-effect waves-light btn modal-trigger" href="#requestDoc">
+                Search Document
+            </a>
+        </div>
+
     </div>
 </div>
 
@@ -48,6 +53,7 @@
 	</div>
 </div>
 
+{% include "components/modal_searchdoc.html" %}
 
 {% endblock container %}
 
