@@ -73,7 +73,8 @@ $("#resident_registration").submit(function(e){
                         text: "Registration Successful!! You will recieve credentials via mail.",
                         icon: "success",
                     }).then((value) => {
-                        window.location.replace(resp.redirect_url);
+                        if(value)
+                            window.location.replace(resp.redirect_url);
                     });
                 });
             }

@@ -441,6 +441,9 @@ $(document).ready(function () {
                 title: "Error!",
                 text: "Not logined",
                 icon: "error",
+            }).then((value) => {
+                if(value)
+                    logout();
             });
         }
         showBalance();
