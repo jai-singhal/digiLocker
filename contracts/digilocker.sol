@@ -142,24 +142,32 @@ contract digiLocker {
         }
     }
 
-    /* function getUserAddressofSharedDoc(bytes32 docid) public view returns (address[] memory, uint[] memory){
+    function getUserAddressofSharedDoc(bytes32 docid) public view returns (address[] memory, uint[] memory){
 
         uint count = 0;
-        for(uint i = 0; i < sharedDocuments[msg.sender].length; i++){
+
+        for(uint i=0;i<usercount;i++){
+            for(uint j=0;j < ownerDocuments[_glbluseraddress[i]].length;j++){
+            }     
+        }
+
+        
+        /*for(uint i = 0; i < sharedDocuments[msg.sender].length; i++){
             if(sharedDocuments[msg.sender][i].docid == docid) count++;
         }
         address[] memory sharedWithAddress = new address[](count);
         uint[] memory sharedWithPermission = new uint[](count);
         uint k = 0;
         for(uint i = 0; i < sharedDocuments[msg.sender].length; i++){
-            if(sharedDocuments[msg.sender][i].docid == docid){
+            if(sharedDocuments[msg.sender][i].docid == docid && sharedDocuments){
                 sharedWithAddress[k] = sharedDocuments[msg.sender][i].sharedWith;
                 sharedWithPermission[k] = uint(sharedDocuments[msg.sender][i].permission);
                 k++;
             }
-        }
+        }*/
+
         return (sharedWithAddress, sharedWithPermission);
-    } */
+    }
 
     function getTotalSharedDocsByOthers() public view returns(uint256){
         return sharedDocuments[msg.sender].length;

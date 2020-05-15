@@ -138,6 +138,6 @@ logs/*
 *.bat
 *.env
 .env/
-
+ben/
 config.py
 static/js/abi.js

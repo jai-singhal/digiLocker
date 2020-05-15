@@ -1,21 +1,28 @@
-
 var web3 = new Web3(window.web3.currentProvider);
 var contract = null;
 var address = null;
 
-function stateChange () {
+function stateChange() {
     address = window.web3.currentProvider;
     console.log("Try again")
     if (!address.selectedAddress) {
         window.location.reload();
         setTimeout(stateChange, 700); // try again in 300 milliseconds
     }
-  }
-  
-function getContract(){
-    if(!contract){
+}
+
+function getUrlVars() {
+    var vars = {};
+    window.location.search.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+        vars[key] = value;
+    });
+    return vars;
+}
+
+function getContract() {
+    if (!contract) {
         address = window.web3.currentProvider;
-        if(!address.selectedAddress && window.location.pathname !== "/")
+        if (!address.selectedAddress && window.location.pathname !== "/")
             stateChange()
         address = address.selectedAddress;
         console.log(address, "final")
@@ -28,22 +35,22 @@ function getContract(){
 }
 
 
-setInterval(function() {
+setInterval(function () {
     window.ethereum.on('accountsChanged', function (accounts) {
         swal("The account change is observed. Reload?")
-        .then((value) => {
-            if(value){
-                logout();
-            }
-        });
+            .then((value) => {
+                if (value) {
+                    logout();
+                }
+            });
     })
-  }, 250);
+}, 250);
 
 
 /**
  * TODO: 
  */
-$(document).ready(function(){
+$(document).ready(function () {
     address = window.web3.currentProvider;
     console.log(address)
     address = address.selectedAddress;
@@ -52,10 +59,8 @@ $(document).ready(function(){
 
 
 
-if(typeof(String.prototype.trim) === "undefined")
-{
-    String.prototype.trim = function() 
-    {
+if (typeof (String.prototype.trim) === "undefined") {
+    String.prototype.trim = function () {
         return String(this).replace(/^\s+|\s+$/g, '');
     };
 }
@@ -86,7 +91,7 @@ function checkWeb3(callback) {
 }
 
 
-function logout(){
+function logout() {
     var request = new XMLHttpRequest();
     let logout_url = "/api/logout/metamask";
     request.open('GET', logout_url, true);
@@ -94,8 +99,7 @@ function logout(){
         if (request.status >= 200 && request.status < 400) {
             var resp = JSON.parse(request.responseText);
             window.location.replace(resp.redirect_url);
-        }
-        else{
+        } else {
             alert("Logout failed")
         }
     };
@@ -111,18 +115,18 @@ $("#logout-btn").click(function (e) {
 });
 
 
-function checkAlreadyRegiteredUser(){
+function checkAlreadyRegiteredUser() {
     contract = getContract()
-    contract.methods.isalreadyRegisteredUser().call().then(function(obj){
-        if(obj == false){
+    contract.methods.isalreadyRegisteredUser().call().then(function (obj) {
+        if (obj == false) {
             swal({
-                title: "Alert!",
-                text: "User is not registered!!. Redirecting to home page.",
-                icon: "warning",
-            })
-            .then((value) => {
-                logout();
-            });
+                    title: "Alert!",
+                    text: "User is not registered!!. Redirecting to home page.",
+                    icon: "warning",
+                })
+                .then((value) => {
+                    logout();
+                });
         }
     }).catch(function (error) {
         swal({
@@ -130,6 +134,5 @@ function checkAlreadyRegiteredUser(){
             text: "Error while checking user is regitred or not" + error,
             icon: "error",
         });
-   });
+    });
 }
-
