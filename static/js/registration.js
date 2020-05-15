@@ -68,11 +68,12 @@ $("#resident_registration").submit(function(e){
                     access_key, pu
                 ).send().then(function(res){
                     // console.log("xx", err, res)
-                    window.location.replace(resp.redirect_url);
                     swal({
                         title: "Success!",
                         text: "Registration Successful!! You will recieve credentials via mail.",
                         icon: "success",
+                    }).then((value) => {
+                        window.location.replace(resp.redirect_url);
                     });
                 });
             }
