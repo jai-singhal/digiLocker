@@ -147,10 +147,28 @@ contract digiLocker {
 
     function getUserAddressofSharedDoc(bytes32 docid) public view returns (address[] memory, uint[] memory,string[] memory){
 
+        uint count=0;
         
-        address[] memory requesterAddress = new address[](usercount);
-        string[] memory requesterEmail = new string[](usercount);
-        uint[] memory sharedWithPermission = new uint[](usercount);
+        
+        
+        for(uint j=0;j<usercount;j++){
+            
+            if(uint(registerUsers[_glbluseraddress[j]].utype)== 2 && _glbluseraddress[j]!=0x0000000000000000000000000000000000000000)
+            {
+              for(uint i = 0; i < sharedDocuments[_glbluseraddress[j]].length; i++)
+             {
+                if(sharedDocuments[_glbluseraddress[j]][i].docid == docid && sharedDocuments[_glbluseraddress[j]][i].docOwner == msg.sender) 
+                {
+                  count++;
+                }    
+             }
+            }
+        
+        }
+        
+        address[] memory requesterAddress = new address[](count);
+        string[] memory requesterEmail = new string[](count);
+        uint[] memory sharedWithPermission = new uint[](count);
         
         uint k=0;
         for(uint j=0;j<usercount;j++){
