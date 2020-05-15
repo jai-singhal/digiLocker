@@ -64,10 +64,9 @@ contract digiLocker {
        return (registerUsers[msg.sender].accessKey);
     }
     
-    function getUserType() public view returns(int)
+    function getUserType() public view returns(uint)
     {
-        if(!isalreadyRegisteredUser()) return -1;
-        return int(registerUsers[msg.sender].utype);
+        return uint(registerUsers[msg.sender].utype);
     }
     
     function getRegisteredUser() public view returns(bytes32, address, string memory){
@@ -108,6 +107,7 @@ contract digiLocker {
     function getDocCountByUserId() public view returns(uint256){
         return ownerDocuments[msg.sender].length;
     }
+    
 
     function uploadDocument(string memory docName, bytes32 docHash, string memory timestamp) public returns(bool){
         bytes32 docid = keccak256(abi.encode(docHash, msg.sender));
@@ -119,19 +119,21 @@ contract digiLocker {
         
     }
 
-    function checkAlreadyShared(bytes32 docId, string memory email_)public view returns(bool){
-        for(uint i = 0; i<sharedDocuments[msg.sender].length; i++)
-            if(sharedDocuments[msg.sender][i].docid == docId &&
-                sharedDocuments[msg.sender][i].sharedWith == emailAddressMapping[email_])
+    function checkAlreadyShared(bytes32 docId,address _owner,address _requester)public view returns(bool){
+        for(uint i = 0; i<sharedDocuments[_requester].length; i++)
+            if(sharedDocuments[_requester][i].docid == docId &&
+                sharedDocuments[_requester][i].docOwner == _owner)
                 return true;
-            
-        return false;
+          
+       
     }
 
-    function shareDocumentwithUser(bytes32 docid, string memory email, uint32 permission) public{
-        sharedDoc memory d = sharedDoc(docid, emailAddressMapping[email], Permission(permission));
-        sharedDocuments[msg.sender].push(d);
-        emit sharedDocumentEvent(docid, emailAddressMapping[email], permission);  
+    function shareDocumentwithUser(bytes32 docid, address  _owner, uint32 permission,address _requester) public{
+       
+            sharedDoc memory d = sharedDoc(docid, _owner, Permission(permission));
+            sharedDocuments[_requester].push(d);
+            emit sharedDocumentEvent(docid, _owner, permission);  
+            
     }
 
     function isValidSharableUser(string memory email_) public view returns(bool){
@@ -143,7 +145,7 @@ contract digiLocker {
         }
     }
 
-    function getUserAddressofSharedDoc(bytes32 docid) public view returns (address[] memory, uint[] memory){
+  /*  function getUserAddressofSharedDoc(bytes32 docid) public view returns (address[] memory, uint[] memory){
 
         uint count = 0;
         for(uint i = 0; i < sharedDocuments[msg.sender].length; i++){
@@ -160,7 +162,7 @@ contract digiLocker {
             }
         }
         return (sharedWithAddress, sharedWithPermission);
-    }
+    }*/
 
     function getTotalSharedDocsByOthers() public view returns(uint256){
         return sharedDocuments[msg.sender].length;
@@ -177,6 +179,19 @@ contract digiLocker {
         }   
     }
     
+    function bytes32ToStr(bytes32 _bytes32) public pure returns (string memory) {
+
+    // string memory str = string(_bytes32);
+    // TypeError: Explicit type conversion not allowed from "bytes32" to "string storage pointer"
+    // thus we should fist convert bytes32 to bytes (to dynamically-sized byte array)
+
+        bytes memory bytesArray = new bytes(32);
+        for (uint256 i; i < 32; i++) {
+            bytesArray[i] = _bytes32[i];
+        }
+        return string(bytesArray);
+        }
+
     
     function getOwnerDocumetList()public view returns (
         string[] memory, string[] memory, bytes32[] memory) {
@@ -233,11 +248,11 @@ contract digiLocker {
         
     }
 
-    function getEmailIdByAddrss()public view returns(string memory,string memory,string memory)
+    function getEmailIdByAddrss()public view returns(string memory,string memory,string memory,address)
     {
         return (registerUsers[msg.sender].details.email,
                 registerUsers[msg.sender].details.firstName,
-                registerUsers[msg.sender].details.lastName);
+                registerUsers[msg.sender].details.lastName,msg.sender);
     }
     
     function getAddressByEmail(string memory _email)public view returns(address)
@@ -277,7 +292,7 @@ contract digiLocker {
     function getSharedDocList(address _uaddr_)public view returns(bytes32[] memory,string[] memory, string[] memory,uint[] memory){
         
       string[] memory _docName = new string[](sharedDocuments[_uaddr_].length);
-      address[] memory _sharedWith = new address[](sharedDocuments[_uaddr_].length);
+      address[] memory _docOwner = new address[](sharedDocuments[_uaddr_].length);
       string[] memory _email = new string[](sharedDocuments[_uaddr_].length);
       bytes32[] memory _docid = new bytes32[](sharedDocuments[_uaddr_].length);
       uint[] memory sharedWithPermission = new uint[](sharedDocuments[_uaddr_].length);
@@ -285,7 +300,7 @@ contract digiLocker {
         for(uint i=0;i<sharedDocuments[_uaddr_].length;i++)
         {
             _docid[i] = sharedDocuments[_uaddr_][i].docid;
-            _sharedWith[i] =  sharedDocuments[_uaddr_][i].sharedWith ;
+            _docOwner[i] =  sharedDocuments[_uaddr_][i].docOwner ;
             sharedWithPermission[i] = uint(sharedDocuments[_uaddr_][i].permission);
         }
 
@@ -295,9 +310,9 @@ contract digiLocker {
             
         }
         
-        for(uint k=0;k < _sharedWith.length;k++){
+        for(uint k=0;k < _docOwner.length;k++){
             
-         _email[k] =    registerUsers[_sharedWith[k]].details.email;
+         _email[k] =    registerUsers[_docOwner[k]].details.email;
             
         }
         
