@@ -27,6 +27,7 @@ function getContract(){
     return contract;
 }
 
+
 setInterval(function() {
     window.ethereum.on('accountsChanged', function (accounts) {
         swal("The account change is observed. Reload?")
@@ -36,7 +37,7 @@ setInterval(function() {
             }
         });
     })
-  }, 100);
+  }, 250);
 
 
 /**

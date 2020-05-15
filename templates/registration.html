@@ -5,48 +5,50 @@
 
 <main>
     <div class="container">
-        <ul class="collapsible">
+        <ul class="collapsible popout">
             <li>
-                <div class="collapsible-header">Register as Resident</div>
+                <div class="collapsible-header">Register as Resident
+                <i class="material-icons">accessibility</i>
+                </div>
                 <div class="collapsible-body">
                     <form class="col s12" id="resident_registration" address="{{user_address}}">
                         <div class="row">
                             <div class="input-field col s6">
-                                <input placeholder="First Name" id="first_name" type="text" class="validate">
-                                <label for="first_name">First Name</label>
+                                <input required="" aria-required="true" placeholder="First Name" id="first_name" type="text" class="validate">
+                                <label for="first_name">First Name<span class="required">*</span></label>
                             </div>
                             <div class="input-field col s6">
-                                <input id="last_name" type="text" class="validate">
-                                <label for="last_name">Last Name</label>
+                                <input required="" aria-required="true" id="last_name" type="text" class="validate">
+                                <label for="last_name">Last Name<span class="required">*</span></label>
                             </div>
                         </div>
 
                         <div class="row">
                             <div class="input-field col s12">
-                                <input id="email" type="email" class="validate" placeholder="Enter your email">
-                                <label for="email">Email</label>
+                                <input required="" aria-required="true" id="email" type="email" class="validate" placeholder="Enter your email">
+                                <label for="email">Email<span class="required">*</span></label>
                             </div>
                         </div>
 
                         <div class="row">
                             <div class="input-field col s12">
-                                <input id="confirm_email" type="email" class="validate"
+                                <input required="" aria-required="true" id="confirm_email" type="email" class="validate"
                                     placeholder="Re enter your email">
-                                <label for="email">Confirm Email</label>
+                                <label for="email">Confirm Email<span class="required">*</span></label>
                             </div>
                         </div>
 
                         <div class="row">
                             <div class="input-field col s12">
-                                <input id="master_key" type="password" class="validate">
-                                <label for="master_key">Master Key</label>
+                                <input required="" aria-required="true" id="master_key" type="password" class="validate">
+                                <label for="master_key">Master Key<span class="required">*</span></label>
                             </div>
                         </div>
 
                         <div class="row">
                             <div class="input-field col s12">
-                                <input id="master_key_confirm" type="password" class="validate">
-                                <label for="master_key_confirm">Confirm Master Key</label>
+                                <input required="" aria-required="true" id="master_key_confirm" type="password" class="validate">
+                                <label for="master_key_confirm">Confirm Master Key<span class="required">*</span></label>
                             </div>
                         </div>
 
@@ -64,30 +66,37 @@
                 </div>
             </li>
             <li>
-                <div class="collapsible-header">Register as Organization/Institution</div>
+                <div class="collapsible-header">Register as Organization/Institution <i class="material-icons">account_balance</i></div>
 
-                <div class="collapsible-body">
+                <div class="collapsible-body" id = "req_form_collaps">
                     <form class="col s12" id="requestor_registration" address="{{user_address}}">
                         <div class="row">
                             <div class="input-field col s12">
-                                <input placeholder="Organization name" id="org_name" type="text" class="validate">
-                                <label for="Organization_name">Name of your Organization/Institution</label>
+                                <input required="" aria-required="true" placeholder="Organization name" id="org_name" type="text" class="validate">
+                                <label for="Organization_name">Name of your Organization/Institution <span class="required">*</span></label>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="input-field col s12">
+                                <input required="" aria-required="true" placeholder="Please enter the master code of the organization." id="master_code" type="text" class="validate">
+                                <label for="master_code">Master Code for registration <span class="required">*</span></label>
                             </div>
                         </div>
 
                         <div class="row">
                             <div class="input-field col s12">
                                 <input id="org_email" type="email" class="validate"
-                                    placeholder="Enter your organization email">
-                                <label for="email">Organization email</label>
+                                    placeholder="Enter your organization email" required="" aria-required="true">
+                                <label for="email">Organization email <span class="required">*</span></label>
                             </div>
                         </div>
 
                         <div class="row">
                             <div class="input-field col s12">
                                 <input id="confirm_org_email" type="email" class="validate"
-                                    placeholder="Re enter your organization email">
-                                <label for="email">Confirm Email</label>
+                                    placeholder="Re enter your organization email" required="" aria-required="true">
+                                <label for="email">Confirm Email<span class="required">*</span></label>
                             </div>
                         </div>
 

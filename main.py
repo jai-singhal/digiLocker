@@ -163,6 +163,10 @@ def registration_postapi(user_address):
             }
 
         elif utype == "2":
+            mastercode = request.form.get("mastercode")
+            if mastercode not in app.config["VERIFICATION_CODES"]:
+                return {'success': False, 'error': "Verification code not valid.", "status_code": 400}
+
             pu, pr = generateRSAKeypair()
             msg = prepareMailMsg(f"{first_name}", email, user_address, pu, pr, None, MAIL_SENDER)
             mail.send(msg)  
@@ -220,6 +224,17 @@ def login_postapi():
                 return {'success': True, 'redirect_url': "/dashboard"}
 
 
+@app.route("/api/get/verify/master/code", methods = ['GET'])
+@token_required
+def verifyMasterCode(user_address):
+    try:
+        if request.args.get("master_code", None) in app.config["VERIFICATION_CODES"]:
+            return {'success': True, 'valid': True, "status_code": 200}
+        else:
+            return {'success': True, 'valid': False, "status_code": 200}
+    except Exception as e:
+        print(e, "xxx")
+        return {'success': False, 'error': str(e), "status_code": 400}
 
 
 @app.route("/api/logout/metamask", methods = ['GET'])

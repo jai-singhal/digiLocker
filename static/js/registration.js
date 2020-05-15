@@ -96,12 +96,57 @@ $("#resident_registration").submit(function(e){
 })
 
 
+var masterKeyValid = false;
+function validateMasterCode(){
+
+    data = {
+        "master_code": $("#master_code").val()
+    }
+    $.ajax({
+        url: '/api/get/verify/master/code',
+        data: data,
+        type: 'GET',
+        success: function (res) {
+            if(res.valid == false){
+                swal({
+                    title: "Master code invalid",
+                    text: "Please enter the master Code corrctly!",
+                    icon: "warning",
+                  }).then((value) => {
+                      if(value){
+                        $("#master_code").val("");
+                        $("#master_code").focus();
+                        masterKeyValid = false;       
+                      }
+                    });
+                  
+            }
+            else
+                masterKeyValid = true;
+        },
+        error: function(res){
+            console.log(res, "error")
+        }
+    });
+}
+
+
+$("#master_code").focusout(function(){
+    if($("#master_code").val().length != 0)
+        validateMasterCode();
+});
+
 $("#requestor_registration").submit(function(e){
     e.preventDefault();
     var fname = $("#org_name").val()
     var lname = "";
     var email = $("#org_email").val()
     var confirm_email = $("#confirm_org_email").val()
+    var master_code = $("#master_code").val();
+
+    validateMasterCode();
+    if(!masterKeyValid || master_code.length == 0) return false;
+
 
     var cno = $("#org_contact_no").val()
 
@@ -129,13 +174,19 @@ $("#requestor_registration").submit(function(e){
                     fname, lname, email, utype, cno, 
                     access_key, resp.pu
                 ).send().then(function(res){
-                    window.location.replace(resp.redirect_url);
                     swal({
                         title: "Success!",
                         text: "Registration Successful!! You will recieve credentials via mail.",
                         icon: "success",
+                    }).then((value) => {
+                        if(value){
+                            window.location.replace(resp.redirect_url);
+                        }
                     });
-                });
+                })
+            }
+            else{
+                alert("Not valid")
             }
         } else {
             alert("Error in sending mail")
@@ -152,6 +203,7 @@ $("#requestor_registration").submit(function(e){
     var formData = 'first_name=' + fname;
     formData += "&email=" + email + "&contact_no=" + cno + "&utype=" + "2";
     formData += "&user_address=" + address;
+    formData += "&mastercode=" + master_code;
     request.send(formData);
 
 })

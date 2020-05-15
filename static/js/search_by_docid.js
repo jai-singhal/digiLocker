@@ -121,8 +121,11 @@ function sendRequestMailAjax(doc_id, email, doc_name){
                         title: "Success!",
                         text: "Request Mail is sent to the owner",
                         icon: "success",
-                      });
-                    window.location.replace("/dashboard");
+                      }).then((value) => {
+                        if(value){
+                            window.location.replace("/dashboard");
+                        }
+                    });
                 }
             } else {
                 swal({
