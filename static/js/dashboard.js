@@ -1,6 +1,9 @@
 var documents = [];
 var docList = [];
 
+
+var resident_address = document.getElementById("main_id").getAttribute("user_address");
+
 function showBalance() {
     web3.eth.getBalance(address, (err, balance) => {
         var mbalance = web3.utils.fromWei(balance, "ether");
@@ -162,7 +165,7 @@ $(document).on('click', '.sharedoc', function () {
     var doc_id = _this.attr("doc_id");
     var doc_name = _this.attr("doc_name");
     $(".doc_name_modal").html("Share doc: " + doc_name)
-
+    //console.log('resident',resident_address)
     $('#shareThisDoc').submit(function (e) {
         e.preventDefault();
         var email = $("#share_email_").val();
@@ -172,7 +175,9 @@ $(document).on('click', '.sharedoc', function () {
 
         contract.methods.isValidSharableUser(email).call().then(function (res1) {
             if (res1) {
-                contract.methods.checkAlreadyShared(doc_id, email).call().then(function (res2) {
+                contract.methods.getAddressByEmail(email).call().then(function(req_address){
+                    console.log("Req address",req_address)
+                 contract.methods.checkAlreadyShared(doc_id,resident_address,req_address).call().then(function (res2) {
                     if (!res2) {
                         contract.methods.getUseraccessKey().call().then(function (mkeyHash) {
                             var request = new XMLHttpRequest();
@@ -189,7 +194,7 @@ $(document).on('click', '.sharedoc', function () {
                                         });
                                     } else {
                                         contract.methods.shareDocumentwithUser(
-                                            doc_id, email, permission).send().then(function (res3) {
+                                            doc_id, resident_address, permission,req_address).send().then(function (res3) {
                                             $("#main-loader").show();
                                             sendShareMailAjax(doc_id, email, doc_name);
                                             $("#main-loader").hide();
@@ -229,6 +234,7 @@ $(document).on('click', '.sharedoc', function () {
                         });
                     }
                 });
+            });
             } else {
                 swal({
                     title: "Error!",
@@ -345,7 +351,7 @@ function getSharedDocListForRequestor() {
             `<tr>
             <th>Document Id</th>
             <th>Document Name</th>
-            <th>Shared with</th>
+            <th>Document Owner</th>
             <th>Permission</th>
             </tr>`
         )

@@ -1,7 +1,9 @@
+var _residentaddr = "";
+
 function getDocumentDetails() {
     const urlParams = new URLSearchParams(window.location.search);
     const docid = urlParams.get('docid');
-    console.log(docid)
+    //console.log(docid)
     try{
         contract.methods.getDocumentListbyDocId(docid).call().then(function(docs) {
             $("#document_table thead").append(
@@ -34,6 +36,7 @@ function getDocumentDetails() {
 
 $(document).on('click', '.sharedoc', function() {
     $('#shareDocModel').modal("open");
+    _residentaddr = "";
     var _this = $(this);
     var doc_id = _this.attr("doc_id");
     var doc_name = _this.attr("doc_name");
@@ -44,16 +47,22 @@ $(document).on('click', '.sharedoc', function() {
         if (_email[0] != null || _email[0] != "") {
             email = _email[0];
         }
+        
+       contract.methods.getAddressByEmail(document.getElementById("owner_email")).call().then(function(addrs){
+        _residentaddr = addrs;
+        console.log(_residentaddr)
+        })
+        
     });
 
     $('#shareThisDoc').submit(function(e) {
         e.preventDefault();
-        // var email = $("#share_email_").val();
+       
 
         var permission = 0;
         contract.methods.isValidSharableUser(email).call().then(function(res) {
             if (res) {
-                contract.methods.checkAlreadyShared(doc_id, email).call().then(function(res) {
+                contract.methods.checkAlreadyShared(doc_id,_residentaddr,address).call().then(function(res) {
                     if (!res) {
                         console.log(res)
                         //send the mail
@@ -89,7 +98,7 @@ $(document).on('click', '.sharedoc', function() {
 
 function sendRequestMailAjax(doc_id, email, doc_name){
     var owner_email = $("#owner_email").html();
-    console.log(owner_email)
+    //console.log(owner_email)
     contract.methods.getAddressByEmail(owner_email).call().then(function(owner_address_) {
         var data = {
             "doc_id": doc_id,

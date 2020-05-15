@@ -1,21 +1,20 @@
 
-var _glbladrress = "";
-
+var _glbladrress = "";//Address of owner or resident to whom we request for document
+var _reqaddress = "";
 function displayDocumentsList(){
 
     var _uid = document.getElementById("_useraddress").innerHTML;
-    console.log(_uid)
+    //console.log(_uid)
     var x="";
     
     if(_uid.indexOf("@")>0)
     {
     contract.methods.getAddressByEmail(_uid).call().then(function(result)
     {
-        console.log(result)
+        //console.log(result)
         x = result;
-        console.log(x)
         _glbladrress = result;
-        console.log(_glbladrress)
+        //List of docs uploaded by owner we searched
         contract.methods.getDocumetList(x).call().then(function(docs){
         console.log(docs)
         var documents = [];   
@@ -65,8 +64,9 @@ function displayDocumentsList(){
     else
     {
         x = _uid;
+        _glbladrress =_uid;
     
-    console.log(x)
+    //console.log(x)
     contract.methods.getDocumetList(x).call().then(function(docs){
     console.log(docs)
     var documents = [];   
@@ -133,6 +133,7 @@ $(document).on('click', '.sharedoc', function() {
     var doc_id = _this.attr("doc_id");
     var doc_name = _this.attr("doc_name");
     $(".doc_name_modal").html("Share doc: " + doc_name)
+    
     var email = "";
     contract.methods.getEmailIdByAddrss().call().then(function(_email)
     {
@@ -140,6 +141,7 @@ $(document).on('click', '.sharedoc', function() {
             if(_email[0] != null || _email[0] != "")
             {
                 email = _email[0];
+                
             }
 
     });
@@ -151,7 +153,7 @@ $(document).on('click', '.sharedoc', function() {
         console.log(email)
         contract.methods.isValidSharableUser(email).call().then(function(res){
             if(res){
-                contract.methods.checkAlreadyShared(doc_id, email).call().then(function(res){
+                contract.methods.checkAlreadyShared(doc_id,_glbladrress,address).call().then(function(res){
                     if(!res){
                         console.log(res)
                         sendRequestMailAjaxUser(doc_id,email,doc_name);
@@ -279,7 +281,7 @@ $(document).ready(function(){
     //showBalance()
     //getDocCount();
     displayDocumentsList();
-    getDocCount();
+   // getDocCount();
     
     
     $("#main-loader").hide();
