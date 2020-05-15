@@ -1,6 +1,6 @@
-var contractAddress = "0x87f5d8F37E93AEFd05457Bb42dC20Ab4dD3D962a"
+var contractAddress = "0x11366a3743BFb3685b0144bf69b03C628E8dEF8c"
 
-var abi = [
+var abi =[
 	{
 		"anonymous": false,
 		"inputs": [
@@ -81,13 +81,39 @@ var abi = [
 		"inputs": [
 			{
 				"internalType": "bytes32",
+				"name": "_bytes32",
+				"type": "bytes32"
+			}
+		],
+		"name": "bytes32ToStr",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			}
+		],
+		"payable": false,
+		"stateMutability": "pure",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"internalType": "bytes32",
 				"name": "docId",
 				"type": "bytes32"
 			},
 			{
-				"internalType": "string",
-				"name": "email_",
-				"type": "string"
+				"internalType": "address",
+				"name": "_owner",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "_requester",
+				"type": "address"
 			}
 		],
 		"name": "checkAlreadyShared",
@@ -478,39 +504,13 @@ var abi = [
 	},
 	{
 		"constant": true,
-		"inputs": [
-			{
-				"internalType": "bytes32",
-				"name": "docid",
-				"type": "bytes32"
-			}
-		],
-		"name": "getUserAddressofSharedDoc",
-		"outputs": [
-			{
-				"internalType": "address[]",
-				"name": "",
-				"type": "address[]"
-			},
-			{
-				"internalType": "uint256[]",
-				"name": "",
-				"type": "uint256[]"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
 		"inputs": [],
 		"name": "getUserType",
 		"outputs": [
 			{
-				"internalType": "int256",
+				"internalType": "uint256",
 				"name": "",
-				"type": "int256"
+				"type": "uint256"
 			}
 		],
 		"payable": false,
@@ -628,14 +628,19 @@ var abi = [
 				"type": "bytes32"
 			},
 			{
-				"internalType": "string",
-				"name": "email",
-				"type": "string"
+				"internalType": "address",
+				"name": "_owner",
+				"type": "address"
 			},
 			{
 				"internalType": "uint32",
 				"name": "permission",
 				"type": "uint32"
+			},
+			{
+				"internalType": "address",
+				"name": "_requester",
+				"type": "address"
 			}
 		],
 		"name": "shareDocumentwithUser",
