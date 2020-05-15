@@ -60,7 +60,9 @@ function displayResidentUploadedDocs() {
         for (var j = 0; j < documents.length; j++) {
             $("#document_table tbody").append(
                 `<tr>
-                <td>Doc #${j+1}</td>
+                <td><a class = 'tooltipped' 
+                data-position="bottom" data-tooltip="${documents[j].doc_id}" 
+                >Doc #${j+1}</td>
                 <td>${documents[j].filename}</td>
                 <td>${documents[j].timestamp}</td>
                 <td>
@@ -69,15 +71,22 @@ function displayResidentUploadedDocs() {
                 doc_id=${documents[j].doc_id}
                 doc_name=${documents[j].filename}
                 >
-                Click to Reveal</button></td>
+                Click to Reveal
+                <i class="material-icons tiny left">folder_shared</i>
+                
+                </button></td>
                 <td><button 
                     class = "btn btn-primary sharedoc"
                     doc_id=${documents[j].doc_id}
-                    doc_name=${documents[j].filename}
-                >Share</button></td>
+                    doc_name=${documents[j].filename}>
+					<i class="material-icons tiny left">share</i>
+                    Share
+                    </button></td>
                 </tr>`
             )
         }
+        $('.tooltipped').tooltip();
+
     }).catch(function (error) {
         swal({
             title: "Error!",
@@ -334,7 +343,6 @@ function groupBy(objectArray, property) {
 function getSharedDocListForRequestor() {
     // address -> requester
     contract.methods.getSharedDocList(address).call().then(function (docs) {
-        console.log(docs)
         var i = 0;
         for (var k = 0; k < docs[0].length; k++) {
             docList[i] = {}
@@ -370,9 +378,11 @@ function getSharedDocListForRequestor() {
             $("#sharedDocumentListByUser ul").append(
                 `
                 <li>
-                <div class="collapsible-header">${property} 
+                <div class="collapsible-header">  
+                <i class="material-icons">mail</i>${property} 
                 <span class="badge blue new" data-badge-caption="">
                     ${docGroup[property].length}</span>
+                    <i class="material-icons">expand_more</i>
                 </div>
                 <div class="collapsible-body">
                 <table property = "${property}" 
@@ -406,12 +416,11 @@ function getSharedDocListForRequestor() {
                 )
             }
         }
+
     });
 }
 
-$("#nottoclickon").click(function(e){
-    e.preventDefault()
-})
+
 $(document).ready(function () {
     checkAlreadyRegiteredUser();
 
@@ -445,4 +454,5 @@ $(document).ready(function () {
     $("#main-loader").hide();
     $('.modal').modal();
     $('.collapsible').collapsible();
+
 })
