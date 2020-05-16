@@ -10,6 +10,9 @@ function getPublicKey(){
     var owner_name="";
     var owner_email="";
     var doc_name ="";
+    var hash="";
+    var total_doc=1;
+    var docIndex=-1;
     console.log(requester_address)
 
     contract.methods.getOwnerDocInfoByDocId(doc_id).call().then(function(details){
@@ -20,25 +23,85 @@ function getPublicKey(){
                 console.log(own)
                 owner_name = own[1]+" "+own[2];
                 owner_email = own[0];
+
+                 contract.methods.getDocIndex(doc_id,owner_address).call().then(function(index){
+
+                    docIndex = index;
+
+                     contract.methods.getPublicKey(requester_address).call().then(function(key) {
+                     console.log(key)
+                     req_pub_key = key;
             
-             contract.methods.getPublicKey(requester_address).call().then(function(key) {
-                console.log(key)
-                req_pub_key = key;
-           
-                //Fetching details of requester such as name email and address(we already have)
-             contract.methods.getEmailIdByUsrAddr(requester_address).call().then(function(req){
-                console.log(req)
-                req_full_name = req[1]+" "+req[2];
-                req_email = req[0];
+                      //Fetching details of requester such as name email and address(we already have)
+                         contract.methods.getEmailIdByUsrAddr(requester_address).call().then(function(req){
+                         console.log(req)
+                         req_full_name = req[1]+" "+req[2];
+                         req_email = req[0];
                 
-                $(document).on('click', '.btn', function() { 
-                    sendRequestMailAjax(req_email,req_full_name,requester_address,
-                        owner_name,owner_address,owner_email,doc_id,doc_name,req_pub_key)
+                            $(document).on('click', '.btn', function() { 
+
+                             var masterKey = document.getElementById("master_key").value;
+                             console.log(masterKey)
+                    
+                             contract.methods.getUseraccessKey().call().then(function(mkeyhash)
+                             {
+                                hash = mkeyhash;
+                                var request = new XMLHttpRequest();
+        
+                                let accesskey_url = "/api/user/accesskey";
+                                request.open('POST', accesskey_url, true);
+
+                             request.onload = function ()
+                              {
+
+                                      if (request.status >= 200 && request.status < 400) {
+                                            var resp = JSON.parse(request.responseText);
+                                            if(resp.valid == false){
+                                             
+                                                    swal({
+                                                        title: "Warning!",
+                                                        text: "Enter master key correctly.",
+                                                        icon: "warning",
+                                                    });
+                                                    
+                                             return false;
+                                            }
+                                             else{
+
+                                            alert("Master Key is valid")
+                                            sendRequestMailAjax(masterKey,req_email,req_full_name,requester_address,
+                                               owner_name,owner_address,owner_email,doc_id,doc_name,req_pub_key,docIndex);
+                                        }
+                                      }
+                                         else{
+                                                  alert("Request failed")
+                                            }
+                              };
+                              request.onerror = function ()
+                               {
+                                            swal({
+                                           title: "Alert!",
+                                            text: "Master key is not correct!!",
+                                             icon: "error",
+                                });
+                        }
+
+                        var formData = 'master_key=' + masterKey + "&mkeydigest=" + hash + "&total_doc="+ total_doc;
+                        formData += "&upload=" + '0';
+                        console.log(formData)
+                        request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+                        request.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+                        request.send(formData);
+
+                        
+
                     });
 
+                });
+
                });
-               
-            });
+            });      
+        });    
         
         });
         
@@ -46,19 +109,21 @@ function getPublicKey(){
     
 }
 
-function sendRequestMailAjax(req_email,req_full_name,requester_address,
-    owner_name,owner_address,owner_email,doc_id,doc_name,req_pub_key){
+function sendRequestMailAjax(masterKey,req_email,req_full_name,requester_address,
+    owner_name,owner_address,owner_email,doc_id,doc_name,req_pub_key,docIndex){
 
     var data = {
         "doc_id": doc_id,
         "doc_name": doc_name,
-        "req_email": req_email,
+        "requester_email": req_email,
         "req_full_name": req_full_name,
         "requester_address": requester_address,
         "owner_address": owner_address,
         "owner_email": owner_email,
         "req_pub_key ": req_pub_key, 
-        "master_key": "asd",
+        "master_key": masterKey,
+        "owner_name":owner_name,
+        "docIndex":docIndex,
     }
     console.log(data)
 
@@ -80,14 +145,18 @@ function sendRequestMailAjax(req_email,req_full_name,requester_address,
         } else {
             swal({
                 title: "Error!",
-                text: "Error",
+                text: "Error, while sending request to the requestor",
                 icon: "error",
             });
         }
     };
 
     request.onerror = function(){
-        console.log("Error")
+        swal({
+            title: "Error!",
+            text: "Error, while sending mail",
+            icon: "error",
+        });
     };
 
     request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
