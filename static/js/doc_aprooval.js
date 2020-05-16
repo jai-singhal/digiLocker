@@ -63,7 +63,6 @@ function getPublicKey() {
                                             return false;
                                         } else {
 
-                                            alert("Master Key is valid")
                                             sendRequestMailAjax(masterKey, req_email, req_full_name, requester_address,
                                                 owner_name, owner_address, owner_email, doc_id, doc_name, req_pub_key, docIndex);
                                         }
@@ -113,7 +112,7 @@ function sendRequestMailAjax(masterKey, req_email, req_full_name, requester_addr
         "requester_address": requester_address,
         "owner_address": owner_address,
         "owner_email": owner_email,
-        "req_pub_key ": req_pub_key,
+        "req_pub_key": req_pub_key,
         "master_key": masterKey,
         "owner_name": owner_name,
         "docIndex": docIndex,

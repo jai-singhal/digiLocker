@@ -109,10 +109,10 @@ contract digiLocker {
     }
     
     function uploadDocument(string memory docName, bytes32 docId, bytes32 docHash, string memory timestamp) public returns(bool){
-            Document memory d = Document(docId, docName, timestamp, docHash);
-            ownerDocuments[msg.sender].push(d);
-            emit uploadDocumentEvent(docId, docHash, msg.sender);
-            return true;
+        Document memory d = Document(docId, docName, timestamp, docHash);
+        ownerDocuments[msg.sender].push(d);
+        emit uploadDocumentEvent(docId, docHash, msg.sender);
+        return true;
     }
 
     function checkAlreadyShared(bytes32 docId,address _owner,address _requester)public view returns(bool){
