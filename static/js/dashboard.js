@@ -25,6 +25,7 @@ function displayResidentUploadedDocs() {
     // });
     contract.methods.getOwnerDocumetList().call().then(function (docs) {
         var i = 0;
+        console.log(docs)
         for (var k = 0; k < docs[0].length; k++) {
             documents[i] = {}
             documents[i++].filename = docs[0][k]
@@ -81,7 +82,7 @@ function displayResidentUploadedDocs() {
             )
         }
         $('.tooltipped').tooltip();
-
+        getUsrDetails();
     }).catch(function (error) {
         swal({
             title: "Error!",
@@ -200,12 +201,7 @@ $(document).on('click', '.sharedoc', function () {
                                         } else {
                                             contract.methods.shareDocumentwithUser(
                                                 doc_id, resident_address, permission, req_address).send().then(function (res3) {
-                                                $("#main-loader").show();
                                                 sendShareMailAjax(doc_id, email, doc_name);
-                                                $("#main-loader").hide();
-                                                $('#share_email_').val("");
-                                                $('#share_mkey_').val("");
-                                                $('#shareDocModel').modal("close");
                                             }).catch(function (error) {
                                                 swal({
                                                     title: "Error!",
@@ -264,6 +260,7 @@ $(document).on('click', '.sharedoc', function () {
 
 
 function sendShareMailAjax(doc_id, email, doc_name) {
+    $("#main-loader").show();
     contract.methods.getAddressByEmail(email).call().then(function (requester_address) {
         contract.methods.getEmailIdByUsrAddr(address).call().then(function (owner_email_name) {
             contract.methods.getPublicKey(requester_address).call().then(function (req_pub_key) {
@@ -307,10 +304,16 @@ function sendShareMailAjax(doc_id, email, doc_name) {
                                 icon: "error",
                             });
                         }
+                        $('#share_email_').val("");
+                        $('#share_mkey_').val("");
+                        $('#shareDocModel').modal("close");
+                        $("#main-loader").hide();
+
                     };
 
-                    request.onerror = function () {
-                        console.log("Registration failed - there was an error");
+                    request.onerror = function (e) {
+                        alert("Upload failed - there was an error" + e);
+                        $("#main-loader").hide();
                     };
                     request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
                     request.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
@@ -326,6 +329,8 @@ function sendShareMailAjax(doc_id, email, doc_name) {
             });
         });
     });
+    $("#main-loader").hide();
+
 }
 
 function groupBy(objectArray, property) {
@@ -344,6 +349,7 @@ function getSharedDocListForRequestor() {
     // address -> requester
     contract.methods.getSharedDocList(address).call().then(function (docs) {
         var i = 0;
+        console.log(docs)
         for (var k = 0; k < docs[0].length; k++) {
             docList[i] = {}
             docList[i++].docId = docs[0][k]
@@ -351,7 +357,6 @@ function getSharedDocListForRequestor() {
 
         i = 0;
         for (var k = 0; k < docs[0].length; k++) {
-
             docList[i++].docName = docs[1][k]
         }
 
@@ -370,8 +375,8 @@ function getSharedDocListForRequestor() {
         console.log(docGroup)
         //console.log(docList)
         $("#sharedDocumentListByUser ul").html(`
-            <li class="collapsible-header" id = "nottoclickon">
-            <strong><h6>Document Shared with you</h6></strong>
+            <li class="z-depth-3" style = "padding:15px;">
+            <h6 class = "bold">Document Shared with you</h6>
             </li>
         `);
         for (const property in docGroup) {
@@ -416,8 +421,19 @@ function getSharedDocListForRequestor() {
                 )
             }
         }
+        getUsrDetails();
 
-    });
+    }).catch(function (error) {
+        swal({
+            title: "Error!",
+            text: "Error while getting shared doc " + error,
+            icon: "error",
+            closeOnClickOutside: false,
+        }).then((value) => {
+            if (value)
+                window.location.reload();
+        });
+    });;
 }
 
 function getUsrDetails(){

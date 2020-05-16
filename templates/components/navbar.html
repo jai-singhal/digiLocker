@@ -1,14 +1,15 @@
 <header class="mdc-top-app-bar">
     <nav>
         <div class="nav-wrapper">
-            <a href="#!" class="brand-logo"> DigiLocker</a>
+            <img style = "margin-top:8px; margin-left: 12px; height:40px;"
+                src="https://img1.digitallocker.gov.in/core/img/logodg.png" alt="logo">
             <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
             <ul class="right hide-on-med-and-down">
                 {% if user_address %}
                     <li id = "dash_btn"><a href="/dashboard">Dashboard<i class="material-icons right">dashboard</i></a></li>
-                    <li id="logout-btn" btn-for = "logout"><a class="waves-effect waves-light btn" href = "#">Logout</a></li>
+                    <li id="logout-btn" btn-for = "logout"><a class="waves-effect waves-light" href = "#"><i class="material-icons right">assignment_return</i> Logout</a></li>
                 {% else %}
-                    <li id="auth-btn" btn-for = "login"><a class="waves-effect waves-light btn" href = "">Login</a></li>
+                    <li id="auth-btn" btn-for = "login"><a class="waves-effect waves-light" href = "">Login<i class="material-icons right">account_circle</i></a></li>
                 
                 {% endif %}
                 </ul>

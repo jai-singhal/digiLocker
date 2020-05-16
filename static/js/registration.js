@@ -175,6 +175,7 @@ $("#requestor_registration").submit(function(e){
             if (resp.success){
                 var access_key = "0x0000000000000000000000000000000000000000"
                 var utype = 2;
+                console.log(resp, resp.pu, ":xxxx")
                 var r = contract.methods.registerUser(
                     fname, lname, email, utype, cno, 
                     access_key, resp.pu

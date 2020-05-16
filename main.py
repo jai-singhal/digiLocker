@@ -84,29 +84,35 @@ def upload_file_postapi(user_address):
     total_doc = request.form["total_doc"]
     file = request.files['file']
 
+    docHash = None
+    docId = None
+    fileContent = file.read().strip()
+    try:
+        docHash = hashlib.sha256(fileContent).hexdigest()
+        docId = hashlib.sha256()
+        docId.update(user_address.encode())
+        docId.update(total_doc.encode())
+        docId.update(docHash.encode())
+        docId = docId.hexdigest()
+    except Exception as e:
+        print(e, "dochash")
+
     if file.filename == '':
         return jsonify({"success": False, "error": "No selected file", "status_code": 200})
     else:
         try:
             savepath = secure_filename(file.filename)
             savepath = f"/test_dropbox/{user_address}/{savepath}"
-            res = dropbox_.files_upload(file.read(), savepath)
+            res = dropbox_.files_upload(fileContent, savepath)
         except Exception as e:
             print(e, "error")
             return {"success": False, "error": str(e)}
 
-        docHash = None
-        try:
-            docHash = hashlib.sha256(file.read().strip()).hexdigest()
-        except Exception as e:
-            docHash = ""
-            print(e, "dochash")
-
-        print(docHash)
         return jsonify({
             "success": True, 
             "redirect_url": "/dashboard",
-            "docHash": docHash,
+            "docHash": "0x" + docHash,
+            "docId": "0x" + docId,
             "status_code": 200
         })
 
@@ -148,7 +154,6 @@ def comparehash_digest(user_address):
 def registration_postapi(user_address):
     try:
         user_address__ = request.form.get("user_address")
-        print(user_address, user_address__)
         if not user_address:
             return jsonify({
                 'success': False, 
@@ -182,15 +187,16 @@ def registration_postapi(user_address):
             if mastercode not in app.config["VERIFICATION_CODES"]:
                 return {'success': False, 'error': "Verification code not valid.", "status_code": 400}
 
-            pu, pr = generateRSAKeypair(4048)
+            pu, pr = generateRSAKeypair()
+            pu = binascii.hexlify(pu.encode()).decode()
             msg = prepareMailMsg(f"{first_name}", email, user_address, pr, None, MAIL_SENDER)
             mail.send(msg)  
-            return {
+            return jsonify({
                 'success': True, 
                 'redirect_url': "/dashboard",
-                "pu": pu.decode(),
+                "pu": pu,
                 "status_code": 200
-            }
+            })
     except Exception as e:
         print("resgister", e)
         return {
@@ -363,8 +369,8 @@ def sendAproovedMailToRequestor(user_address):
         req_pub_key = request.form.get("req_pub_key")
         docIndex = request.form.get("docIndex")
         docKey = getKey(int(docIndex), master_key, owner_address)
-
-        pubKeyObj =  RSA.importKey(req_pub_key)  
+        req_pub_key = binascii.unhexlify(req_pub_key).decode()
+        pubKeyObj =  RSA.import_key(req_pub_key) 
         cipher = Cipher_PKCS1_v1_5.new(pubKeyObj) 
         encrypted_mkey = cipher.encrypt(docKey.encode())
         encrypted_mkey = binascii.hexlify(encrypted_mkey).decode()

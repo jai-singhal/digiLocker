@@ -3,11 +3,19 @@ body {
   min-height: 100vh;
   flex-direction: column;
 }
-
+nav, footer{
+  background-color: #6a1b9a !important ;
+}
+.btn{
+  background-color: #7b1fa2;
+}
+.btn:hover{
+  background-color: #6a1b9a;
+}
 main {
   flex: 1 0 auto;
   min-height: 500px;
-  margin-top: 50px;
+  margin-top: 20px;
   margin-bottom: 100px;
 
 }

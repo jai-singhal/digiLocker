@@ -53,69 +53,65 @@ $('#id_upload_doc').submit(function (event) {
                                 type: file.type,
                                 lastModified: file.lastModified
                             });
-                            // contract.methods.checkAlreadyUpload(dochash).call().then(function (obj) {
-                            //     console.log(obj, "xxxxxxxx")
-                            //     if (obj == true) {
-                            //         alert("This document is already uploaded!!")
-                            //         return false;
-                            //     } else {
 
-                                    var data = new FormData();
-                                    data.append('file', encryptedFile);
-                                    data.append("X-CSRFToken", getCookie('csrftoken'));
-                                    data.append("total_doc", total_doc);
-                                    var bar = $('.bar');
-                                    var percent = $('.percent');
-                                    var status = $('#status');
-                                    
-                                    $.ajax({
-                                        url: '/post/api/upload/doc',
-                                        data: data,
-                                        cache: false,
-                                        contentType: false,
-                                        processData: false,
-                                        type: 'POST',
+                            var data = new FormData();
+                            data.append('file', encryptedFile);
+                            data.append("X-CSRFToken", getCookie('csrftoken'));
+                            data.append("total_doc", total_doc);
+                            var bar = $('.bar');
+                            var percent = $('.percent');
+                            var status = $('#status');
 
-                                        beforeSend: function() {
-                                            status.empty();
-                                            var percentVal = '0%';
-                                            bar.width(percentVal);
-                                            percent.html(percentVal);
-                                        },
-                                        uploadProgress: function(event, position, total, percentComplete) {
-                                            var percentVal = percentComplete + '%';
-                                            console.log(percentComplete, event)
-                                            bar.width(percentVal);
-                                            percent.html(percentVal);
-                                        },
+                            $.ajax({
+                                url: '/post/api/upload/doc',
+                                data: data,
+                                cache: false,
+                                contentType: false,
+                                processData: false,
+                                type: 'POST',
 
-                                        success: function (res) {
-                                            if (res.success == true) {
-                                                console.log(res.docHash, Object.keys(res))
-                                                console.log("0x"+res.docHash)
-                                                var timestamp = new Date().toLocaleString();
-                                                contract.methods.uploadDocument(file.name.trim(), "0x"+res.docHash, timestamp).send().then(function (obj) {
+                                beforeSend: function () {
+                                    $("#main-loader").show();
+                                },
+
+                                success: function (res) {
+                                    if (res.success == true) {
+                                        $("#main-loader").hide();
+
+                                        var docHash = res.docHash;
+                                        var docId = res.docId;
+                                        console.log(docHash, docId)
+                                        var timestamp = new Date().toLocaleString();
+
+                                        contract.methods.checkAlreadyUpload(docId).call().then(function (obj) {
+                                            if (obj == true) {
+                                                alert("This document is already uploaded!!")
+                                                return false;
+                                            } else {
+                                                contract.methods.uploadDocument(file.name.trim(), docId, docHash, timestamp).send().then(function (obj) {
                                                     swal({
                                                         title: "Success!",
                                                         text: "Document Uploaded Successfully",
                                                         icon: "success",
                                                     }).then((value) => {
-                                                        if(value)
+                                                        if (value)
                                                             window.location.replace(res.redirect_url);
                                                     })
                                                 });
-                                            } else {
-                                                swal({
-                                                    title: "Something went wrong!",
-                                                    text: res["error"],
-                                                    icon: "error",
-                                                });
                                             }
-                                        },
-                                        error: function (res) {
-                                            console.log(res, "error")
-                                        }
-                                    });
+                                        });
+                                    } else {
+                                        swal({
+                                            title: "Something went wrong!",
+                                            text: res["error"],
+                                            icon: "error",
+                                        });
+                                    }
+                                },
+                                error: function (res) {
+                                    console.log(res, "error")
+                                }
+                            });
 
                             //     }
                             // })
@@ -125,10 +121,14 @@ $('#id_upload_doc').submit(function (event) {
                     } // end if
                     else {
                         alert("Upload size limits to 5MB");
+                        $("#main-loader").hide();
+
+
                     }
                 }
             } else {
                 alert("Request failed")
+                $("#main-loader").hide();
             }
         };
         request.onerror = function () {

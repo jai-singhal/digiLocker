@@ -3,12 +3,11 @@ from web3.auto import w3
 from eth_account.messages import defunct_hash_message
 from flask_mail import Mail, Message
 import binascii
-from cryptography.hazmat.primitives import serialization as crypto_serialization
-from cryptography.hazmat.primitives.asymmetric import rsa
-from cryptography.hazmat.backends import default_backend as crypto_default_backend
 from Crypto.Protocol.KDF import PBKDF2
 from Crypto.Hash import SHA512
 from Crypto.Random import get_random_bytes
+from Crypto.PublicKey import RSA
+
 
 def recover_to_addr(token, signature):
     msghash = defunct_hash_message(text=token)
@@ -17,22 +16,12 @@ def recover_to_addr(token, signature):
     return address
 
 def generateRSAKeypair():
-    key = rsa.generate_private_key(
-        backend=crypto_default_backend(),
-        public_exponent=65537,
-        key_size=2048
+    keyPair = RSA.generate(2048)
+    return (
+        keyPair.publickey().export_key().decode(),
+        keyPair.export_key().decode()
     )
-    private_key = key.private_bytes(
-        crypto_serialization.Encoding.PEM,
-        crypto_serialization.PrivateFormat.PKCS8,
-        crypto_serialization.NoEncryption()
-    )
-    public_key = key.public_key().public_bytes(
-        crypto_serialization.Encoding.OpenSSH,
-        crypto_serialization.PublicFormat.OpenSSH
-    )
-    return public_key, private_key
-
+    
 def prepareMailMsg(name, from_mail, address, pr, master_key, MAIL_SENDER):
     msg = Message(
         recipients=[from_mail.strip(),],
