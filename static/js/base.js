@@ -37,8 +37,13 @@ function getContract() {
 
 setInterval(function () {
     window.ethereum.on('accountsChanged', function (accounts) {
-        swal("The account change is observed. Reload?")
-            .then((value) => {
+        swal({
+            title: "Alert!",
+            text: "The account change is observed. Reload?",
+            icon: "warning",
+            allowOutsideClick: false,
+            closeOnClickOutside: false,
+            }).then((value) => {
                 if (value) {
                     logout();
                 }
@@ -123,9 +128,12 @@ function checkAlreadyRegiteredUser() {
                     title: "Alert!",
                     text: "User is not registered!!. Redirecting to home page.",
                     icon: "warning",
+                    allowOutsideClick: false,
+                    closeOnClickOutside: false,
                 })
                 .then((value) => {
-                    logout();
+                    if(value)
+                        logout();
                 });
         }
     }).catch(function (error) {
@@ -133,6 +141,7 @@ function checkAlreadyRegiteredUser() {
             title: "Error!",
             text: "Error while checking user is regitred or not" + error,
             icon: "error",
+            allowOutsideClick: false,
         });
     });
 }

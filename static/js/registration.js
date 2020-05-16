@@ -72,6 +72,7 @@ $("#resident_registration").submit(function(e){
                         title: "Success!",
                         text: "Registration Successful!! You will recieve credentials via mail.",
                         icon: "success",
+                        allowOutsideClick: false,
                     }).then((value) => {
                         if(value)
                             window.location.replace(resp.redirect_url);
@@ -114,6 +115,7 @@ function validateMasterCode(){
                     title: "Master code invalid",
                     text: "Please enter the master Code corrctly!",
                     icon: "warning",
+                    allowOutsideClick: false,
                   }).then((value) => {
                       if(value){
                         $("#master_code").val("");
@@ -157,6 +159,7 @@ $("#requestor_registration").submit(function(e){
             title: "Warning!",
             text: "Enter email correctly.",
             icon: "warning",
+            allowOutsideClick: false,
         });
         return false;
     }
@@ -180,6 +183,7 @@ $("#requestor_registration").submit(function(e){
                         title: "Success!",
                         text: "Registration Successful!! You will recieve credentials via mail.",
                         icon: "success",
+                        allowOutsideClick: false,
                     }).then((value) => {
                         if(value){
                             window.location.replace(resp.redirect_url);
