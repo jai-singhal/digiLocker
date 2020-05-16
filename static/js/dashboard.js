@@ -421,10 +421,24 @@ function getSharedDocListForRequestor() {
     });
 }
 
+function getUsrDetails(){
+    
+    contract.methods.getEmailIdByAddrss().call().then(function(usrdetails){
+
+        console.log(usrdetails)
+        $("#email_addr").html(usrdetails[0]);
+        $("#usr_name").html(usrdetails[1]+" "+usrdetails[2]);
+        //For Requester Dashboard
+        $("#org_addr").html(usrdetails[0]);
+        $("#org_name").html(usrdetails[1]);
+    });
+
+}
+
 
 $(document).ready(function () {
-    checkAlreadyRegiteredUser();
-
+    //checkAlreadyRegiteredUser();
+    getUsrDetails();
     contract.methods.getUserType().call().then(function (utype) {
         $("main").css("display", "block");
 
