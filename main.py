@@ -94,7 +94,21 @@ def upload_file_postapi(user_address):
         except Exception as e:
             print(e, "error")
             return {"success": False, "error": str(e)}
-        return jsonify({"success": True, "redirect_url": "/dashboard", "status_code": 200})
+
+        docHash = None
+        try:
+            docHash = hashlib.sha256(file.read().strip()).hexdigest()
+        except Exception as e:
+            docHash = ""
+            print(e, "dochash")
+
+        print(docHash)
+        return jsonify({
+            "success": True, 
+            "redirect_url": "/dashboard",
+            "docHash": docHash,
+            "status_code": 200
+        })
 
 
 @app.route("/api/user/accesskey", methods = ['POST'])
@@ -152,7 +166,7 @@ def registration_postapi(user_address):
             # TODO: ADD MORE PARAMS IN HASH
             mkey_digest = hashlib.sha256((master_key.strip()).encode()).hexdigest()
 
-            msg = prepareMailMsg(f"{first_name} {last_name}", email, user_address, None, None, master_key, MAIL_SENDER)
+            msg = prepareMailMsg(f"{first_name} {last_name}", email, user_address, None, master_key, MAIL_SENDER)
             mail.send(msg)  
 
             return {
@@ -168,8 +182,8 @@ def registration_postapi(user_address):
             if mastercode not in app.config["VERIFICATION_CODES"]:
                 return {'success': False, 'error': "Verification code not valid.", "status_code": 400}
 
-            pu, pr = generateRSAKeypair()
-            msg = prepareMailMsg(f"{first_name}", email, user_address, pu, pr, None, MAIL_SENDER)
+            pu, pr = generateRSAKeypair(4048)
+            msg = prepareMailMsg(f"{first_name}", email, user_address, pr, None, MAIL_SENDER)
             mail.send(msg)  
             return {
                 'success': True, 
@@ -347,10 +361,12 @@ def sendAproovedMailToRequestor(user_address):
         owner_name = request.form.get("owner_name")
         master_key = request.form.get("master_key")
         req_pub_key = request.form.get("req_pub_key")
-        print(request.form)
+        docIndex = request.form.get("docIndex")
+        docKey = getKey(int(docIndex), master_key, owner_address)
+
         pubKeyObj =  RSA.importKey(req_pub_key)  
         cipher = Cipher_PKCS1_v1_5.new(pubKeyObj) 
-        encrypted_mkey = cipher.encrypt(master_key.encode())
+        encrypted_mkey = cipher.encrypt(docKey.encode())
         encrypted_mkey = binascii.hexlify(encrypted_mkey).decode()
 
         access_url = f"{SERVER_BASE_ADDRESS}/requestor/doc/access"
@@ -386,7 +402,7 @@ def approoveDoc(user_address):
     doc_id = request.args.get('doc_id', None)
 
     if not requester_address or not owner_address or not doc_id:
-        return redirect("/dashboard", code = 400)
+        return redirect("/", code = 400)
 
     if owner_address != user_address:
         session.pop("x-access-tokens", None)
@@ -411,9 +427,67 @@ def access_doc(user_address):
         flash("You must login into the system")
         return redirect(url_for('index', next= "/".join(request.url.split('/')[3:])))
 
-    print(request.args)
-    return render_template("requester_decrypt.html", user_address=user_address)
+    requester_address = request.args.get('requester', None)
+    owner_address = request.args.get('owner', None)
+    doc_id = request.args.get('doc_id', None)
+    ekey = request.args.get('ekey', None)
 
+    if not requester_address or not owner_address or not doc_id or not ekey:
+        flash("Invalid URL")
+        return redirect("/", code = 400)
+
+    if requester_address != user_address:
+        session.pop("x-access-tokens", None)
+        session.pop("user_address", None)
+        flash("You was logined with different account. Login with current account")
+        return redirect(url_for('index', next= "/".join(request.url.split('/')[3:])))
+
+    return render_template("requester_decrypt.html", 
+        user_address=user_address,
+        requester_address = requester_address,
+        owner_address = owner_address,
+        doc_id = doc_id,
+        ekey = ekey
+    )
+
+
+
+@app.route('/api/post/file/comparehash',methods=['POST'])
+@token_required
+def downloadEncryptedFile(user_address):
+    doc_id = request.form.get("doc_id")
+    dochash = request.form.get("dochash")
+    ekey = request.form.get("ekey")
+    owner_add = request.form.get("owner_add")
+    privKey = request.form.get("privKey")
+    doc_name = request.form.get("doc_name")
+
+    """
+    1. Download encrypted file
+    2. Compare Hash
+    3. Decrypt File
+    4. Send file back
+    """
+    # 1. Download encrypted file
+    fileData = None
+    try:
+        savepath = secure_filename(doc_name)
+        savepath = f"/test_dropbox/{owner_add}/{savepath}"
+        metadata, fileData = dropbox_.files_download(savepath)
+    except Exception as e:
+        print(e, "error")
+        return {"success": False, "error": str(e)}
+    
+    print(ekey)
+
+    keyPriv = RSA.importKey(privKey) # import the private key
+    cipher = Cipher_PKCS1_v1_5.new(keyPriv)
+    ekey = binascii.unhexlify(ekey)
+    print(ekey, type(ekey))
+    decrypt_text = cipher.decrypt(ekey, None).decode()
+    print("decrypted msg->", decrypt_text)
+
+    return {"success": True, "fileData": fileData}
 
 
 if __name__ == '__main__':

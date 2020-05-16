@@ -70,18 +70,13 @@ function displayResidentUploadedDocs() {
                 class = "btn shared_with"
                 doc_id=${documents[j].doc_id}
                 doc_name=${documents[j].filename}
-                >
-                Click to Reveal
-                <i class="material-icons tiny left">folder_shared</i>
-                
+                >Click to Reveal<i class="material-icons tiny left">folder_shared</i>
                 </button></td>
                 <td><button 
                     class = "btn btn-primary sharedoc"
                     doc_id=${documents[j].doc_id}
                     doc_name=${documents[j].filename}>
-					<i class="material-icons tiny left">share</i>
-                    Share
-                    </button></td>
+					Share<i class="material-icons tiny left">share</i></button></td>
                 </tr>`
             )
         }
@@ -272,59 +267,62 @@ function sendShareMailAjax(doc_id, email, doc_name) {
     contract.methods.getAddressByEmail(email).call().then(function (requester_address) {
         contract.methods.getEmailIdByUsrAddr(address).call().then(function (owner_email_name) {
             contract.methods.getPublicKey(requester_address).call().then(function (req_pub_key) {
-                var data = {
-                    "master_key": $("#share_mkey_").val(),
-                    "req_pub_key": req_pub_key,
-                    "doc_id": doc_id,
-                    "doc_name": doc_name,
-                    "requester_address": requester_address,
-                    "requester_email": email,
-                    "owner_address": address,
-                    "owner_email": owner_email_name[0],
-                    "owner_name": owner_email_name[1] + " " + owner_email_name[2],
-                }
+                contract.methods.getDocIndex(doc_id, address).call().then(function (docIndex) {
+                    var data = {
+                        "master_key": $("#share_mkey_").val(),
+                        "req_pub_key": req_pub_key,
+                        "doc_id": doc_id,
+                        "doc_name": doc_name,
+                        "requester_address": requester_address,
+                        "requester_email": email,
+                        "owner_address": address,
+                        "owner_email": owner_email_name[0],
+                        "owner_name": owner_email_name[1] + " " + owner_email_name[2],
+                        "docIndex": docIndex
+                    }
 
-                var request = new XMLHttpRequest();
-                request.open('POST', "/post/api/send/aproove/mail", true);
-                request.onload = function () {
-                    if (request.status == 200) {
-                        // Success!
-                        var resp = JSON.parse(request.responseText);
-                        if (resp.success) {
-                            swal({
-                                title: "Success!",
-                                text: "Shared with " + email,
-                                icon: "success",
-                            });
+                    var request = new XMLHttpRequest();
+                    request.open('POST', "/post/api/send/aproove/mail", true);
+                    request.onload = function () {
+                        if (request.status == 200) {
+                            // Success!
+                            var resp = JSON.parse(request.responseText);
+                            if (resp.success) {
+                                swal({
+                                    title: "Success!",
+                                    text: "Shared with " + email,
+                                    icon: "success",
+                                });
+                            } else {
+                                swal({
+                                    title: "Error!",
+                                    text: "Error" + resp.error,
+                                    icon: "error",
+                                });
+                            }
                         } else {
                             swal({
                                 title: "Error!",
-                                text: "Error" + resp.error,
+                                text: "Error",
                                 icon: "error",
                             });
                         }
-                    } else {
-                        swal({
-                            title: "Error!",
-                            text: "Error",
-                            icon: "error",
-                        });
-                    }
-                };
+                    };
 
-                request.onerror = function () {
-                    console.log("Registration failed - there was an error");
-                };
-                request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
-                request.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+                    request.onerror = function () {
+                        console.log("Registration failed - there was an error");
+                    };
+                    request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+                    request.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
 
-                var formData = "";
-                for (var key in data) {
-                    if (data.hasOwnProperty(key)) {
-                        formData += `${key}=${data[key]}&`
+                    var formData = "";
+                    for (var key in data) {
+                        if (data.hasOwnProperty(key)) {
+                            formData += `${key}=${data[key]}&`
+                        }
                     }
-                }
-                request.send(formData);
+                    request.send(formData);
+                });
             });
         });
     });

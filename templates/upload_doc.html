@@ -3,29 +3,37 @@
 {% block container %}
 {% include "components/navbar.html" %}
 
-<main id = "main_id" user_address = "{{user_address}}">
+<main id="main_id" user_address="{{user_address}}">
     <div class="container">
         <div class="row">
-            <form id = "id_upload_doc" 
-                method="post" enctype="multipart/form-data" address="{{user_address}}">
+            <form id="id_upload_doc" method="post" enctype="multipart/form-data" address="{{user_address}}">
 
-                <input id="total_doc" type="text" class="validate" hidden  name = "total_doc">
+                <input id="total_doc" type="text" class="validate" hidden name="total_doc">
 
                 <div class="row">
                     <div class="input-field col s12">
-                        <input id="master_key" type="password" class="validate" name = "master_key" required>
+                        <input id="master_key" type="password" class="validate" name="master_key" required>
                         <label for="master_key">Master Key</label>
                     </div>
                 </div>
 
                 <div class="row">
                     <div class="input-field col s12">
-                        <input type="file" id = "file" name="file" required>
+                        <input type="file" id="file" name="file" required>
                     </div>
                 </div>
+                
+                <div class="progress">
+                    <div class="bar"></div>
+                    <div class="percent">0%</div>
+                </div>
+
+                <div id="status"></div>
+
                 <button class="btn waves-effect waves-light" type="submit" name="action">Upload
                 </button>
             </form>
+
         </div>
     </div>
 </main>
@@ -34,6 +42,6 @@
 
 {% block javascript %}
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"></script>
- <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9/sha256.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9/sha256.js"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/upload_doc.js') }}"></script>
 {% endblock javascript %}
