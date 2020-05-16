@@ -358,6 +358,7 @@ def sendAproovedMailToRequestor(user_address):
         })
     try:
         MAIL_SENDER = app.config["MAIL_SENDER"]
+
         doc_id = request.form.get("doc_id")
         doc_name = request.form.get("doc_name")
         requester_email = request.form.get("requester_email")
@@ -366,11 +367,14 @@ def sendAproovedMailToRequestor(user_address):
         owner_email = request.form.get("owner_email")
         owner_name = request.form.get("owner_name")
         master_key = request.form.get("master_key")
-        req_pub_key = request.form.get("req_pub_key")
+        req_pub_key = request.form.get("req_pub_key", None)
         docIndex = request.form.get("docIndex")
+
         docKey = getKey(int(docIndex), master_key, owner_address)
-        req_pub_key = binascii.unhexlify(req_pub_key).decode()
+
+        req_pub_key = binascii.unhexlify(req_pub_key).decode()  
         pubKeyObj =  RSA.import_key(req_pub_key) 
+        
         cipher = Cipher_PKCS1_v1_5.new(pubKeyObj) 
         encrypted_mkey = cipher.encrypt(docKey.encode())
         encrypted_mkey = binascii.hexlify(encrypted_mkey).decode()
