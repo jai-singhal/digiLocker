@@ -1,6 +1,4 @@
 function getPublicKey() {
-
-
     var requester_address = document.getElementById("_reqaddress").innerHTML;
     var owner_address = document.getElementById("_owneraddress").innerHTML;
     var doc_id = document.getElementById("_docid").innerHTML;
