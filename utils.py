@@ -33,7 +33,7 @@ def generateRSAKeypair():
     )
     return public_key, private_key
 
-def prepareMailMsg(name, from_mail, address, pub, pr, master_key, MAIL_SENDER):
+def prepareMailMsg(name, from_mail, address, pr, master_key, MAIL_SENDER):
     msg = Message(
         recipients=[from_mail.strip(),],
         sender = MAIL_SENDER
@@ -54,15 +54,11 @@ def prepareMailMsg(name, from_mail, address, pub, pr, master_key, MAIL_SENDER):
         """
     msgHtml += "</table>"
 
-    if pub and pr:
+    if pr:
         msgHtml += """
-        <p><br>PFA the Public key and private key.<br/>
+        <p><br>PFA the private key. This private key is used to download the document which
+        is shared with you in future.<br/>
         """
-        msg.attach(
-        "pub.key",
-        'application/octect-stream',
-            pub
-        )
         msg.attach(
             "pr.key",
             'application/octect-stream',
