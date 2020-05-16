@@ -257,6 +257,7 @@ $(document).on('click', '.sharedoc', function () {
                 title: "Error!",
                 text: "Error while sharing doc " + error,
                 icon: "error",
+                closeOnClickOutside: false,
             }).then((value) => {
                 if (value)
                     logout();
@@ -455,6 +456,10 @@ $(document).ready(function () {
                 title: "Error!",
                 text: "Not logined",
                 icon: "error",
+                closeOnClickOutside: false,
+            }).then((value) => {
+                if(value)
+                    logout();
             });
         }
         showBalance();
