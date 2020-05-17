@@ -464,7 +464,7 @@ def access_doc(user_address):
 
 @app.route('/api/post/file/comparehash',methods=['POST'])
 @token_required
-def downloadEncryptedFile(user_address):
+def downloadEncryptedFileNcompareHash(user_address):
     doc_id = request.form.get("doc_id")
     dochash = request.form.get("dochash")
     ekey = request.form.get("ekey")
@@ -475,8 +475,8 @@ def downloadEncryptedFile(user_address):
     """
     1. Download encrypted file
     2. Compare Hash
-    3. Decrypt File
-    4. Send file back
+    3. Decrypt doc key
+    4. Send file back, and key
     """
     # 1. Download encrypted file
     fileData = None
@@ -488,16 +488,23 @@ def downloadEncryptedFile(user_address):
         print(e, "error")
         return {"success": False, "error": str(e)}
     
-    print(ekey)
+    # compare hash
+    docHashObtained = "0x" + hashlib.sha256(fileData.content).hexdigest()
+    if docHashObtained != dochash:
+        return {"success": False, "error": "Corrupted file, dochash not matched"}
 
     keyPriv = RSA.importKey(privKey) # import the private key
     cipher = Cipher_PKCS1_v1_5.new(keyPriv)
     ekey = binascii.unhexlify(ekey)
-    print(ekey, type(ekey))
     decrypt_text = cipher.decrypt(ekey, None).decode()
-    print("decrypted msg->", decrypt_text)
 
-    return {"success": True, "fileData": fileData}
+    return {
+        "success": True, 
+        "fileData": fileData.content.decode(),
+        "decrypt_key": decrypt_text,
+        "owner_address": owner_add,
+        "doc_name": doc_name
+    }
 
 
 if __name__ == '__main__':
