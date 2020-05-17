@@ -60,14 +60,29 @@ function downloadFile(dochash, doc_id, owner_address, privKey, ekey, doc_name){
         success: function (res) {
             if(res.success == true){
                 console.log(res.fileData)
+
+                var decrypted = CryptoJS.AES.decrypt(res.fileData, res.decrypt_key, {
+                    iv: res.owner_address,
+                    padding: CryptoJS.pad.Pkcs7,
+                    mode: CryptoJS.mode.CBC
+                }).toString()
+
+                var decryptedFile = new File([decrypted], res.doc_name, {
+                    // type: file.type,
+                    // lastModified: file.lastModified
+                });
+                console.log(decrypted, decryptedFile)
+                var url = window.URL.createObjectURL(decryptedFile);
+                console.log(url)
+                const el = document.createElement('div')
+                el.innerHTML = `Here's a <a href='${url}' target = "_blank" 
+                    download = "${res.doc_name}">link</a>`
                 swal({
                     title: "Success!",
-                    text: "Document Uploaded Successfully",
+                    content: el,
                     icon: "success",
                   })
-                //   .then((value) => {
-                //         // window.location.replace(res.redirect_url);
-                //     });
+
             }
             else{
                 swal({

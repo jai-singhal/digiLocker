@@ -182,7 +182,7 @@ $(document).on('click', '.sharedoc', function () {
         contract.methods.isValidSharableUser(email).call().then(function (res1) {
             if (res1) {
                 contract.methods.getAddressByEmail(email).call().then(function (req_address) {
-                    console.log("Req address", req_address)
+                    console.log(address, req_address, doc_id)
 
                     contract.getPastEvents('sharedDocumentEvent', {
                             filter: {
@@ -295,6 +295,8 @@ function sendShareMailAjax(doc_id, email, doc_name) {
                     var request = new XMLHttpRequest();
                     request.open('POST', "/post/api/send/aproove/mail", true);
                     request.onload = function () {
+                        $("#main-loader").hide();
+
                         if (request.status == 200) {
                             // Success!
                             var resp = JSON.parse(request.responseText);
@@ -338,6 +340,7 @@ function sendShareMailAjax(doc_id, email, doc_name) {
                             formData += `${key}=${data[key]}&`
                         }
                     }
+                    $("#main-loader").show();
                     request.send(formData);
                 });
             });
@@ -359,13 +362,11 @@ function groupBy(objectArray, property) {
     }, {});
 }
 
-function getDocName(docid, owner_address){
+function getDocName(docid, owner_address) {
     contract.methods.getDocumentName(
         docid, owner_address).call().then(function (docname) {
-            $(`.docname[doc_id="${docid}"][docOwner="${owner_address}"]`).html(docname)
-}) 
-
-
+        $(`.docname[doc_id="${docid}"][docOwner="${owner_address}"]`).html(docname)
+    })
 }
 
 function getSharedDocListForRequestor() {
@@ -382,11 +383,11 @@ function getSharedDocListForRequestor() {
             for (var k = 0; k < docs.length; k++) {
                 docList[k] = {}
 
- 
+
                 docList[k].docName = `<a 
                 onClick=getDocName("${docs[k].returnValues.docid}","${docs[k].returnValues.docOwner}")
                     >Click to reveal</a>`;
-            
+
                 docList[k].docId = docs[k].returnValues.docid;
                 docList[k].permission = docs[k].returnValues.permission;
                 docList[k].docOwner = docs[k].returnValues.docOwner;
