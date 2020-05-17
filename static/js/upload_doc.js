@@ -8,8 +8,7 @@ $(document).ready(function () {
 
     contract.methods.getDocCountByUserId().call().then(function (obj) {
         $("#total_doc").val(obj);
-    }).catch(function(error)
-    {
+    }).catch(function (error) {
         swal({
             title: "Error!",
             text: "Error while fetching document count : " + error,
@@ -93,7 +92,7 @@ $('#id_upload_doc').submit(function (event) {
 
                                         var docHash = res.docHash;
                                         var docId = res.docId;
-                                        console.log(docHash, docId)
+                                        // console.log(docHash, docId)
                                         var timestamp = new Date().toLocaleString();
 
                                         contract.methods.checkAlreadyUpload(docId).call().then(function (obj) {
@@ -122,7 +121,7 @@ $('#id_upload_doc').submit(function (event) {
                                     }
                                 },
                                 error: function (res) {
-                                    console.log(res, "error")
+                                    alert(res, "error")
                                 }
                             });
 
@@ -135,8 +134,6 @@ $('#id_upload_doc').submit(function (event) {
                     else {
                         alert("Upload size limits to 5MB");
                         $("#main-loader").hide();
-
-
                     }
                 }
             } else {
