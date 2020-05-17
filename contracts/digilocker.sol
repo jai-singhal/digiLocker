@@ -41,7 +41,7 @@ contract digiLocker {
     ///////////////////////-- events here -- ///////////////////////////////////
     event registeredUserEvent(string _email,userType utype,address _useraddress);
     event uploadDocumentEvent(bytes32 docid, bytes32 docHash, address user_addr);
-    event sharedDocumentEvent(bytes32 docid, address sharedWith, uint32 permission);
+    event sharedDocumentEvent(bytes32 docid, address docOwner,address sharedWith, uint32 permission);
     
     ///////////////////////-- mapping here -- ///////////////////////////////////
     mapping(address => User) registerUsers;
@@ -125,10 +125,9 @@ contract digiLocker {
     }
 
     function shareDocumentwithUser(bytes32 docid, address  _owner, uint32 permission,address _requester) public{
-       
             sharedDoc memory d = sharedDoc(docid, _owner, Permission(permission));
             sharedDocuments[_requester].push(d);
-            emit sharedDocumentEvent(docid, _owner, permission);  
+            emit sharedDocumentEvent(docid, _owner, _requester, permission);  
             
     }
 
@@ -202,20 +201,6 @@ contract digiLocker {
             
         }   
     }
-    
-    function bytes32ToStr(bytes32 _bytes32) public pure returns (string memory) {
-
-    // string memory str = string(_bytes32);
-    // TypeError: Explicit type conversion not allowed from "bytes32" to "string storage pointer"
-    // thus we should fist convert bytes32 to bytes (to dynamically-sized byte array)
-
-        bytes memory bytesArray = new bytes(32);
-        for (uint256 i; i < 32; i++) {
-            bytesArray[i] = _bytes32[i];
-        }
-        return string(bytesArray);
-        }
-
     
     function getOwnerDocumetList()public view returns (
         string[] memory, string[] memory, bytes32[] memory) {

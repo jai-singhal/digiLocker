@@ -110,56 +110,56 @@ $(document).on('click', '.shared_with', function () {
     var doc_id = _this.attr("doc_id");
     var doc_name = _this.attr("doc_name");
     $(".doc_name_modal").html(doc_name)
-    contract.methods.getUserAddressofSharedDoc(doc_id).call().then(function (obj) {
-        console.log(obj)
-        var userAddrrs = [];
-        var i = 0;
-        for (var k = 0; k < obj[0].length; k++) {
-            userAddrrs[i] = {}
-            userAddrrs[i++].address = obj[0][k]
-        }
 
-        i = 0;
-        for (var k = 0; k < obj[1].length; k++)
-            userAddrrs[i++].permission = obj[1][k]
 
-        if (userAddrrs.length == 0)
-            $("#shared_doc_table tbody").html(
-                "<br><center style = 'color:red'>\
+    contract.getPastEvents('sharedDocumentEvent', {
+            filter: {
+                docid: doc_id,
+                docOwner: address
+            }, // Using an array means OR: e.g. 20 or 23
+            fromBlock: 0,
+            toBlock: 'latest'
+        }, function (error, events) {
+            console.log(events);
+        })
+        .then(function (events) {
+            if (events.length == 0)
+                $("#shared_doc_table tbody").html(
+                    "<br><center style = 'color:red'>\
                 <h6>This document is not shared with anyone.</h6></center>"
-            )
-        else {
-            $("#shared_doc_table thead").html(
-                `<tr>
+                )
+            else {
+                $("#shared_doc_table thead").html(
+                    `<tr>
                 <th>Serial Number</th>
                 <th>User Address</th>
                 <th>Permisson</th>
                 </tr>`
-            )
-            $("#shared_doc_table tbody").html("");
-            for (var j = 0; j < userAddrrs.length; j++) {
-                var ptype;
-                if (userAddrrs[j].permission == 0)
-                    ptype = "Read"
-                else
-                    ptype = "Modify"
-                $("#shared_doc_table tbody").append(
-                    `<tr>
+                )
+                $("#shared_doc_table tbody").html("");
+                for (var j = 0; j < events.length; j++) {
+                    var ptype;
+                    if (events[j].returnValues.permission == "0")
+                        ptype = "Read"
+                    else
+                        ptype = "Modify"
+                    $("#shared_doc_table tbody").append(
+                        `<tr>
                     <td>#${j+1}</td>
-                    <td>${userAddrrs[j].address}</td>
+                    <td>${events[j].returnValues.sharedWith}</td>
                     <td>${ptype}</td>
                     </tr>`
-                )
+                    )
+                }
             }
-        }
 
-    }).catch(function (error) {
-        swal({
-            title: "Error!",
-            text: "Error while fetching docs " + error,
-            icon: "error",
+        }).catch(function (error) {
+            swal({
+                title: "Error!",
+                text: "Error while fetching docs " + error,
+                icon: "error",
+            });
         });
-    });
 });
 
 
@@ -183,58 +183,71 @@ $(document).on('click', '.sharedoc', function () {
             if (res1) {
                 contract.methods.getAddressByEmail(email).call().then(function (req_address) {
                     console.log("Req address", req_address)
-                    contract.methods.checkAlreadyShared(doc_id, resident_address, req_address).call().then(function (res2) {
-                        if (!res2) {
-                            contract.methods.getUseraccessKey().call().then(function (mkeyHash) {
-                                var request = new XMLHttpRequest();
-                                let accesskey_url = "/api/user/accesskey";
-                                request.open('POST', accesskey_url, true);
-                                request.onload = function () {
-                                    if (request.status == 200) {
-                                        var resp = JSON.parse(request.responseText);
-                                        if (resp.valid == false || resp.success == false) {
-                                            swal({
-                                                title: "Alert!",
-                                                text: "Master key is not valid",
-                                                icon: "error",
-                                            });
-                                        } else {
-                                            contract.methods.shareDocumentwithUser(
-                                                doc_id, resident_address, permission, req_address).send().then(function (res3) {
-                                                sendShareMailAjax(doc_id, email, doc_name);
-                                            }).catch(function (error) {
+
+                    contract.getPastEvents('sharedDocumentEvent', {
+                            filter: {
+                                sharedWith: req_address,
+                                docOwner: address,
+                                docid: doc_id
+                            }, // Using an array means OR: e.g. 20 or 23
+                            fromBlock: 0,
+                            toBlock: 'latest'
+                        }, function (error, events) {})
+                        .then(function (docs) {
+                            if (!docs.length) { // check the length, if 0, not shared
+                                $("#main-loader").show();
+                                contract.methods.getUseraccessKey().call().then(function (mkeyHash) {
+                                    var request = new XMLHttpRequest();
+                                    let accesskey_url = "/api/user/accesskey";
+                                    request.open('POST', accesskey_url, true);
+                                    request.onload = function () {
+                                        if (request.status == 200) {
+                                            var resp = JSON.parse(request.responseText);
+                                            if (resp.valid == false || resp.success == false) {
                                                 swal({
-                                                    title: "Error!",
-                                                    text: "Error while checking user validity " + error,
+                                                    title: "Alert!",
+                                                    text: "Master key is not valid",
                                                     icon: "error",
                                                 });
-                                            });
+                                            } else {
+                                                contract.methods.shareDocumentwithUser(
+                                                    doc_id, resident_address, permission, req_address).send().then(function (res3) {
+                                                    sendShareMailAjax(doc_id, email, doc_name);
+                                                    $("#main-loader").hide();
+                                                }).catch(function (error) {
+                                                    swal({
+                                                        title: "Error!",
+                                                        text: "Error while checking user validity " + error,
+                                                        icon: "error",
+                                                    });
+                                                });
 
+                                            }
                                         }
-                                    }
-                                };
-                                request.onerror = function () {
-                                    swal({
-                                        title: "Alert!",
-                                        text: "Error while uploading!!",
-                                        icon: "error",
-                                    });
-                                };
-                                var formData = 'master_key=' + mkey + "&mkeydigest=" + mkeyHash;
-                                formData += "&upload=" + '0';
-                                request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
-                                request.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
-                                request.send(formData);
-                            });
+                                    };
+                                    request.onerror = function () {
+                                        swal({
+                                            title: "Alert!",
+                                            text: "Error while uploading!!",
+                                            icon: "error",
+                                        });
+                                        $("#main-loader").hide();
+                                    };
+                                    var formData = 'master_key=' + mkey + "&mkeydigest=" + mkeyHash;
+                                    formData += "&upload=" + '0';
+                                    request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+                                    request.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+                                    request.send(formData);
+                                });
 
-                        } else {
-                            swal({
-                                title: "Error!",
-                                text: "This email is already shared with this document",
-                                icon: "error",
-                            });
-                        }
-                    });
+                            } else {
+                                swal({
+                                    title: "Error!",
+                                    text: "This Document is already shared with this Organization/requestor",
+                                    icon: "error",
+                                });
+                            }
+                        });
                 });
             } else {
                 swal({
@@ -256,6 +269,7 @@ $(document).on('click', '.sharedoc', function () {
         });
 
     })
+    $("#main-loader").hide();
 });
 
 
@@ -345,104 +359,121 @@ function groupBy(objectArray, property) {
     }, {});
 }
 
+function getDocName(docid, owner_address){
+    contract.methods.getDocumentName(
+        docid, owner_address).call().then(function (docname) {
+            $(`.docname[doc_id="${docid}"][docOwner="${owner_address}"]`).html(docname)
+}) 
+
+
+}
+
 function getSharedDocListForRequestor() {
     // address -> requester
-    contract.methods.getSharedDocList(address).call().then(function (docs) {
-        var i = 0;
-        console.log(docs)
-        for (var k = 0; k < docs[0].length; k++) {
-            docList[i] = {}
-            docList[i++].docId = docs[0][k]
-        }
+    contract.getPastEvents('sharedDocumentEvent', {
+            filter: {
+                sharedWith: address
+            }, // Using an array means OR: e.g. 20 or 23
+            fromBlock: 0,
+            toBlock: 'latest'
+        }, function (error, events) {})
+        .then(function (docs) {
+            console.log(docs)
+            for (var k = 0; k < docs.length; k++) {
+                docList[k] = {}
 
-        i = 0;
-        for (var k = 0; k < docs[0].length; k++) {
-            docList[i++].docName = docs[1][k]
-        }
+ 
+                docList[k].docName = `<a 
+                onClick=getDocName("${docs[k].returnValues.docid}","${docs[k].returnValues.docOwner}")
+                    >Click to reveal</a>`;
+            
+                docList[k].docId = docs[k].returnValues.docid;
+                docList[k].permission = docs[k].returnValues.permission;
+                docList[k].docOwner = docs[k].returnValues.docOwner;
+            }
 
-        i = 0;
-        for (var k = 0; k < docs[0].length; k++) {
-            docList[i++].docOwner = docs[2][k]
-        }
-
-        i = 0;
-        for (var k = 0; k < docs[0].length; k++) {
-            docList[i++].permission = docs[3][k]
-        }
-
-
-        const docGroup = groupBy(docList, 'docOwner');
-        console.log(docGroup)
-        //console.log(docList)
-        $("#sharedDocumentListByUser ul").html(`
+            const docGroup = groupBy(docList, 'docOwner');
+            console.log(docGroup)
+            //console.log(docList)
+            $("#sharedDocumentListByUser ul").html(`
             <li class="z-depth-3" style = "padding:15px;">
             <h6 class = "bold">Document Shared with you</h6>
             </li>
         `);
-        for (const property in docGroup) {
-            $("#sharedDocumentListByUser ul").append(
+            for (const property in docGroup) {
+                contract.methods.getEmailIdByUsrAddr(property).call().then(function (usrdetails) {
+
+                    $("#sharedDocumentListByUser ul").append(
+                        `
+                    <li>
+                    <div class="collapsible-header">  
+                    <i class="material-icons">mail</i>
+                    ${usrdetails[0]}: ${usrdetails[1]} ${usrdetails[2]}
+                    
+                    <span class="badge blue new" data-badge-caption="">
+                        ${docGroup[property].length}</span>
+                        <i class="material-icons">expand_more</i>
+                    </div>
+                    <div class="collapsible-body">
+                    <table property = "${property}" 
+                        class = "responsive-table highlight">
+                    <thead>
+                    </thead>
+                    <tr>
+                    <th>Document Id</th>
+                    <th>Document Name</th>
+                    <th>Permission</th>
+                    </tr>
+                    <tbody>
+                    </tbody>
+                    </div>
+                </li>
                 `
-                <li>
-                <div class="collapsible-header">  
-                <i class="material-icons">mail</i>${property} 
-                <span class="badge blue new" data-badge-caption="">
-                    ${docGroup[property].length}</span>
-                    <i class="material-icons">expand_more</i>
-                </div>
-                <div class="collapsible-body">
-                <table property = "${property}" 
-                    class = "responsive-table highlight">
-                <thead>
-                </thead>
-                <tr>
-                <th>Document Id</th>
-                <th>Document Name</th>
-                <th>Permission</th>
-                </tr>
-                <tbody>
-                </tbody>
-                </div>
-              </li>
-            `
-            )
-            for (var j = 0; j < docGroup[property].length; j++) {
-                var ptype;
-                if (docGroup[property][j].permission == 0)
-                    ptype = "Read"
-                else
-                    ptype = "Modify"
+                    )
+                    for (var j = 0; j < docGroup[property].length; j++) {
+                        var ptype;
+                        if (docGroup[property][j].permission == 0)
+                            ptype = "Read"
+                        else
+                            ptype = "Modify"
 
-                $(`#sharedDocumentListByUser ul table[property="${property}"]`).append(
-                    `<tr>
-                    <td doc_id = "${docGroup[property][j].docId}">Document#${j+1}</td>
-                    <td>${docGroup[property][j].docName}</td>
-                    <td>${ptype}</td>
-                    </tr>`
-                )
+                        $(`#sharedDocumentListByUser ul table[property="${property}"]`).append(
+                            `<tr>
+                        <td doc_id = "${docGroup[property][j].docId}">Document#${j+1}</td>
+                        <td class = "docname" 
+                        doc_id = "${docGroup[property][j].docId}"
+                        docOwner = "${property}"
+                        >${docGroup[property][j].docName}</td>
+                        <td>${ptype}</td>
+                        </tr>`
+                        )
+                    }
+                });
+
             }
-        }
-        getUsrDetails();
+            getUsrDetails();
 
-    }).catch(function (error) {
-        swal({
-            title: "Error!",
-            text: "Error while getting shared doc " + error,
-            icon: "error",
-            closeOnClickOutside: false,
-        }).then((value) => {
-            if (value)
-                window.location.reload();
-        });
-    });;
+        })
+        .catch(function (error) {
+            swal({
+                title: "Error!",
+                text: "Error while getting shared doc " + error,
+                icon: "error",
+                closeOnClickOutside: false,
+            }).then((value) => {
+                if (value)
+                    window.location.reload();
+            });
+        });;
 }
 
-function getUsrDetails(){
-    
-    contract.methods.getEmailIdByAddrss().call().then(function(usrdetails){
+function getUsrDetails() {
+
+    contract.methods.getEmailIdByAddrss().call().then(function (usrdetails) {
 
         console.log(usrdetails)
         $("#email_addr").html(usrdetails[0]);
-        $("#usr_name").html(usrdetails[1]+" "+usrdetails[2]);
+        $("#usr_name").html(usrdetails[1] + " " + usrdetails[2]);
         //For Requester Dashboard
         $("#org_addr").html(usrdetails[0]);
         $("#org_name").html(usrdetails[1]);
@@ -472,7 +503,7 @@ $(document).ready(function () {
                 icon: "error",
                 closeOnClickOutside: false,
             }).then((value) => {
-                if(value)
+                if (value)
                     logout();
             });
         }
