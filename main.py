@@ -139,6 +139,9 @@ def comparehash_digest(user_address):
         if is_upload:
             total_doc = request.form['total_doc']
             ekey = getKey(int(total_doc), master_key, user_address)
+            print("Doc key after: " + ekey, "master key: " + master_key, "doc Index: " + str(total_doc))
+            print("Address(salt): " + user_address)
+
             result["ekey"] = ekey
             return jsonify(result)
         else:
@@ -371,7 +374,8 @@ def sendAproovedMailToRequestor(user_address):
         docIndex = request.form.get("docIndex")
 
         docKey = getKey(int(docIndex), master_key, owner_address)
-
+        print("Doc key after: " + docKey, "master key: " + master_key, "doc Index: " + str(docIndex))
+        print("Address(salt): " + owner_address)
         req_pub_key = binascii.unhexlify(req_pub_key).decode()  
         pubKeyObj =  RSA.import_key(req_pub_key) 
         
@@ -497,7 +501,7 @@ def downloadEncryptedFileNcompareHash(user_address):
     cipher = Cipher_PKCS1_v1_5.new(keyPriv)
     ekey = binascii.unhexlify(ekey)
     decrypt_text = cipher.decrypt(ekey, None).decode()
-
+    print("Decrypted key =>" + decrypt_text)
     return {
         "success": True, 
         "fileData": fileData.content.decode(),

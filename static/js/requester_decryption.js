@@ -65,7 +65,7 @@ function downloadFile(dochash, doc_id, owner_address, privKey, ekey, doc_name){
                     iv: res.owner_address,
                     padding: CryptoJS.pad.Pkcs7,
                     mode: CryptoJS.mode.CBC
-                }).toString()
+                }).toString(CryptoJS.enc.Utf8)
 
                 var decryptedFile = new File([decrypted], res.doc_name, {
                     // type: file.type,

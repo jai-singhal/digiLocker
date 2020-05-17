@@ -34,9 +34,9 @@ contract digiLocker {
     
     
     ///////////////////////-- events here -- ///////////////////////////////////
-    event registeredUserEvent(string _email,userType utype,address _useraddress);
-    event uploadDocumentEvent(bytes32 docid, bytes32 docHash, address user_addr);
-    event sharedDocumentEvent(bytes32 docid, address docOwner,address sharedWith, uint32 permission);
+    event registeredUserEvent(string _email,userType utype,address indexed _useraddress);
+    event uploadDocumentEvent(bytes32 indexed docid, bytes32 docHash, address indexed user_addr);
+    event sharedDocumentEvent(bytes32 indexed docid, address indexed docOwner,address indexed sharedWith, uint32 permission);
     
     ///////////////////////-- mapping here -- ///////////////////////////////////
     mapping(address => User) registerUsers;

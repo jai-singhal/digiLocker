@@ -71,9 +71,13 @@ def prepareMailMsg(name, from_mail, address, pr, master_key, MAIL_SENDER):
 def getKey(total_doc, masterKey, user_address):
     salt = user_address.encode()
     masterKey = masterKey.encode()
-    keys = PBKDF2(masterKey, salt, 128*(total_doc+1), count=10000, prf= None)
+    keys = PBKDF2(masterKey, salt, 512, count=10000, prf= None)
     keys = binascii.hexlify(keys)
-    key = keys[total_doc*128:(total_doc+1)*128]
+    startIndex = (total_doc*16)%512
+    if startIndex + 128 > 512:
+        startIndex = startIndex - 128
+    key = keys[startIndex:startIndex+128]
+    print(len(key))
     return key.decode()
 
 
