@@ -118,7 +118,7 @@ $(document).ready(function () {
     //fetching doc hask key 
     contract.methods.getDocumentListbyDocId(
         doc_id).call().then(function (docInfo) {
-        $("#main-loader").hide();
+        $("#main-loader").hide().fadeOut("slow");
         doc_hash = docInfo[3];
         console.log(docInfo)
         displayDocInfo(docInfo)

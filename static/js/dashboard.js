@@ -19,13 +19,8 @@ function showBalance() {
 
 function displayResidentUploadedDocs() {
 
-    // contract.methods.getUseraccessKey().call().then(function(obj,err){
-    //     console.log(obj, "Xxx")
-    //     // console.log("err")                   
-    // });
     contract.methods.getOwnerDocumetList().call().then(function (docs) {
         var i = 0;
-        console.log(docs)
         for (var k = 0; k < docs[0].length; k++) {
             documents[i] = {}
             documents[i++].filename = docs[0][k]
@@ -69,14 +64,14 @@ function displayResidentUploadedDocs() {
                 <td>
                 <button
                 class = "btn shared_with"
-                doc_id=${documents[j].doc_id}
-                doc_name=${documents[j].filename}
+                doc_id="${documents[j].doc_id}"
+                doc_name="${documents[j].filename}"
                 >Click to Reveal<i class="material-icons tiny left">folder_shared</i>
                 </button></td>
                 <td><button 
                     class = "btn btn-primary sharedoc"
-                    doc_id=${documents[j].doc_id}
-                    doc_name=${documents[j].filename}>
+                    doc_id="${documents[j].doc_id}"
+                    doc_name="${documents[j].filename}">
 					Share<i class="material-icons tiny left">share</i></button></td>
                 </tr>`
             )
@@ -109,7 +104,7 @@ $(document).on('click', '.shared_with', function () {
     var _this = $(this);
     var doc_id = _this.attr("doc_id");
     var doc_name = _this.attr("doc_name");
-    $(".doc_name_modal").html(doc_name)
+    $(".doc_name_modal").html("Shared with: " + doc_name)
 
 
     contract.getPastEvents('sharedDocumentEvent', {
@@ -120,7 +115,6 @@ $(document).on('click', '.shared_with', function () {
             fromBlock: 0,
             toBlock: 'latest'
         }, function (error, events) {
-            console.log(events);
         })
         .then(function (events) {
             if (events.length == 0)
@@ -182,7 +176,7 @@ $(document).on('click', '.sharedoc', function () {
         contract.methods.isValidSharableUser(email).call().then(function (res1) {
             if (res1) {
                 contract.methods.getAddressByEmail(email).call().then(function (req_address) {
-                    console.log(address, req_address, doc_id)
+                    // console.log(address, req_address, doc_id)
 
                     contract.getPastEvents('sharedDocumentEvent', {
                             filter: {
@@ -379,10 +373,8 @@ function getSharedDocListForRequestor() {
             toBlock: 'latest'
         }, function (error, events) {})
         .then(function (docs) {
-            console.log(docs)
             for (var k = 0; k < docs.length; k++) {
                 docList[k] = {}
-
 
                 docList[k].docName = `<a 
                 onClick=getDocName("${docs[k].returnValues.docid}","${docs[k].returnValues.docOwner}")
@@ -394,8 +386,6 @@ function getSharedDocListForRequestor() {
             }
 
             const docGroup = groupBy(docList, 'docOwner');
-            console.log(docGroup)
-            //console.log(docList)
             $("#sharedDocumentListByUser ul").html(`
             <li class="z-depth-3" style = "padding:15px;">
             <h6 class = "bold">Document Shared with you</h6>
@@ -472,7 +462,6 @@ function getUsrDetails() {
 
     contract.methods.getEmailIdByAddrss().call().then(function (usrdetails) {
 
-        console.log(usrdetails)
         $("#email_addr").html(usrdetails[0]);
         $("#usr_name").html(usrdetails[1] + " " + usrdetails[2]);
         //For Requester Dashboard
@@ -502,7 +491,6 @@ $(document).ready(function () {
             $("#residentDashboard").remove();
             getSharedDocListForRequestor();
         } else {
-            console.log(utype)
             swal({
                 title: "Error!",
                 text: "Not logined",
@@ -522,7 +510,7 @@ $(document).ready(function () {
             icon: "error",
         });
     });
-    $("#main-loader").hide();
+    $("#main-loader").hide().fadeOut("slow");
     $('.modal').modal();
     $('.collapsible').collapsible();
 

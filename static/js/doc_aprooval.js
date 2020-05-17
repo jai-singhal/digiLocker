@@ -323,6 +323,6 @@ $(document).ready(function () {
 
 
   
- $("#main-loader").hide();
+    $("#main-loader").hide().fadeOut("slow");
 
 })

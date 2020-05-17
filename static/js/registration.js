@@ -15,7 +15,7 @@ function checkRegiterededUser(){
 }
 
 $(document).ready(function(){
-    $("#main-loader").hide();
+    $("#main-loader").hide().fadeOut("slow");;
     $('.collapsible').collapsible();
     $("#dash_btn a").removeAttr("href");
     checkRegiterededUser();
@@ -171,11 +171,10 @@ $("#requestor_registration").submit(function(e){
         if (request.status == 200) {
             // Success!
             var resp = JSON.parse(request.responseText);
-            console.log(resp)
+            // console.log(resp)
             if (resp.success){
                 var access_key = "0x0000000000000000000000000000000000000000"
                 var utype = 2;
-                console.log(resp, resp.pu, ":xxxx")
                 var r = contract.methods.registerUser(
                     fname, lname, email, utype, cno, 
                     access_key, resp.pu
@@ -201,7 +200,7 @@ $("#requestor_registration").submit(function(e){
     };
 
     request.onerror = function () {
-        console.log("Registration failed - there was an error");
+        alert("Registration failed - there was an error");
     };
     request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
     request.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));

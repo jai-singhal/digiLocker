@@ -97,9 +97,6 @@ function checkWeb3(callback) {
 
 
 function logout() {
-    var next = null;
-
-
     var request = new XMLHttpRequest();
     let logout_url = "/api/logout/metamask";
     request.open('GET', logout_url, true);

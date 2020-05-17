@@ -47,8 +47,8 @@ function displayDocumentsList(){
             <td>Document #${j+1}</td>
             <td>${documents[j].filename}</td>
             <td>${documents[j].timestamp}</td>
-            <td><button class = "btn btn-primary sharedoc" doc_id=${documents[j].doc_id}
-             doc_name=${documents[j].filename}>Request</button></td>
+            <td><button class = "btn btn-primary sharedoc" doc_id="${documents[j].doc_id}"
+             doc_name="${documents[j].filename}">Request</button></td>
             </tr>`
         )
     }
@@ -99,8 +99,8 @@ function displayDocumentsList(){
             <td>Document #${j+1}</td>
             <td>${documents[j].filename}</td>
             <td>${documents[j].timestamp}</td>
-            <td><button class = "btn btn-primary sharedoc" doc_id=${documents[j].doc_id}
-             doc_name=${documents[j].filename}>Request</button></td>
+            <td><button class = "btn btn-primary sharedoc" doc_id="${documents[j].doc_id}"
+             doc_name="${documents[j].filename}">Request</button></td>
             </tr>`
         )
     }
@@ -296,11 +296,8 @@ function sendRequestMailAjaxUser(doc_id, email, doc_name){
 
 
 $(document).ready(function(){
-    
     displayDocumentsList();
    // getDocCount();
-    
-    
     $("#main-loader").hide();
     $('.modal').modal();
     $('.collapsible').collapsible();

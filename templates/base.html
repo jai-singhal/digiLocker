@@ -12,37 +12,28 @@
 </head>
 
 <body>
-	<div id = "main_useraddress" uaddress = "{{user_address}}"></div>
+	<div id="main_useraddress" uaddress="{{user_address}}"></div>
 	<div id="main-loader">
-		<div class="preloader-wrapper big active">
-			<div class="spinner-layer spinner-blue-only">
-				<div class="circle-clipper left">
-					<div class="circle"></div>
-				</div>
-				<div class="gap-patch">
-					<div class="circle"></div>
-				</div>
-				<div class="circle-clipper right">
-					<div class="circle"></div>
-				</div>
-			</div>
-		</div>
+		<div class="hex"></div>
+		<div class="para1"></div>
+		<div class="para2"></div>
+		<div class="para3"></div>
 	</div>
 
 
 	{% with messages = get_flashed_messages() %}
 	{% if messages %}
-		<ul class=flashes>
+	<ul class=flashes>
 		{% for message in messages %}
 		<li>{{ message }}</li>
 		{% endfor %}
-		</ul>
+	</ul>
 	{% endif %}
 	{% endwith %}
 	{% block body %}{% endblock %}
 
 	{% block container %}
-	
+
 	{% endblock container %}
 
 	{% include "components/footer.html" %}
