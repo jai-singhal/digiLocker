@@ -153,12 +153,31 @@ $(document).on('click', '.sharedoc', function() {
         console.log(email)
         contract.methods.isValidSharableUser(email).call().then(function(res){
             if(res){
-                contract.methods.checkAlreadyShared(doc_id,_glbladrress,address).call().then(function(res){
-                    if(!res){
-                        console.log(res)
-                        sendRequestMailAjaxUser(doc_id,email,doc_name);
-                    }else{
-                        swal({
+                contract.getPastEvents('sharedDocumentEvent',{
+
+                    filter :{
+                        sharedWith:address,
+                        docOwner:_glbladrress,
+                        docid:doc_id
+            
+                    },
+                    fromBlock:0,
+                    toBlock:'latest'
+                    },function(error,events){})
+                    .then(function(docs)
+                    
+                    {
+            
+                         console.log(docs)
+                       
+                         if(docs.length==0)
+                         {
+                            console.log(res)
+                           sendRequestMailAjaxUser(doc_id,email,doc_name);
+                         }
+                         else
+                         {
+                            swal({
                             title: "Warning!",
                             text: "You already have read \
                             permission for this document. \

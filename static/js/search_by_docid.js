@@ -63,24 +63,46 @@ $(document).on('click', '.sharedoc', function() {
 
         var permission = 0;
         contract.methods.isValidSharableUser(email).call().then(function(res) {
-            if (res) {
-                contract.methods.checkAlreadyShared(doc_id,_residentaddr,address).call().then(function(res) {
-                    if (!res) {
-                        console.log(res)
-                        //send the mail
-                        sendRequestMailAjax(doc_id, email, doc_name);
+            if (res) 
+            {
 
-                    } else {
-                        swal({
-                            title: "Warning!",
-                            text: "You already have read \
-                                permission for this document. \
-                                Or you already raised the request for this documen.t",
-                            icon: "warning",
+                contract.getPastEvents('sharedDocumentEvent',{
+
+                    filter :
+                    {
+                                sharedWith:_residentaddr,
+                                docOwner:_residentaddr,
+                                docid:doc_id
+            
+                    },
+                              fromBlock:0,
+                              toBlock:'latest'
+                    },function(error,events){})
+                    .then(function(docs)
+                    
+                        {
+                                    console.log(docs)
+                                    if (docs.length==0) {
+                                    console.log(res)
+                                     //send the mail
+                                    sendRequestMailAjax(doc_id, email, doc_name);
+
+                                } 
+                                else
+                                {
+                                         swal
+                                         ({
+                                                 title: "Warning!",
+                                                 text: "You already have read \
+                                                         permission for this document. \
+                                                        Or you already raised the request for this documen.t",
+                                                 icon: "warning",
+                                          });
+                                  }
                         });
-                    }
-                });
-            } else {
+
+            } 
+            else {
                 swal({
                     title: "Error!",
                     text: "Not a valid email. This email is not a valid or not regsitered!!",

@@ -41,7 +41,11 @@ $('#id_upload_doc').submit(function (event) {
             if (request.status >= 200 && request.status < 400) {
                 var resp = JSON.parse(request.responseText);
                 if (resp.valid == false) {
-                    alert("Master key is not valid")
+                    swal({
+                        title: "Warning!",
+                        text: "Master key is not valid!!",
+                        icon: "warning",
+                    });
                     return false;
                 } else {
                     var key = resp.ekey;

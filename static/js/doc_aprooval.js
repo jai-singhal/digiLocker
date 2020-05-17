@@ -80,7 +80,7 @@ function getPublicKey() {
                                                     console.log("Sharing info is updated")
                                                     if(res)
                                                     {
-                                                        console.log("Now call to mail aapi to send mail after entry in blockchain")
+                                                        console.log("Now call to mail aapi to send mail after entry in")
                                                         sendRequestMailAjax(masterKey, req_email, req_full_name, requester_address,
                                                         owner_name, owner_address, owner_email, doc_id, doc_name, req_pub_key, docIndex);
                                                     }        
@@ -256,9 +256,19 @@ $(document).ready(function () {
         if(check)
         {
             console.log("Document is uploaded by owner")
-            contract.methods.checkAlreadyShared(doc_id,owner_address,requester_address).call().then(function(res)
-            {
-                 if(!res)
+            contract.getPastEvents('sharedDocumentEvent',{
+
+                filter :{
+                    sharedWith:requester_address,
+                    docOwner:owner_address,
+                    docid:doc_id
+        
+                },
+                fromBlock:0,
+                toBlock:'latest'
+                },function(error,events){})
+                .then(function(docs){
+                 if(docs.length==0)
                  {
                         console.log("Document is not shared before- good request")
                         getPublicKey();
@@ -292,7 +302,7 @@ $(document).ready(function () {
         {
             swal({
                 title: "Error!",
-                text: "Incorrect url or\
+                text: "Incorrect url or \
                         requested document is not owned by mentioned owner \
                          Or bad url",
                 icon: "error",
