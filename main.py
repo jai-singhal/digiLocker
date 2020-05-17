@@ -139,7 +139,7 @@ def comparehash_digest(user_address):
         if is_upload:
             total_doc = request.form['total_doc']
             ekey = getKey(int(total_doc), master_key, user_address)
-            print("Doc key after: " + ekey, "master key: " + master_key, "doc Index: " + str(total_doc))
+            print("Doc key before(upload): " + ekey, "master key: " + master_key, "doc Index: " + str(total_doc))
             print("Address(salt): " + user_address)
 
             result["ekey"] = ekey

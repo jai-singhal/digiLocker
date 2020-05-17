@@ -2,7 +2,7 @@ var doc_hash = "";
 var doc_name = "";
 
 
-function displayDocInfo(docInfo){
+function displayDocInfo(docInfo) {
     $("#document_table thead").append(
         `<tr><th>Document Name</th><td>${docInfo[1]}</td></tr>
         <tr><th>Uploaded Date</th><td>${docInfo[2]}</td></tr>
@@ -10,37 +10,34 @@ function displayDocInfo(docInfo){
         <tr><th>Uploaded By Email Address</th><td id = "owner_email">${docInfo[5]}</td></tr>
         `
     );
-    if(docInfo[7]){
+    if (docInfo[7]) {
         $("#document_table thead").append(`
             <tr><th>Contact Details</th><td>${docInfo[7]}</tr>
         `);
     }
 }
 
-function displayPrivateKeyField(){
-    // $("#requestorDecryption").html(`
-    // <div class="row">
-    //     <h5> Enter your private key to download the document</h5>
-    // </div>
+function displayPrivateKeyField() {
+    $("#requestorDecryption").html(`
+    <div class="row">
+        <h5> Enter your private key to download the document</h5>
+    </div>
 
-    // <div class="row">
-    //     <div class="input-field col s12">
-    //         <input id="private_key" type="password" class="validate" />
-    //         <label for="private_key">Enter your private key</label>
-    //     </div>
-    // </div>
-    // <div class="row">
-    // <center><a class="btn waves-effect waves-light" type="submit" name="action">Perform Decryption</a>
-    // </center>
-    // </div>
-    // `)
+    <div class="row">
+        <div class="input-field col s12">
+            <input id="private_key" type="password" class="validate" />
+            <label for="private_key">Enter your private key</label>
+        </div>
+    </div>
+    <div class="row">
+    <center><a class="btn waves-effect waves-light" type="submit" name="action">Perform Decryption</a>
+    </center>
+    </div>
+    `)
 }
 
-function decryptFileandDownload(){
 
-}
-
-function downloadFile(dochash, doc_id, owner_address, privKey, ekey, doc_name){
+function downloadFile(dochash, doc_id, owner_address, privKey, ekey, doc_name) {
     var data = new FormData();
     data.append("X-CSRFToken", getCookie('csrftoken'));
     data.append("doc_id", doc_id);
@@ -58,41 +55,56 @@ function downloadFile(dochash, doc_id, owner_address, privKey, ekey, doc_name){
         contentType: false,
         processData: false,
         success: function (res) {
-            if(res.success == true){
-                console.log(res.fileData)
-
+            if (res.success == true) {
                 var decrypted = CryptoJS.AES.decrypt(res.fileData, res.decrypt_key, {
                     iv: res.owner_address,
                     padding: CryptoJS.pad.Pkcs7,
                     mode: CryptoJS.mode.CBC
                 }).toString(CryptoJS.enc.Utf8)
 
-                var decryptedFile = new File([decrypted], res.doc_name, {
-                    // type: file.type,
-                    // lastModified: file.lastModified
-                });
-                console.log(decrypted, decryptedFile)
-                var url = window.URL.createObjectURL(decryptedFile);
-                console.log(url)
-                const el = document.createElement('div')
-                el.innerHTML = `Here's a <a href='${url}' target = "_blank" 
-                    download = "${res.doc_name}">link</a>`
+                // var decryptedFile = new File([decrypted], res.doc_name, {
+                //     type: "text/plain"
+                // });
+
+                // var url = window.URL.createObjectURL(decryptedFile);
                 swal({
                     title: "Success!",
-                    content: el,
+                    text: `The file ${res.doc_name} is available to download. Click Download button`,
                     icon: "success",
-                  })
+                    button: {
+                        text: "Download",
+                        closeModal: true,
+                        value: true,
+                        visible: true,
+                        className: "",
+                        closeModal: true,
+                    },
+                }).then((value) => {
+                    if (value) {
+                        download(decrypted, res.doc_name, "text/plain")
+                        swal({
+                            title: "Downloaded Completed",
+                            text: "File is Downloaded. Close this tab?",
+                            icon: "success",
+                        }).then((value) => {
+                            if (value) {
+                                $("#private_key").val("");
+                                window.top.close();
+                            }
+                        });
 
-            }
-            else{
+                    }
+                })
+
+            } else {
                 swal({
                     title: "Something went wrong!",
                     text: res["error"],
                     icon: "error",
-                  });
+                });
             }
         },
-        error: function(res){
+        error: function (res) {
             console.log(res, "error")
         }
     });
@@ -100,22 +112,22 @@ function downloadFile(dochash, doc_id, owner_address, privKey, ekey, doc_name){
 
 
 
-$(document).ready(function() {
+$(document).ready(function () {
     let doc_id = $("#requestorDecryption").attr("doc_id");
-    displayPrivateKeyField();
+    // displayPrivateKeyField();
     //fetching doc hask key 
     contract.methods.getDocumentListbyDocId(
-            doc_id).call().then(function(docInfo){
+        doc_id).call().then(function (docInfo) {
         $("#main-loader").hide();
         doc_hash = docInfo[3];
         console.log(docInfo)
         displayDocInfo(docInfo)
         doc_hash = docInfo[3]; //Doc Hash from documentId 
         doc_name = docInfo[1]; //Doc name from documentId 
-    }); 
+    });
 })
 
-$("#requestorDecryption").submit(function(e){
+$("#requestorDecryption").submit(function (e) {
     e.preventDefault();
     let doc_id = $("#requestorDecryption").attr("doc_id");
     var private_key = $("#private_key").val();
@@ -129,7 +141,7 @@ $("#requestorDecryption").submit(function(e){
         ekey,
         doc_name
     )
-    if(private_key.length == 0){
+    if (private_key.length == 0) {
         alert("Please enter private key");
         return false;
     }

@@ -44,6 +44,6 @@
 {% endblock container %}
 {% block javascript %}
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9/sha256.js"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/download.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/requester_decryption.js') }}"></script>
 {% endblock javascript %}
