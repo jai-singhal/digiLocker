@@ -277,9 +277,7 @@ function sendRequestMailAjaxUser(doc_id, email, doc_name){
 
 
 $(document).ready(function(){
-    //checkAlreadyRegiteredUser()
-    //showBalance()
-    //getDocCount();
+    
     displayDocumentsList();
    // getDocCount();
     

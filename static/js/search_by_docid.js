@@ -6,12 +6,12 @@ function getDocumentDetails() {
     //console.log(docid)
     try{
         contract.methods.getDocumentListbyDocId(docid).call().then(function(docs) {
+            //console.log(docs)
             $("#document_table thead").append(
                 `<tr><th>Document Name</th><td>${docs[1]}</td></tr>
                 <tr><th>Uploaded Date</th><td>${docs[2]}</td></tr>
                 <tr><th>Uploaded By User Name</th><td id = "owner_name">${docs[4]+" "+docs[6]}  </td></tr>
                 <tr><th>Uploaded By Email Address</th><td id = "owner_email">${docs[5]}</td></tr>
-                <tr><th>Contact Details</th><td>${docs[7]}</tr>
                 <tr><td><button class = "btn btn-primary sharedoc" doc_id=${docs[0]} doc_name=${docs[1]}>Raise Request To Access</button></td></tr>`
             );
         }).catch(function (error) {
@@ -40,6 +40,8 @@ $(document).on('click', '.sharedoc', function() {
     var _this = $(this);
     var doc_id = _this.attr("doc_id");
     var doc_name = _this.attr("doc_name");
+    var owner_email = document.getElementById("owner_email").innerHTML;
+    console.log(owner_email)
     $(".doc_name_modal").html("Share doc: " + doc_name)
     var email = "";
     contract.methods.getEmailIdByAddrss().call().then(function(_email) {
@@ -48,7 +50,7 @@ $(document).on('click', '.sharedoc', function() {
             email = _email[0];
         }
         
-       contract.methods.getAddressByEmail(document.getElementById("owner_email")).call().then(function(addrs){
+       contract.methods.getAddressByEmail(owner_email).call().then(function(addrs){
         _residentaddr = addrs;
         console.log(_residentaddr)
         })
