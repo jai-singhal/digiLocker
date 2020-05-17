@@ -5,8 +5,17 @@ var contract = new web3.eth.Contract(abi, contractAddress, {
     gasLimit: 3000000,
 });
 $(document).ready(function () {
+
     contract.methods.getDocCountByUserId().call().then(function (obj) {
         $("#total_doc").val(obj);
+    }).catch(function(error)
+    {
+        swal({
+            title: "Error!",
+            text: "Error while fetching document count : " + error,
+            icon: "error",
+        });
+
     });
     checkAlreadyRegiteredUser();
     $("#main-loader").hide();

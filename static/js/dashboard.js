@@ -446,13 +446,18 @@ function getUsrDetails(){
         //For Requester Dashboard
         $("#org_addr").html(usrdetails[0]);
         $("#org_name").html(usrdetails[1]);
+    }).catch(function(error){
+        swal({
+            title: "Error!",
+            text: "Error while fetching Logged in user details : " + error,
+            icon: "error",
+        });
     });
 
 }
 
 
 $(document).ready(function () {
-    //checkAlreadyRegiteredUser();
     getUsrDetails();
     contract.methods.getUserType().call().then(function (utype) {
         $("main").css("display", "block");
