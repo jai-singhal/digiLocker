@@ -369,6 +369,34 @@ function getDocName(docid, owner_address) {
     })
 }
 
+
+$(document).on('click', '.verify_doc', function () {
+
+    $('#declarationModel').modal("open");
+    var _this = $(this);
+    var doc_id = _this.attr("doc_id");
+    var doc_owner = _this.attr("docOwner");
+    console.log(doc_id, doc_owner,address)
+
+    $('#verifyThisDoc').submit(function (e) {
+
+        e.preventDefault();
+
+        console.log("Button Clicked")
+
+        contract.methods.verifyUserDocument(doc_id,doc_owner,address).send().then(function(){
+
+            alert("verified")
+            $('#declarationModel').modal("close");
+
+        });
+
+    })
+
+});
+
+
+
 function getSharedDocListForRequestor() {
     // address -> requester
     contract.getPastEvents('sharedDocumentEvent', {
@@ -424,6 +452,7 @@ function getSharedDocListForRequestor() {
                     <th>Document Id</th>
                     <th>Document Name</th>
                     <th>Permission</th>
+                    <th>Action</th>
                     </tr>
                     <tbody>
                     </tbody>
@@ -446,6 +475,8 @@ function getSharedDocListForRequestor() {
                         docOwner = "${property}"
                         >${docGroup[property][j].docName}</td>
                         <td>${ptype}</td>
+                        <td><a class="btn verify_doc" doc_id = "${docGroup[property][j].docId}" docOwner = "${property}">
+                        <i class="material-icons tiny left">verified_user</i>Verify</a></td>
                         </tr>`
                         )
                     }
