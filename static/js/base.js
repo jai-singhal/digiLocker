@@ -97,13 +97,23 @@ function checkWeb3(callback) {
 
 
 function logout() {
+    var next = null;
+
+
     var request = new XMLHttpRequest();
     let logout_url = "/api/logout/metamask";
     request.open('GET', logout_url, true);
     request.onload = function () {
         if (request.status >= 200 && request.status < 400) {
             var resp = JSON.parse(request.responseText);
-            window.location.replace(resp.redirect_url);
+            if (window.location.href.indexOf("next") > -1) {
+                let next = decodeURIComponent(window.location.search.replace("?next=", ""));
+                let path = window.location.origin + "/" + next
+                window.location.replace(decodeURIComponent(path));
+            }
+            else{
+                window.location.replace(resp.redirect_url);
+            }
         } else {
             alert("Logout failed")
         }

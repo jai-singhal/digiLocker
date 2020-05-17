@@ -174,9 +174,11 @@ $("#auth-btn").click(function (e) {
             else{
                 var login_url = "/api/login/metamask";
                 web3Login(login_url, console.log, console.log, console.log, console.log, console.log, function (resp) {
-                    
+
                     if (window.location.href.indexOf("next") > -1) {
-                        window.location.replace(decodeURIComponent(getUrlVars()['next']))
+                        let next = decodeURIComponent(window.location.search.replace("?next=", ""));
+                        let path = window.location.origin + "/" + next
+                        window.location.replace(decodeURIComponent(path));
                     }
                     else{
                         window.location.replace(resp.redirect_url);
