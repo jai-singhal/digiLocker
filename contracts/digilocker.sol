@@ -11,11 +11,6 @@ contract digiLocker {
         string timestamp; //
         bytes32 docHash; //doc hash
     }
-    struct sharedDoc{
-        bytes32 docid;
-        address docOwner;
-        Permission permission;
-    }
     struct UserDetails{
         string firstName;
         string lastName;
@@ -46,7 +41,6 @@ contract digiLocker {
     ///////////////////////-- mapping here -- ///////////////////////////////////
     mapping(address => User) registerUsers;
     mapping (address => Document[])  ownerDocuments;
-    mapping (address => sharedDoc[])  sharedDocuments;
     mapping (string => address)  emailAddressMapping;
     
 
@@ -115,82 +109,22 @@ contract digiLocker {
         return true;
     }
 
-    function checkAlreadyShared(bytes32 docId,address _owner,address _requester)public view returns(bool){
-        for(uint i = 0; i<sharedDocuments[_requester].length; i++)
-            if(sharedDocuments[_requester][i].docid == docId &&
-                sharedDocuments[_requester][i].docOwner == _owner)
-                return true;
-          
-       
-    }
-
     function shareDocumentwithUser(bytes32 docid, address  _owner, uint32 permission,address _requester) public{
-            sharedDoc memory d = sharedDoc(docid, _owner, Permission(permission));
-            sharedDocuments[_requester].push(d);
+           // sharedDoc memory d = sharedDoc(docid, _owner, Permission(permission));
+            // sharedDocuments[_requester].push(d);
             emit sharedDocumentEvent(docid, _owner, _requester, permission);  
-            
     }
 
     function isValidSharableUser(string memory email_) public view returns(bool){
-        if(emailAddressMapping[email_] == 0x0000000000000000000000000000000000000000){
-            return false;
-        }
-        else{
+        if(emailAddressMapping[email_] != 0x0000000000000000000000000000000000000000 &&
+            uint(registerUsers[emailAddressMapping[email_]].utype) == 2){
             return true;
         }
-    }
-
-    function getUserAddressofSharedDoc(bytes32 docid) public view returns (address[] memory, uint[] memory,string[] memory){
-
-        uint count=0;
-        
-        
-        
-        for(uint j=0;j<usercount;j++){
-            
-            if(uint(registerUsers[_glbluseraddress[j]].utype)== 2)
-            {
-              for(uint i = 0; i < sharedDocuments[_glbluseraddress[j]].length; i++)
-             {
-                if(sharedDocuments[_glbluseraddress[j]][i].docid == docid && sharedDocuments[_glbluseraddress[j]][i].docOwner == msg.sender) 
-                {
-                  count++;
-                }    
-             }
-            }
-        
+        else{
+            return false;
         }
-        
-        address[] memory requesterAddress = new address[](count);
-        string[] memory requesterEmail = new string[](count);
-        uint[] memory sharedWithPermission = new uint[](count);
-        
-        uint k=0;
-        for(uint j=0;j<usercount;j++){
-            
-            if(uint(registerUsers[_glbluseraddress[j]].utype)== 2)
-            {
-              for(uint i = 0; i < sharedDocuments[_glbluseraddress[j]].length; i++)
-             {
-                if(sharedDocuments[_glbluseraddress[j]][i].docid == docid && sharedDocuments[_glbluseraddress[j]][i].docOwner == msg.sender) 
-                {
-                 requesterAddress[k] = _glbluseraddress[j];  
-                 requesterEmail[k]  = registerUsers[_glbluseraddress[j]].details.email;
-                 sharedWithPermission[k] = uint(sharedDocuments[_glbluseraddress[j]][i].permission);
-                 k++;
-                }    
-             }
-            }
-        
-        }
-        
-        return (requesterAddress,sharedWithPermission,requesterEmail);
     }
 
-    function getTotalSharedDocsByOthers() public view returns(uint256){
-        return sharedDocuments[msg.sender].length;
-    }
-    
     function getOwnerDocInfoByDocId(bytes32 docId)public view returns (string memory, string memory){
         
         for(uint i = 0; i < ownerDocuments[msg.sender].length; i++){
@@ -257,16 +191,13 @@ contract digiLocker {
         
     }
 
-    function getEmailIdByAddrss()public view returns(string memory,string memory,string memory)
-    {
+    function getEmailIdByAddrss()public view returns(string memory,string memory,string memory){
         return (registerUsers[msg.sender].details.email,
                 registerUsers[msg.sender].details.firstName,
                 registerUsers[msg.sender].details.lastName);
     }
     
-    function getAddressByEmail(string memory _email)public view returns(address)
-    {
-        
+    function getAddressByEmail(string memory _email)public view returns(address){
         return emailAddressMapping[_email];
     }
     
@@ -293,58 +224,15 @@ contract digiLocker {
     }
     
     function getPublicKey(address _uaddr_)public view returns(string memory){
-        
         return registerUsers[_uaddr_].pubKey;
-        
     }
     
-    function getSharedDocList(address _uaddr_)public view returns(bytes32[] memory,string[] memory, string[] memory,uint[] memory){
-        
-      string[] memory _docName = new string[](sharedDocuments[_uaddr_].length);
-      address[] memory _docOwner = new address[](sharedDocuments[_uaddr_].length);
-      string[] memory _email = new string[](sharedDocuments[_uaddr_].length);
-      bytes32[] memory _docid = new bytes32[](sharedDocuments[_uaddr_].length);
-      uint[] memory sharedWithPermission = new uint[](sharedDocuments[_uaddr_].length);
-        
-        for(uint i=0;i<sharedDocuments[_uaddr_].length;i++)
-        {
-            _docid[i] = sharedDocuments[_uaddr_][i].docid;
-            _docOwner[i] =  sharedDocuments[_uaddr_][i].docOwner ;
-            sharedWithPermission[i] = uint(sharedDocuments[_uaddr_][i].permission);
-        }
-
-        for(uint j=0;j<_docid.length;j++)
-        {
-          _docName[j] = getDocumentName(_docid[j]);
-            
-        }
-        
-        for(uint k=0;k < _docOwner.length;k++){
-            
-         _email[k] =    registerUsers[_docOwner[k]].details.email;
-            
-        }
-        
-        return (_docid,_docName,_email,sharedWithPermission);
-        
-    }   
     
-    
-    function getDocumentName(bytes32 _docId) internal view returns(string memory)
-    {
-        for(uint i=0;i<usercount;i++){
-            
-            for(uint j=0;j < ownerDocuments[_glbluseraddress[i]].length;j++)
-            {
-                
-                if(ownerDocuments[_glbluseraddress[i]][j].docid == _docId)
-                    
-                    return (ownerDocuments[_glbluseraddress[i]][j].docName);
-                
-            }
-            
+    function getDocumentName(bytes32 _docId, address docOwner) public view returns(string memory){
+        for(uint j=0;j < ownerDocuments[docOwner].length;j++){
+            if(ownerDocuments[docOwner][j].docid == _docId)
+                return (ownerDocuments[docOwner][j].docName);
         }
-        
     }
     
 }
