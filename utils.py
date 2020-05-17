@@ -69,18 +69,19 @@ def prepareMailMsg(name, from_mail, address, pr, master_key, MAIL_SENDER):
 
 
 def getKey(total_doc, masterKey, user_address):
-    salt = user_address.encode()
-    masterKey = masterKey.encode()
-    keys = PBKDF2(masterKey, salt, 512, count=10000, prf= None)
+    salt = user_address.lower().strip().encode()
+    masterKey = masterKey.strip().encode()
+    keys = PBKDF2(masterKey, salt, 512, count=1000, prf= None)
     keys = binascii.hexlify(keys)
-    startIndex = (total_doc*16)%512
-    if startIndex + 128 > 512:
-        startIndex = startIndex - 128
+    startIndex = (total_doc*16)%450
+    if startIndex + 128 >= 500:
+        startIndex = total_doc%256
     key = keys[startIndex:startIndex+128]
-    print(len(key))
+    print(len(key), "key len")
+    print("Key: ", key)
     return key.decode()
 
-
+# getKey(65, "jai@321", "0xc95044089191d7d8038c00cca051d5c4da80aa3e")
 
 def prepareRequestMail(        
         owner_name, 
