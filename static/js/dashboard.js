@@ -1,5 +1,6 @@
 var documents = [];
 var docList = [];
+var _glblDocName = "";
 
 
 var resident_address = document.getElementById("main_id").getAttribute("user_address");
@@ -363,29 +364,53 @@ function getDocName(docid, owner_address) {
     })
 }
 
+function getDocNameOnly(docid, owner_address) {
+    contract.methods.getDocumentName(
+        docid, owner_address).call().then(function (docname) {
+            _glblDocName = docname;
+    })
+}
+
+
 
 $(document).on('click', '.verify_doc', function () {
 
+  
     $('#declarationModel').modal("open");
     var _this = $(this);
     var doc_id = _this.attr("doc_id");
     var doc_owner = _this.attr("docOwner");
+    getDocNameOnly(doc_id,doc_owner);
+    $("#doc_id").html(doc_id);
+    $("#doc_owner").html(doc_owner);
+    $(".doc_name_modal").html("Verification of the Document :"+_glblDocName);
+
+    $("#doc_name").html(_glblDocName);
+    console.log(_glblDocName)
+
+    
     console.log(doc_id, doc_owner,address)
 
     $('#verifyThisDoc').submit(function (e) {
-
+        $("#main-loader").show();
         e.preventDefault();
 
         console.log("Button Clicked")
 
         contract.methods.verifyUserDocument(doc_id,doc_owner,address).send().then(function(){
 
-            alert("verified")
+            swal({
+                title: "Success!",
+                text: "Document is verified successfully",
+                icon: "success",
+            });
             $('#declarationModel').modal("close");
+             $("#main-loader").hide();
 
         });
 
     })
+   
 
 });
 
@@ -403,7 +428,7 @@ function getSharedDocListForRequestor() {
         .then(function (docs) {
             for (var k = 0; k < docs.length; k++) {
                 docList[k] = {}
-
+                
                 docList[k].docName = `<a 
                 onClick=getDocName("${docs[k].returnValues.docid}","${docs[k].returnValues.docOwner}")
                     >Click to reveal</a>`;
@@ -451,6 +476,7 @@ function getSharedDocListForRequestor() {
                 `
                     )
                     for (var j = 0; j < docGroup[property].length; j++) {
+                        //var doc_name = docGroup[property][j].docName;
                         var ptype;
                         if (docGroup[property][j].permission == 0)
                             ptype = "Read"

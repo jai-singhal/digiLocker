@@ -121,7 +121,9 @@ $('#id_upload_doc').submit(function (event) {
                                     }
                                 },
                                 error: function (res) {
-                                    alert(res, "error")
+                                    console.log(res)
+                                    alert(res.error, "error")
+                                    
                                 }
                             });
 

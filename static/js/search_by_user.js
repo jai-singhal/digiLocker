@@ -133,6 +133,7 @@ $(document).on('click', '.sharedoc', function() {
     var doc_id = _this.attr("doc_id");
     var doc_name = _this.attr("doc_name");
     $(".doc_name_modal").html("Share doc: " + doc_name)
+   
     
     var email = "";
     contract.methods.getEmailIdByAddrss().call().then(function(_email)
