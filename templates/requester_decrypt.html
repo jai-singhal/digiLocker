@@ -6,7 +6,11 @@
 
 <main>
 
+
     <div class="container">
+        <div class="row">
+            <h5 class="bold">Document Information</h5><hr/>
+        </div>
         <table id="document_table">
             <thead>
             </thead>
@@ -18,22 +22,25 @@
     <div class="container">
         <div class="row">
             <form class="col s12" id="requestorDecryption" address="{{user_address}}"
-                requester_address={{requester_address}} owner_address={{owner_address}} 
-                doc_id={{doc_id}} ekey={{ekey}}>
+                requester_address={{requester_address}} owner_address={{owner_address}} doc_id={{doc_id}} ekey={{ekey}}>
 
                 <div class="row">
-                    <h5> Enter your private key to download the document</h5>
+                    <h5 class="bold"> Enter your private key to download the document</h5><hr/>
                 </div>
 
                 <div class="row">
                     <div class="input-field col s12">
-                        <textarea id="private_key" type="password" class="validate materialize-textarea" required="" aria-required="true" ></textarea>
+                        <i class="material-icons prefix">vpn_key</i>
+                        <textarea id="private_key" type="password" class="validate materialize-textarea" required=""
+                            aria-required="true"></textarea>
                         <label for="private_key">Enter your private key</label>
+                        <span class="helper-text">Enter your private key to download the document.
+                            Admin have sent you the private key during registration.</span>
                     </div>
                 </div>
                 <div class="row">
                     <center>
-                        <button class="btn waves-effect waves-light" type="submit">Perform Decryption
+                        <button class="btn waves-effect waves-light btn-large" type="submit">Perform Decryption
                         </button>
                     </center>
                 </div>

@@ -46,7 +46,7 @@ function downloadFile(dochash, doc_id, owner_address, privKey, ekey, doc_name) {
     data.append("privKey", privKey);
     data.append("ekey", ekey);
     data.append("doc_name", doc_name);
-    console.log(data)
+
     $.ajax({
         url: '/api/post/file/comparehash',
         data: data,
@@ -126,7 +126,6 @@ $(document).ready(function () {
         doc_id).call().then(function (docInfo) {
         $("#main-loader").hide().fadeOut("slow");
         doc_hash = docInfo[3];
-        console.log(docInfo)
         displayDocInfo(docInfo)
         doc_hash = docInfo[3]; //Doc Hash from documentId 
         doc_name = docInfo[1]; //Doc name from documentId 
@@ -139,14 +138,6 @@ $("#requestorDecryption").submit(function (e) {
     var private_key = $("#private_key").val();
     let owner_address = $("#requestorDecryption").attr("owner_address");
     let ekey = $("#requestorDecryption").attr("ekey");
-    console.log(
-        doc_hash, //Doc Hash from documentId 
-        doc_id,
-        owner_address,
-        private_key,
-        ekey,
-        doc_name
-    )
     if (private_key.length == 0) {
         alert("Please enter private key");
         return false;
