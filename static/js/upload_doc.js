@@ -13,6 +13,8 @@ $(document).ready(function () {
             title: "Error!",
             text: "Error while fetching document count : " + error,
             icon: "error",
+            allowOutsideClick: false,
+            closeOnClickOutside: false,
         });
 
     });
@@ -44,6 +46,8 @@ $('#id_upload_doc').submit(function (event) {
                         title: "Warning!",
                         text: "Master key is not valid!!",
                         icon: "warning",
+                        allowOutsideClick: false,
+                        closeOnClickOutside: false,
                     });
                     return false;
                 } else {
@@ -102,6 +106,8 @@ $('#id_upload_doc').submit(function (event) {
                                                         title: "Success!",
                                                         text: "Document Uploaded Successfully",
                                                         icon: "success",
+                                                        allowOutsideClick: false,
+                                                        closeOnClickOutside: false,
                                                     }).then((value) => {
                                                         if (value)
                                                             window.location.replace(res.redirect_url);
@@ -115,6 +121,8 @@ $('#id_upload_doc').submit(function (event) {
                                             title: "Something went wrong!",
                                             text: res["error"],
                                             icon: "error",
+                                            allowOutsideClick: false,
+                                            closeOnClickOutside: false,
                                         });
                                     }
                                 },
@@ -137,6 +145,8 @@ $('#id_upload_doc').submit(function (event) {
                             title: "Something went wrong!",
                             text: "Upload size limits to 5MB",
                             icon: "error",
+                            allowOutsideClick: false,
+                            closeOnClickOutside: false,
                         });
                     }
                 }
@@ -151,6 +161,8 @@ $('#id_upload_doc').submit(function (event) {
                 title: "Alert!",
                 text: "Error while uploading!!",
                 icon: "error",
+                allowOutsideClick: false,
+                closeOnClickOutside: false,
             });
 
         };

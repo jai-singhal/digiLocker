@@ -79,8 +79,6 @@ def getKey(total_doc, masterKey, user_address):
     key = keys[startIndex:startIndex+128]
     return key.decode()
 
-# getKey(65, "jai@321", "0xc95044089191d7d8038c00cca051d5c4da80aa3e")
-
 def prepareRequestMail(        
         owner_name, 
         owner_email, 

@@ -14,6 +14,8 @@ function showBalance() {
             title: "Error!",
             text: "Error while fetching balance" + error,
             icon: "error",
+            allowOutsideClick: false,
+            closeOnClickOutside: false,
         });
     });
 }
@@ -84,6 +86,8 @@ function displayResidentUploadedDocs() {
             title: "Error!",
             text: "Error while fetching documents" + error,
             icon: "error",
+            allowOutsideClick: false,
+            closeOnClickOutside: false,
         });
     });
 }
@@ -97,6 +101,8 @@ function getDocCount() {
             title: "Error!",
             text: "Error while fetching documents count" + error,
             icon: "error",
+            allowOutsideClick: false,
+            closeOnClickOutside: false,
         });
     });
 }
@@ -153,6 +159,8 @@ $(document).on('click', '.shared_with', function () {
                 title: "Error!",
                 text: "Error while fetching docs " + error,
                 icon: "error",
+                allowOutsideClick: false,
+                closeOnClickOutside: false,
             });
         });
 });
@@ -203,6 +211,8 @@ $(document).on('click', '.sharedoc', function () {
                                                     title: "Alert!",
                                                     text: "Master key is not valid",
                                                     icon: "error",
+                                                    allowOutsideClick: false,
+                                                    closeOnClickOutside: false,
                                                 });
                                             } else {
                                                 contract.methods.shareDocumentwithUser(
@@ -214,6 +224,8 @@ $(document).on('click', '.sharedoc', function () {
                                                         title: "Error!",
                                                         text: "Error while checking user validity " + error,
                                                         icon: "error",
+                                                        allowOutsideClick: false,
+                                                        closeOnClickOutside: false,
                                                     });
                                                 });
 
@@ -225,6 +237,8 @@ $(document).on('click', '.sharedoc', function () {
                                             title: "Alert!",
                                             text: "Error while uploading!!",
                                             icon: "error",
+                                            allowOutsideClick: false,
+                                            closeOnClickOutside: false,
                                         });
                                         $("#main-loader").hide();
                                     };
@@ -240,6 +254,8 @@ $(document).on('click', '.sharedoc', function () {
                                     title: "Error!",
                                     text: "This Document is already shared with this Organization/requestor",
                                     icon: "error",
+                                    allowOutsideClick: false,
+                                    closeOnClickOutside: false,
                                 });
                             }
                         });
@@ -249,6 +265,8 @@ $(document).on('click', '.sharedoc', function () {
                     title: "Error!",
                     text: "Not a valid email. This email is not a valid or not regsitered!!",
                     icon: "error",
+                    allowOutsideClick: false,
+                    closeOnClickOutside: false,
                 });
             }
         }).catch(function (error) {
@@ -256,6 +274,7 @@ $(document).on('click', '.sharedoc', function () {
                 title: "Error!",
                 text: "Error while sharing doc " + error,
                 icon: "error",
+                allowOutsideClick: false,
                 closeOnClickOutside: false,
             }).then((value) => {
                 if (value)
@@ -300,12 +319,16 @@ function sendShareMailAjax(doc_id, email, doc_name) {
                                     title: "Success!",
                                     text: "Shared with " + email,
                                     icon: "success",
+                                    allowOutsideClick: false,
+                                    closeOnClickOutside: false,
                                 });
                             } else {
                                 swal({
                                     title: "Error!",
                                     text: "Error" + resp.error,
                                     icon: "error",
+                                    allowOutsideClick: false,
+                                    closeOnClickOutside: false,
                                 });
                             }
                         } else {
@@ -313,6 +336,8 @@ function sendShareMailAjax(doc_id, email, doc_name) {
                                 title: "Error!",
                                 text: "Error",
                                 icon: "error",
+                                allowOutsideClick: false,
+                                closeOnClickOutside: false,
                             });
                         }
                         $('#share_email_').val("");
@@ -386,16 +411,16 @@ $(document).on('click', '.verify_doc', function () {
     $(".doc_name_modal").html("Verification of the Document :"+_glblDocName);
 
     $("#doc_name").html(_glblDocName);
-    console.log(_glblDocName)
+    // console.log(_glblDocName)
 
     
-    console.log(doc_id, doc_owner,address)
+    // console.log(doc_id, doc_owner,address)
 
     $('#verifyThisDoc').submit(function (e) {
         $("#main-loader").show();
         e.preventDefault();
 
-        console.log("Button Clicked")
+        // console.log("Button Clicked")
 
         contract.methods.verifyUserDocument(doc_id,doc_owner,address).send().then(function(){
 
@@ -403,6 +428,8 @@ $(document).on('click', '.verify_doc', function () {
                 title: "Success!",
                 text: "Document is verified successfully",
                 icon: "success",
+                allowOutsideClick: false,
+                closeOnClickOutside: false,
             });
             $('#declarationModel').modal("close");
              $("#main-loader").hide();
@@ -507,6 +534,7 @@ function getSharedDocListForRequestor() {
                 title: "Error!",
                 text: "Error while getting shared doc " + error,
                 icon: "error",
+                allowOutsideClick: false,
                 closeOnClickOutside: false,
             }).then((value) => {
                 if (value)
@@ -529,6 +557,8 @@ function getUsrDetails() {
             title: "Error!",
             text: "Error while fetching Logged in user details : " + error,
             icon: "error",
+            allowOutsideClick: false,
+            closeOnClickOutside: false,
         });
     });
 
@@ -552,6 +582,7 @@ $(document).ready(function () {
                 title: "Error!",
                 text: "Not logined",
                 icon: "error",
+                allowOutsideClick: false,
                 closeOnClickOutside: false,
             }).then((value) => {
                 if (value)
@@ -565,6 +596,8 @@ $(document).ready(function () {
             title: "Error!",
             text: "Error while fetching user type: " + error,
             icon: "error",
+            allowOutsideClick: false,
+            closeOnClickOutside: false,
         });
     });
     $("#main-loader").hide().fadeOut("slow");

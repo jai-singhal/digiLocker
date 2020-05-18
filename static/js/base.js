@@ -149,6 +149,7 @@ function checkAlreadyRegiteredUser() {
             text: "Error while checking user is regitred or not" + error,
             icon: "error",
             allowOutsideClick: false,
+            closeOnClickOutside: false,
         });
     });
 }

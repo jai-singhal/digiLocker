@@ -72,7 +72,7 @@ function downloadFile(dochash, doc_id, owner_address, privKey, ekey, doc_name) {
                     text: `The file ${res.doc_name} is available to download. Click Download button`,
                     icon: "success",
                     allowOutsideClick: false,
-
+                    closeOnClickOutside: false,
                     button: {
                         text: "Download",
                         closeModal: true,
@@ -85,6 +85,7 @@ function downloadFile(dochash, doc_id, owner_address, privKey, ekey, doc_name) {
                     if (value) {
                         download(decrypted, res.doc_name, "text/plain")
                         swal({
+                            closeOnClickOutside: false,
                             allowOutsideClick: false,
                             title: "Downloaded Completed",
                             text: "File is Downloaded. Close this tab?",
@@ -101,6 +102,7 @@ function downloadFile(dochash, doc_id, owner_address, privKey, ekey, doc_name) {
 
             } else {
                 swal({
+                    closeOnClickOutside: false,
                     allowOutsideClick: false,
                     title: "Something went wrong!",
                     text: res["error"],
