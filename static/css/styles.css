@@ -3,9 +3,12 @@ body {
   min-height: 100vh;
   flex-direction: column;
 }
-nav, footer{
+.navbar-top, footer{
   background-color: #6a1b9a !important ;
 }
+
+
+
 .bold{
   font-weight: 500;
 }
@@ -25,6 +28,10 @@ main {
   margin-top: 20px;
   margin-bottom: 100px;
 
+}
+
+.breadcrumb-nav div{
+  padding-left: 10px;
 }
 
 #main-loader {

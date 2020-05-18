@@ -50,7 +50,6 @@ def index(user_address):
 @token_required
 def dashboard(user_address = None):
     if not user_address:
-        print(request.path)
         return redirect(url_for('index',  next= request.path))
     return render_template("dashboard.html", user_address = user_address)
 
@@ -77,43 +76,58 @@ def upload_file_postapi(user_address):
             'success': False, 
             "status_code": 401
         })
-
-    if 'total_doc' not in request.form:
-        return jsonify({"success": False, "error": "No files uploaded", "status_code": 400})
-    
-    total_doc = request.form["total_doc"]
-    file = request.files['file']
-
-    docHash = None
-    docId = None
-    fileContent = file.read().strip()
     try:
-        docHash = hashlib.sha256(fileContent).hexdigest()
-        docId = hashlib.sha256()
-        docId.update(user_address.encode())
-        docId.update(total_doc.encode())
-        docId.update(docHash.encode())
-        docId = docId.hexdigest()
-    except Exception as e:
-        print(e, "dochash")
-
-    if file.filename == '':
-        return jsonify({"success": False, "error": "No selected file", "status_code": 200})
-    else:
+        if 'total_doc' not in request.form:
+            return jsonify({"success": False, "error": "No files uploaded", "status_code": 200})
+        
+        total_doc = request.form["total_doc"]
+        file = request.files['file']
+        docHash = None
+        docId = None
+        fileContent = None
         try:
-            savepath = secure_filename(file.filename)
-            savepath = f"/test_dropbox/{user_address}/{savepath}"
-            res = dropbox_.files_upload(fileContent, savepath)
+            fileContent = file.read().strip()
+
+            if(len(fileContent)//(10**6) > 7):
+                return {"success": False, "error": "The upload size should be less than 5MB"}
+            docHash = hashlib.sha256(fileContent).hexdigest()
+            docId = hashlib.sha256()
+            docId.update(user_address.encode())
+            docId.update(docHash.encode())
+            docId = docId.hexdigest()
         except Exception as e:
-            print(e, "error")
+            print(e, "dochash")
             return {"success": False, "error": str(e)}
 
+        if file.filename == '':
+            return jsonify({"success": False, "error": "No selected file", "status_code": 200})
+        elif file.filename.split(".")[-1] not in ALLOWED_EXTENSIONS:
+            return jsonify({
+                "success": False,
+                "error": f"Not a valid file type. Valid file are f{str(ALLOWED_EXTENSIONS)}",
+                "status_code": 200
+            })
+        else:
+            try:
+                savepath = docId + "." + file.filename.split(".")[-1]
+                savepath = f"/test_dropbox/{user_address}/{savepath}"
+                res = dropbox_.files_upload(fileContent, savepath)
+            except Exception as e:
+                print(e, "error")
+                return {"success": False, "error": str(e)}
+
+            return jsonify({
+                "success": True, 
+                "redirect_url": "/dashboard",
+                "docHash": "0x" + docHash,
+                "docId": "0x" + docId,
+                "status_code": 200
+            })
+    except Exception as e:
         return jsonify({
-            "success": True, 
-            "redirect_url": "/dashboard",
-            "docHash": "0x" + docHash,
-            "docId": "0x" + docId,
-            "status_code": 200
+            "success": False, 
+            "status_code": 400,
+            "error": str(e)
         })
 
 
@@ -139,9 +153,6 @@ def comparehash_digest(user_address):
         if is_upload:
             total_doc = request.form['total_doc']
             ekey = getKey(int(total_doc), master_key, user_address)
-            print("Doc key before(upload): " + ekey, "master key: " + master_key, "doc Index: " + str(total_doc))
-            print("Address(salt): " + user_address)
-
             result["ekey"] = ekey
             return jsonify(result)
         else:
@@ -374,8 +385,6 @@ def sendAproovedMailToRequestor(user_address):
         docIndex = request.form.get("docIndex")
 
         docKey = getKey(int(docIndex), master_key, owner_address)
-        print("Doc key after: " + docKey, "master key: " + master_key, "doc Index: " + str(docIndex))
-        print("Address(salt): " + owner_address)
         req_pub_key = binascii.unhexlify(req_pub_key).decode()  
         pubKeyObj =  RSA.import_key(req_pub_key) 
         
@@ -469,47 +478,64 @@ def access_doc(user_address):
 @app.route('/api/post/file/comparehash',methods=['POST'])
 @token_required
 def downloadEncryptedFileNcompareHash(user_address):
-    doc_id = request.form.get("doc_id")
-    dochash = request.form.get("dochash")
-    ekey = request.form.get("ekey")
-    owner_add = request.form.get("owner_add")
-    privKey = request.form.get("privKey")
-    doc_name = request.form.get("doc_name")
-
-    """
-    1. Download encrypted file
-    2. Compare Hash
-    3. Decrypt doc key
-    4. Send file back, and key
-    """
-    # 1. Download encrypted file
-    fileData = None
+    if not user_address:
+        return jsonify({
+            'success': False, 
+            "status_code": 401
+        })
     try:
-        savepath = secure_filename(doc_name)
-        savepath = f"/test_dropbox/{owner_add}/{savepath}"
-        metadata, fileData = dropbox_.files_download(savepath)
+        doc_id = request.form.get("doc_id")
+        dochash = request.form.get("dochash")
+        ekey = request.form.get("ekey")
+        owner_add = request.form.get("owner_add")
+        privKey = request.form.get("privKey")
+        doc_name = request.form.get("doc_name")
+
+        """
+        1. Download encrypted file
+        2. Compare Hash
+        3. Decrypt doc key
+        4. Send file back, and key
+        """
+        # 1. Download encrypted file
+        fileData = None
+        try:
+            # remove 0x from docid
+            savepath = doc_id[2:] + "." + doc_name.split(".")[-1]
+            savepath = f"/test_dropbox/{owner_add}/{savepath}"
+            metadata, fileData = dropbox_.files_download(savepath)
+        except Exception as e:
+            print(e, "error")
+            return {"success": False, "error": str(e)}
+        
+        # compare hash
+        docHashObtained = "0x" + hashlib.sha256(fileData.content).hexdigest()
+        if docHashObtained != dochash:
+            return {"success": False, "error": "Corrupted file, dochash not matched"}
+
+        try:
+            keyPriv = RSA.importKey(privKey) # import the private key
+            cipher = Cipher_PKCS1_v1_5.new(keyPriv)
+        except Exception as e:
+            print("Key error", str(e))
+            return {"success": False, "error": "Private key is not valid. Please re enter the private key."}
+        
+        try:
+            ekey = binascii.unhexlify(ekey)
+            decrypt_text = cipher.decrypt(ekey, None).decode()
+        except Exception as e:
+            print("Key error", str(e))
+            return {"success": False, "error": "Private key is not valid"}
+        
+        return {
+            "success": True, 
+            "fileData": fileData.content.decode(),
+            "decrypt_key": decrypt_text,
+            "owner_address": owner_add,
+            "doc_name": doc_name
+        }
     except Exception as e:
-        print(e, "error")
         return {"success": False, "error": str(e)}
-    
-    # compare hash
-    docHashObtained = "0x" + hashlib.sha256(fileData.content).hexdigest()
-    if docHashObtained != dochash:
-        return {"success": False, "error": "Corrupted file, dochash not matched"}
-
-    keyPriv = RSA.importKey(privKey) # import the private key
-    cipher = Cipher_PKCS1_v1_5.new(keyPriv)
-    ekey = binascii.unhexlify(ekey)
-    decrypt_text = cipher.decrypt(ekey, None).decode()
-    print("Decrypted key =>" + decrypt_text)
-    return {
-        "success": True, 
-        "fileData": fileData.content.decode(),
-        "decrypt_key": decrypt_text,
-        "owner_address": owner_add,
-        "doc_name": doc_name
-    }
-
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", debug=True)

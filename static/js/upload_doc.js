@@ -13,6 +13,8 @@ $(document).ready(function () {
             title: "Error!",
             text: "Error while fetching document count : " + error,
             icon: "error",
+            allowOutsideClick: false,
+            closeOnClickOutside: false,
         });
 
     });
@@ -37,20 +39,22 @@ $('#id_upload_doc').submit(function (event) {
         request.open('POST', accesskey_url, true);
         request.onload = function () {
 
-            if (request.status >= 200 && request.status < 400) {
+            if (request.status == 200) {
                 var resp = JSON.parse(request.responseText);
                 if (resp.valid == false) {
                     swal({
                         title: "Warning!",
                         text: "Master key is not valid!!",
                         icon: "warning",
+                        allowOutsideClick: false,
+                        closeOnClickOutside: false,
                     });
                     return false;
                 } else {
                     var key = resp.ekey;
                     var fileInput = document.getElementById('file');
                     var file = fileInput.files[0]
-
+                    console.log(file.size, "file size", file, file.size / 1000000)
                     if (Math.floor(file.size / 1000000) <= 5) {
                         // Read file callback!
                         var reader = new FileReader();
@@ -70,9 +74,6 @@ $('#id_upload_doc').submit(function (event) {
                             data.append('file', encryptedFile);
                             data.append("X-CSRFToken", getCookie('csrftoken'));
                             data.append("total_doc", total_doc);
-                            var bar = $('.bar');
-                            var percent = $('.percent');
-                            var status = $('#status');
 
                             $.ajax({
                                 url: '/post/api/upload/doc',
@@ -105,6 +106,8 @@ $('#id_upload_doc').submit(function (event) {
                                                         title: "Success!",
                                                         text: "Document Uploaded Successfully",
                                                         icon: "success",
+                                                        allowOutsideClick: false,
+                                                        closeOnClickOutside: false,
                                                     }).then((value) => {
                                                         if (value)
                                                             window.location.replace(res.redirect_url);
@@ -113,10 +116,13 @@ $('#id_upload_doc').submit(function (event) {
                                             }
                                         });
                                     } else {
+                                        $("#main-loader").hide();
                                         swal({
                                             title: "Something went wrong!",
                                             text: res["error"],
                                             icon: "error",
+                                            allowOutsideClick: false,
+                                            closeOnClickOutside: false,
                                         });
                                     }
                                 },
@@ -132,12 +138,19 @@ $('#id_upload_doc').submit(function (event) {
                         reader.readAsDataURL(file);
                     } // end if
                     else {
-                        alert("Upload size limits to 5MB");
                         $("#main-loader").hide();
+                        swal({
+                            title: "Something went wrong!",
+                            text: "Upload size limits to 5MB",
+                            icon: "error",
+                            allowOutsideClick: false,
+                            closeOnClickOutside: false,
+                        });
                     }
                 }
             } else {
-                alert("Request failed")
+                var resp = JSON.parse(request.responseText);
+                alert("Request failed" + resp.error)
                 $("#main-loader").hide();
             }
         };
@@ -146,6 +159,8 @@ $('#id_upload_doc').submit(function (event) {
                 title: "Alert!",
                 text: "Error while uploading!!",
                 icon: "error",
+                allowOutsideClick: false,
+                closeOnClickOutside: false,
             });
 
         };
