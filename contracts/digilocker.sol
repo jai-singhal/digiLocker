@@ -37,6 +37,8 @@ contract digiLocker {
     event registeredUserEvent(string _email,userType utype,address indexed _useraddress);
     event uploadDocumentEvent(bytes32 indexed docid, bytes32 docHash, address indexed user_addr);
     event sharedDocumentEvent(bytes32 indexed docid, address indexed docOwner,address indexed sharedWith, uint32 permission);
+    event verifyDocumentEvent(bytes32 indexed docid, address indexed docOwner, address indexed sharedWith);
+    
     
     ///////////////////////-- mapping here -- ///////////////////////////////////
     mapping(address => User) registerUsers;
@@ -114,6 +116,12 @@ contract digiLocker {
             // sharedDocuments[_requester].push(d);
             emit sharedDocumentEvent(docid, _owner, _requester, permission);  
     }
+    
+    function verifyUserDocument(bytes32 docid, address  _owner, address _requester) public{
+        
+        emit verifyDocumentEvent(docid,_owner,_requester);
+    }
+    
 
     function isValidSharableUser(string memory email_) public view returns(bool){
         if(emailAddressMapping[email_] != 0x0000000000000000000000000000000000000000 &&

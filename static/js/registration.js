@@ -147,6 +147,9 @@ $("#master_code").focusout(function(){
 
 $("#requestor_registration").submit(function(e){
     e.preventDefault();
+    $("#main-loader").show();
+    $(".btn").attr("disabled", true);
+
     var fname = $("#org_name").val()
     var lname = "";
     var email = $("#org_email").val()
@@ -187,6 +190,7 @@ $("#requestor_registration").submit(function(e){
                     fname, lname, email, utype, cno, 
                     access_key, resp.pu
                 ).send().then(function(res){
+                    $("#main-loader").hide();
                     swal({
                         title: "Success!",
                         text: "Registration Successful!! You will recieve credentials via mail.",
@@ -197,7 +201,12 @@ $("#requestor_registration").submit(function(e){
                             window.location.replace(resp.redirect_url);
                         }
                     });
-                })
+                }).catch(function(error)
+                {     
+                        $("#main-loader").hide();  
+                        console.log("registerUser() is rejected"+error.message)
+                        $(".btn").attr("disabled", false);
+                });
             }
             else{
                 alert("Not valid")
