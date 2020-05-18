@@ -15,7 +15,7 @@ function checkRegiterededUser(){
 }
 
 $(document).ready(function(){
-    $("#main-loader").hide().fadeOut("slow");;
+    $("#main-loader").hide().fadeOut("slow");
     $('.collapsible').collapsible();
     $("#dash_btn a").removeAttr("href");
     checkRegiterededUser();
@@ -50,10 +50,13 @@ $("#resident_registration").submit(function(e){
         return false;
     }
 
+    $("#main-loader").show();
     var request = new XMLHttpRequest();
     var register_url = "/api/user/registration/";
     request.open('POST', register_url, true);
     request.onload = function () {
+        $("#main-loader").hide().fadeOut("slow");
+
         if (request.status == 200) {
             // Success!
             var resp = JSON.parse(request.responseText);
@@ -85,6 +88,7 @@ $("#resident_registration").submit(function(e){
     };
 
     request.onerror = function () {
+        $("#main-loader").hide().fadeOut("slow");
         console.log("Registration failed - there was an error");
     };
     request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
@@ -94,14 +98,15 @@ $("#resident_registration").submit(function(e){
     var formData = 'first_name=' + fname + '&last_name=' + lname + "&utype=" + "1";
     formData += "&email=" + email + "&contact_no=" + cno + "&master_key=" + mkey;
     formData += "&user_address=" + address;
+    $("#main-loader").show();
     request.send(formData);
+    $("#main-loader").hide().fadeOut("slow");
 
 })
 
 
 var masterKeyValid = false;
 function validateMasterCode(){
-
     data = {
         "master_code": $("#master_code").val()
     }
@@ -164,10 +169,13 @@ $("#requestor_registration").submit(function(e){
         return false;
     }
 
+    $("#main-loader").show();
     var request = new XMLHttpRequest();
+    $("#main-loader").hide().fadeOut("slow");
     var register_url = "/api/user/registration/";
     request.open('POST', register_url, true);
     request.onload = function () {
+        $("#main-loader").hide().fadeOut("slow");
         if (request.status == 200) {
             // Success!
             var resp = JSON.parse(request.responseText);
@@ -195,6 +203,7 @@ $("#requestor_registration").submit(function(e){
                 alert("Not valid")
             }
         } else {
+            $("#main-loader").hide().fadeOut("slow");
             alert("Error in sending mail")
         }
     };
@@ -210,8 +219,9 @@ $("#requestor_registration").submit(function(e){
     formData += "&email=" + email + "&contact_no=" + cno + "&utype=" + "2";
     formData += "&user_address=" + address;
     formData += "&mastercode=" + master_code;
+    $("#main-loader").show();
     request.send(formData);
-
+    $("#main-loader").hide().fadeOut("slow");
 })
 
 

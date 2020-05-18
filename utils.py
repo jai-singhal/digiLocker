@@ -77,8 +77,6 @@ def getKey(total_doc, masterKey, user_address):
     if startIndex + 128 >= 500:
         startIndex = total_doc%256
     key = keys[startIndex:startIndex+128]
-    print(len(key), "key len")
-    print("Key: ", key)
     return key.decode()
 
 # getKey(65, "jai@321", "0xc95044089191d7d8038c00cca051d5c4da80aa3e")
