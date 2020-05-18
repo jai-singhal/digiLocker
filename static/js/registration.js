@@ -24,6 +24,9 @@ $(document).ready(function () {
 
 $("#resident_registration").submit(function (e) {
     e.preventDefault();
+    
+    $(".btn").attr("disabled", true);
+
     var fname = $("#first_name").val()
     var lname = $("#last_name").val()
     var email = $("#email").val()
@@ -86,6 +89,10 @@ $("#resident_registration").submit(function (e) {
                         if (value)
                             window.location.replace(resp.redirect_url);
                     });
+                }).catch(function(error){
+                    $(".btn").attr("disabled", false);
+                    console.log("Registration failed - "+error.message)
+                    
                 });
             }
         } else {

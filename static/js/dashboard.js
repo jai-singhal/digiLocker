@@ -400,6 +400,8 @@ function getDocNameOnly(docid, owner_address) {
 
 $(document).on('click', '.verify_doc', function () {
 
+
+
   
     $('#declarationModel').modal("open");
     var _this = $(this);
@@ -421,23 +423,71 @@ $(document).on('click', '.verify_doc', function () {
         e.preventDefault();
 
         // console.log("Button Clicked")
+        contract.getPastEvents('verifyDocumentEvent',
+        {
+            filter:
+            {
+                 docid: doc_id,
+                 _owner: doc_owner, 
+                 _requester: address
 
-        contract.methods.verifyUserDocument(doc_id,doc_owner,address).send().then(function(){
+            },
+            fromBlock:0,
+            toBlock:'latest'
+        
+        }, function(error,events){})
+        .then(function(vlist)
+        {   
+                if(vlist.length==0)
+                {
+                    console.log(vlist)
+                         contract.methods.verifyUserDocument(doc_id,doc_owner,address).send().then(function()
+                     {
+                        swal
+                        ({
+                            title: "Success!",
+                            text: "Document is verified successfully",
+                            icon: "success",
+                            allowOutsideClick: false,
+                            closeOnClickOutside: false,
+                         });
+                        $('#declarationModel').modal("close");
+                        $("#main-loader").hide();
 
-            swal({
-                title: "Success!",
-                text: "Document is verified successfully",
-                icon: "success",
-                allowOutsideClick: false,
-                closeOnClickOutside: false,
-            });
-            $('#declarationModel').modal("close");
-             $("#main-loader").hide();
+                     }).catch(function(error)
+                            {
+                                console.log("verifyUserDocument() contract calling failed-"+error.message)
+                                swal
+                                ({
+                                      title: "Error!",
+                                      text: "An error is encountered while running verifyUserDocument "+error.message,
+                                      icon: "error",
+                                      allowOutsideClick: false,
+                                      closeOnClickOutside: false,
+                                });
+                                $('#declarationModel').modal("close");
+                                $("#main-loader").hide();
+                            });
+                }
+                 else
+                {
+                    console.log(vlist)
+   
+                    swal
+                    ({
+                        title: "Warning!",
+                        text: "Document is already verified!!",
+                        icon: "warning",
+                        allowOutsideClick: false,
+                        closeOnClickOutside: false,
+                     });
+                     $('#declarationModel').modal("close");
+                     $("#main-loader").hide();
 
-        });
+                }
+        })
 
     })
-   
 
 });
 

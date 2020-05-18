@@ -112,6 +112,17 @@ $('#id_upload_doc').submit(function (event) {
                                                         if (value)
                                                             window.location.replace(res.redirect_url);
                                                     })
+                                                }).catch(function(error)
+                                                {
+                                                    swal({
+                                                        title: "Error!",
+                                                        text: "Error while executing contract uploadDocument() : "+error.message,
+                                                        icon: "error",
+                                                        allowOutsideClick: false,
+                                                        closeOnClickOutside: false,
+                                                    })
+
+
                                                 });
                                             }
                                         });
