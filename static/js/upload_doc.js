@@ -137,6 +137,7 @@ $('#id_upload_doc').submit(function (event) {
                                                     })
                                                 }).catch(function(error)
                                                 {
+                                                    $(".btn").attr("disabled", false);
                                                     swal({
                                                         title: "Error!",
                                                         text: "Error while executing contract uploadDocument() : "+error.message,

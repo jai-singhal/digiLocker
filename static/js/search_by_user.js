@@ -14,6 +14,7 @@ function displayDocumentsList(){
         //console.log(result)
         x = result;
         _glbladrress = result;
+        $("#uid").html(_glbladrress);
         //List of docs uploaded by owner we searched
         contract.methods.getDocumetList(x).call().then(function(docs){
         console.log(docs)
@@ -65,7 +66,7 @@ function displayDocumentsList(){
     {
         x = _uid;
         _glbladrress =_uid;
-    
+        $("#uid").html(_glbladrress);
     //console.log(x)
     contract.methods.getDocumetList(x).call().then(function(docs){
     console.log(docs)
