@@ -36,7 +36,7 @@ contract digiLocker {
     ///////////////////////-- events here -- ///////////////////////////////////
     event registeredUserEvent(string _email,userType utype,address indexed _useraddress);
     event uploadDocumentEvent(bytes32 indexed docid, bytes32 docHash, address indexed user_addr);
-    event sharedDocumentEvent(bytes32 indexed docid, address indexed docOwner,address indexed sharedWith, uint32 permission);
+    event sharedDocumentEvent(bytes32 indexed docid, address indexed docOwner,address indexed sharedWith, uint8 permission);
     event verifyDocumentEvent(bytes32 indexed docid, address indexed docOwner, address indexed sharedWith);
     
     
@@ -60,15 +60,15 @@ contract digiLocker {
        return (registerUsers[msg.sender].accessKey);
     }
     
-    function getUserType() public view returns(uint)
-    {
-        return uint(registerUsers[msg.sender].utype);
+    function getUserType() public view returns(uint8){
+        return uint8(registerUsers[msg.sender].utype);
     }
     
     function getRegisteredUser() public view returns(bytes32, address, string memory){
-       return (registerUsers[msg.sender].accessKey, 
-       registerUsers[msg.sender]._useraddress,
-       registerUsers[msg.sender].details.firstName
+       return (
+           registerUsers[msg.sender].accessKey, 
+           registerUsers[msg.sender]._useraddress,
+           registerUsers[msg.sender].details.firstName
        );
     }
     
@@ -111,21 +111,19 @@ contract digiLocker {
         return true;
     }
 
-    function shareDocumentwithUser(bytes32 docid, address  _owner, uint32 permission,address _requester) public{
-           // sharedDoc memory d = sharedDoc(docid, _owner, Permission(permission));
-            // sharedDocuments[_requester].push(d);
-            emit sharedDocumentEvent(docid, _owner, _requester, permission);  
+    function shareDocumentwithUser(bytes32 docid, uint8 permission,address _requester) public{
+        //  address  _owner, = msg.sender
+        emit sharedDocumentEvent(docid, msg.sender, _requester, permission);
     }
-    
-    function verifyUserDocument(bytes32 docid, address  _owner, address _requester) public{
-        
-        emit verifyDocumentEvent(docid,_owner,_requester);
+
+    function verifyUserDocument(bytes32 docid, address  _owner) public{
+        // , address _requester = msg.sender
+        emit verifyDocumentEvent(docid,_owner,msg.sender);
     }
-    
 
     function isValidSharableUser(string memory email_) public view returns(bool){
         if(emailAddressMapping[email_] != 0x0000000000000000000000000000000000000000 &&
-            uint(registerUsers[emailAddressMapping[email_]].utype) == 2){
+            uint8(registerUsers[emailAddressMapping[email_]].utype) == 2){
             return true;
         }
         else{
@@ -210,8 +208,7 @@ contract digiLocker {
     }
     
     //To find owners details
-    function getEmailIdByUsrAddr(address _usraddrs)public view returns(string memory,string memory,string memory)
-    {
+    function getEmailIdByUsrAddr(address _usraddrs)public view returns(string memory,string memory,string memory){
         return (registerUsers[_usraddrs].details.email,
                 registerUsers[_usraddrs].details.firstName,
                 registerUsers[_usraddrs].details.lastName);
@@ -219,16 +216,11 @@ contract digiLocker {
     
     function getDocIndex(bytes32 _docid_,address _uaddr_)public view returns(uint256){
        
-       for(uint i=0;i < ownerDocuments[_uaddr_].length ;i++)
-       {
-           
-           if(ownerDocuments[_uaddr_][i].docid == _docid_)
-           {
-               
+       for(uint i=0;i < ownerDocuments[_uaddr_].length ;i++){
+           if(ownerDocuments[_uaddr_][i].docid == _docid_){
                return i;
            }
        }
-        
     }
     
     function getPublicKey(address _uaddr_)public view returns(string memory){

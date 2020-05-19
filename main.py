@@ -147,7 +147,11 @@ def comparehash_digest(user_address):
         mkeydigest = request.form['mkeydigest']
         is_upload = int(request.form['upload'])
 
-        mkey_digest_new = hashlib.sha256(master_key.strip().encode()).hexdigest()
+        mkey_digest_new = hashlib.sha256()
+        mkey_digest_new.update(master_key.strip().encode())
+        mkey_digest_new.update(app.config["SECRET_KEY"])
+        mkey_digest_new = mkey_digest_new.hexdigest()
+
         if "0x" + mkey_digest_new == mkeydigest:
             result={"valid": True, 'success': True, "status_code": 200}
         else:
@@ -186,7 +190,10 @@ def registration_postapi(user_address):
             master_key = request.form.get("master_key")
             last_name = request.form.get("last_name")
             # TODO: ADD MORE PARAMS IN HASH
-            mkey_digest = hashlib.sha256((master_key.strip()).encode()).hexdigest()
+            mkey_digest = hashlib.sha256()
+            mkey_digest.update(master_key.strip().encode())
+            mkey_digest.update(app.config["SECRET_KEY"])
+            mkey_digest = mkey_digest.hexdigest()
 
             msg = prepareMailMsg(f"{first_name} {last_name}", email, user_address, None, master_key, MAIL_SENDER)
             mail.send(msg)  

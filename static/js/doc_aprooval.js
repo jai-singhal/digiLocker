@@ -2,9 +2,7 @@ var requester_address = document.getElementById("_reqaddress").innerHTML;
 var owner_address = document.getElementById("_owneraddress").innerHTML;
 var doc_id = document.getElementById("_docid").innerHTML;
 
-
 function getPublicKey() {
-
     var req_pub_key = "";
     var req_full_name = "";
     var req_email = "";
@@ -35,9 +33,8 @@ function getPublicKey() {
                         req_email = req[0];
 
                         $(document).on('click', '.btn', function () {
-
+                            $("#main-loader").show();
                             var masterKey = document.getElementById("master_key").value;
-
                             contract.methods.getUseraccessKey().call().then(function (mkeyhash) {
                                 hash = mkeyhash;
                                 var request = new XMLHttpRequest();
@@ -70,7 +67,7 @@ function getPublicKey() {
                                                 closeOnClickOutside: false,
                                             }).then((value) => {
                                                 if (value) {
-                                                    contract.methods.shareDocumentwithUser(doc_id, owner_address, 0, requester_address).send().then(function (res) {
+                                                    contract.methods.shareDocumentwithUser(doc_id, 0, requester_address).send().then(function (res) {
                                                         console.log("Sharing info is updated")
                                                         if (res) {
                                                             sendRequestMailAjax(masterKey, req_email, req_full_name, requester_address,
@@ -197,6 +194,8 @@ function sendRequestMailAjax(masterKey, req_email, req_full_name, requester_addr
     request.open('POST', "/post/api/send/aproove/mail", true);
 
     request.onload = function () {
+        $("#main-loader").hide();
+
         if (request.status >= 200 && request.status < 400) {
             // Success!
             var resp = JSON.parse(request.responseText);
@@ -208,8 +207,9 @@ function sendRequestMailAjax(masterKey, req_email, req_full_name, requester_addr
                     allowOutsideClick: false,
                     closeOnClickOutside: false,
                 }).then((value) => {
-                    if (value)
-                        window.location.replace("/dashboard");
+                    if (value) {
+                        window.top.close();
+                    }
                 });
             }
         } else {
@@ -224,6 +224,8 @@ function sendRequestMailAjax(masterKey, req_email, req_full_name, requester_addr
     };
 
     request.onerror = function (error) {
+        $("#main-loader").hide();
+
         console.log("There was an error" + error)
         swal({
             title: "Error!",
@@ -253,31 +255,26 @@ function sendRequestMailAjax(masterKey, req_email, req_full_name, requester_addr
 
 
 $(document).ready(function () {
-
-    console.log(requester_address, owner_address, doc_id)
+    $("#main-loader").show();
 
     contract.methods.checkAlreadyUpload(doc_id).call().then(function (check) {
         if (check) {
             console.log("Document is uploaded by owner")
             contract.getPastEvents('sharedDocumentEvent', {
-
-                    filter: {
-                        sharedWith: requester_address,
-                        docOwner: owner_address,
-                        docid: doc_id
-
-                    },
-                    fromBlock: 0,
-                    toBlock: 'latest'
-                }, function (error, events) {})
+                filter: {
+                    sharedWith: requester_address,
+                    docOwner: owner_address,
+                    docid: doc_id
+                },
+                fromBlock: 0,
+                toBlock: 'latest'
+            }, function (error, events) {})
                 .then(function (docs) {
                     if (docs.length == 0) {
                         console.log("Document is not shared before- good request")
                         getPublicKey();
-
-
                     } else {
-
+                        $("#main-loader").hide();
                         swal({
                             allowOutsideClick: false,
                             closeOnClickOutside: false,
@@ -292,6 +289,7 @@ $(document).ready(function () {
                         });
                     }
                 }).catch(function (error) {
+                    $("#main-loader").hide();
                     swal({
                         allowOutsideClick: false,
                         closeOnClickOutside: false,
@@ -301,6 +299,7 @@ $(document).ready(function () {
                     });
                 });
         } else {
+            $("#main-loader").hide();
             swal({
                 title: "Error!",
                 text: "Incorrect url or \
@@ -315,6 +314,7 @@ $(document).ready(function () {
             });
         }
     }).catch(function (error) {
+        $("#main-loader").hide();
         swal({
             allowOutsideClick: false,
             closeOnClickOutside: false,

@@ -119,8 +119,7 @@ $(document).on('click', '.shared_with', function () {
             }, // Using an array means OR: e.g. 20 or 23
             fromBlock: 0,
             toBlock: 'latest'
-        }, function (error, events) {
-        })
+        }, function (error, events) {})
         .then(function (events) {
             if (events.length == 0)
                 $("#shared_doc_table tbody").html(
@@ -214,7 +213,7 @@ $(document).on('click', '.sharedoc', function () {
                                                 });
                                             } else {
                                                 contract.methods.shareDocumentwithUser(
-                                                    doc_id, resident_address, permission, req_address).send().then(function (res3) {
+                                                    doc_id, permission, req_address).send().then(function (res3) {
                                                     sendShareMailAjax(doc_id, email, doc_name);
                                                     $("#main-loader").hide();
                                                 }).catch(function (error) {
@@ -388,96 +387,74 @@ function getDocName(docid, owner_address) {
 }
 
 
-$(document).on('click', '.verify_doc', function () 
-{
-
+$(document).on('click', '.verify_doc', function () {
     var _this = $(this);
     var doc_id = _this.attr("doc_id");
     var doc_owner = _this.attr("docOwner");
-    contract.methods.getDocumentName(doc_id,doc_owner).call().then(function(docname)
-    {
 
-            $('#declarationModel').modal("open");
-            
-            $("#doc_id").html(doc_id);
-            $("#doc_owner").html(doc_owner);
-            $(".doc_name_modal").html("Verification of the Document :"+docname);
-            $("#doc_name").html(docname);
-    
-    }).catch(function(error)
-    {
-        console.log("error while calling getDocumentName() -"+error.message)
-    });
-    
-    $('#verifyThisDoc').submit(function (e) {
-        $("#main-loader").show();
-        e.preventDefault();
+    contract.getPastEvents('verifyDocumentEvent', {
+        filter: {
+            docid: doc_id,
+            _owner: doc_owner,
+            _requester: address
+        },
+        fromBlock: 0,
+        toBlock: 'latest'
+    }, function (error, events) {
+        console.log(events, "xxx")
+    }).then(function (vlist) {
+        if (vlist.length == 0) {
+            contract.methods.getDocumentName(doc_id, doc_owner).call().then(function (docname) {
+                $('#declarationModel').modal("open");
+                $("#doc_id").html(doc_id);
+                $("#doc_owner").html(doc_owner);
+                $(".doc_name_modal").html("Verification of the Document :" + docname);
+                $("#doc_name").html(docname);
 
-        // console.log("Button Clicked")
-        contract.getPastEvents('verifyDocumentEvent',
-        {
-            filter:
-            {
-                 docid: doc_id,
-                 _owner: doc_owner, 
-                 _requester: address
-
-            },
-            fromBlock:0,
-            toBlock:'latest'
-        
-        }, function(error,events){})
-        .then(function(vlist)
-        {   
-                if(vlist.length==0)
-                {
-                    console.log(vlist)
-                         contract.methods.verifyUserDocument(doc_id,doc_owner,address).send().then(function()
-                     {
-                        swal
-                        ({
+                $('#verifyThisDoc').submit(function (e) {
+                    e.preventDefault();
+                    $("#main-loader").show();
+                    contract.methods.verifyUserDocument(doc_id, doc_owner).send().then(function () {
+                        swal({
                             title: "Success!",
                             text: "Document is verified successfully",
                             icon: "success",
                             allowOutsideClick: false,
                             closeOnClickOutside: false,
-                         });
+                        });
                         $('#declarationModel').modal("close");
                         $("#main-loader").hide();
 
-                     }).catch(function(error)
-                            {
-                                console.log("verifyUserDocument() contract calling failed-"+error.message)
-                                swal
-                                ({
-                                      title: "Error!",
-                                      text: "An error is encountered while running verifyUserDocument "+error.message,
-                                      icon: "error",
-                                      allowOutsideClick: false,
-                                      closeOnClickOutside: false,
-                                });
-                                $('#declarationModel').modal("close");
-                                $("#main-loader").hide();
-                            });
-                }
-                 else
-                {
-                    console.log(vlist)
-   
-                    swal
-                    ({
-                        title: "Warning!",
-                        text: "Document is already verified!!",
-                        icon: "warning",
-                        allowOutsideClick: false,
-                        closeOnClickOutside: false,
-                     });
-                     $('#declarationModel').modal("close");
-                     $("#main-loader").hide();
+                    }).catch(function (error) {
+                        console.log("verifyUserDocument() contract calling failed-" + error.message)
+                        swal({
+                            title: "Error!",
+                            text: "An error is encountered while running verifyUserDocument " + error.message,
+                            icon: "error",
+                            allowOutsideClick: false,
+                            closeOnClickOutside: false,
+                        });
+                        $('#declarationModel').modal("close");
+                        $("#main-loader").hide();
+                    });
+                });
 
-                }
-        })
+            }).catch(function (error) {
+                console.log("error while calling getDocumentName() -" + error.message)
+            });
 
+        } //end if
+        else {
+            swal({
+                title: "Warning!",
+                text: `You have already verified this document!!`,
+                icon: "warning",
+                allowOutsideClick: false,
+                closeOnClickOutside: false,
+            });
+            $('#declarationModel').modal("close");
+            $("#main-loader").hide();
+        }
     })
 
 });
@@ -496,7 +473,7 @@ function getSharedDocListForRequestor() {
         .then(function (docs) {
             for (var k = 0; k < docs.length; k++) {
                 docList[k] = {}
-                
+
                 docList[k].docName = `<a 
                 onClick=getDocName("${docs[k].returnValues.docid}","${docs[k].returnValues.docOwner}")
                     >Click to reveal</a>`;
@@ -593,7 +570,7 @@ function getUsrDetails() {
         //For Requester Dashboard
         $("#org_addr").html(usrdetails[0]);
         $("#org_name").html(usrdetails[1]);
-    }).catch(function(error){
+    }).catch(function (error) {
         swal({
             title: "Error!",
             text: "Error while fetching Logged in user details : " + error,

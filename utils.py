@@ -21,7 +21,18 @@ def generateRSAKeypair():
         keyPair.publickey().export_key().decode(),
         keyPair.export_key().decode()
     )
-    
+
+def getKey(total_doc, masterKey, user_address):
+    salt = user_address.lower().strip().encode()
+    masterKey = masterKey.strip().encode()
+    keys = PBKDF2(masterKey, salt, 512, count=1000, prf= None)
+    keys = binascii.hexlify(keys)
+    startIndex = (total_doc*16)%450
+    if startIndex + 128 >= 500:
+        startIndex = total_doc%256
+    key = keys[startIndex:startIndex+128]
+    return key.decode()
+
 def prepareMailMsg(name, from_mail, address, pr, master_key, MAIL_SENDER):
     msg = Message(
         recipients=[from_mail.strip(),],
@@ -66,18 +77,6 @@ def prepareMailMsg(name, from_mail, address, pr, master_key, MAIL_SENDER):
 
     return msg
 
-
-
-def getKey(total_doc, masterKey, user_address):
-    salt = user_address.lower().strip().encode()
-    masterKey = masterKey.strip().encode()
-    keys = PBKDF2(masterKey, salt, 512, count=1000, prf= None)
-    keys = binascii.hexlify(keys)
-    startIndex = (total_doc*16)%450
-    if startIndex + 128 >= 500:
-        startIndex = total_doc%256
-    key = keys[startIndex:startIndex+128]
-    return key.decode()
 
 def prepareRequestMail(        
         owner_name, 
@@ -133,8 +132,6 @@ def prepareRequestMail(
     msg.subject = f"Read access Request for document: {doc_name} by {requester_email}"
     return msg
     
-
-
 def prepareAproovedMail(        
         owner_name, 
         owner_email, 
