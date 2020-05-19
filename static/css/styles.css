@@ -30,11 +30,20 @@ main {
 
 }
 
-.breadcrumb-nav div{
-  padding-left: 10px;
+#main-loader{
+  z-index: 9999;
+  height: 100%;
+  width: 100%;
+  background-color: rgba(0,0,0,0.5); /*dim the background*/
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  opacity: .75; /* in FireFox */ 
+  filter: alpha(opacity=50); /* in IE */
 }
 
-#main-loader {
+
+.loader {
   /* Looks cuter when its smaller */
   transform: scale(0.68);
   /* background: #f0e8f7; */
@@ -111,13 +120,13 @@ footer{
   right: 0;
   width: 85px;
   height: 90px;
-  background: #ac6eec;
+  background: #6a1b9a;
   -webkit-clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
   clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
   transform: rotate(90deg);
   animation: rotateHex 1s infinite;
   border-radius: 6%;
-  opacity: 0.8;
+  /* opacity: 1; */
 }
 .para1 {
   margin: auto;
@@ -133,7 +142,7 @@ footer{
   transform: rotate(63.5deg);
   -webkit-clip-path: polygon(25% 0%, 100% 0%, 75% 100%, 0% 100%);
   clip-path: polygon(25% 0%, 100% 0%, 75% 100%, 0% 100%);
-  background: #c297ee;
+  background: #7b1fa2;
   border-radius: 10%;
   animation: rotatePara1 2s infinite;
   opacity: 0.9;
@@ -152,7 +161,7 @@ footer{
   transform: rotate(-56deg);
   -webkit-clip-path: polygon(25% 0%, 100% 0%, 75% 100%, 0% 100%);
   clip-path: polygon(25% 0%, 100% 0%, 75% 100%, 0% 100%);
-  background: #c297ee;
+  background: #7b1fa2;
   animation: rotatePara2 2s infinite;
   border-radius: 10%;
   opacity: 0.9;
@@ -171,7 +180,7 @@ footer{
   transform: rotate(-56deg);
   -webkit-clip-path: polygon(25% 0%, 100% 0%, 75% 100%, 0% 100%);
   clip-path: polygon(25% 0%, 100% 0%, 75% 100%, 0% 100%);
-  background: #c297ee;
+  background: #7b1fa2;
   animation: rotatePara3 2s infinite;
   border-radius: 10%;
   opacity: 0.9;
