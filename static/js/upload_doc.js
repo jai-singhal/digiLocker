@@ -54,7 +54,28 @@ $('#id_upload_doc').submit(function (event) {
                     var key = resp.ekey;
                     var fileInput = document.getElementById('file');
                     var file = fileInput.files[0]
-                    console.log(file.size, "file size", file, file.size / 1000000)
+                    console.log(file.size, "file size", file,file.name, file.size / 1000000)
+                    var fileName = file.name;
+                    fileName = fileName.split(".").pop();
+                    if( ['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', "docx"].includes(fileName))
+                    {
+                        console.log("Valid Extension-"+fileName);
+                        
+                    }
+                    else
+                    {
+                        console.log("not matched")
+                        $("#main-loader").hide();
+                        swal({
+                            title: "Warning!",
+                            text: "Invalid file extension!!",
+                            icon: "warning",
+                            allowOutsideClick: false,
+                            closeOnClickOutside: false,
+                        });
+                       
+                    }
+                
                     if (Math.floor(file.size / 1000000) <= 5) {
                         // Read file callback!
                         var reader = new FileReader();
