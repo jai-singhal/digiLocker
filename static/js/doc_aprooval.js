@@ -53,7 +53,7 @@ function getPublicKey() {
 
                                             swal({
                                                 title: "Warning!",
-                                                text: "Please enter correct master key",
+                                                text: "Master Key is not valid. Please enter correct master key",
                                                 icon: "warning",
                                                 allowOutsideClick: false,
                                                 closeOnClickOutside: false,
@@ -62,9 +62,10 @@ function getPublicKey() {
                                             return false;
                                         } else {
                                             swal({
-                                                title: "Success!",
-                                                text: "Do you want to provide the approval ?",
-                                                icon: "success",
+                                                title: "Warning!",
+                                                text: `Do you want to provide the approval of document 
+                                                    ${doc_name} to  ${req_full_name}`,
+                                                icon: "warning",
                                                 allowOutsideClick: false,
                                                 closeOnClickOutside: false,
                                             }).then((value) => {

@@ -30,6 +30,7 @@ $('#id_upload_doc').submit(function (event) {
 
     var master_key = $("#master_key").val();
     var total_doc = $("#total_doc").val();
+    $(".btn").attr("disabled", true);
 
     var _this = $(this);
     contract.methods.getUseraccessKey().call().then(function (mkeyHash) {
@@ -102,6 +103,7 @@ $('#id_upload_doc').submit(function (event) {
                                                 return false;
                                             } else {
                                                 contract.methods.uploadDocument(file.name.trim(), docId, docHash, timestamp).send().then(function (obj) {
+                                                    $(".btn").attr("disabled", false);
                                                     swal({
                                                         title: "Success!",
                                                         text: "Document Uploaded Successfully",
@@ -128,6 +130,8 @@ $('#id_upload_doc').submit(function (event) {
                                         });
                                     } else {
                                         $("#main-loader").hide();
+                                        $(".btn").attr("disabled", false);
+
                                         swal({
                                             title: "Something went wrong!",
                                             text: res["error"],
@@ -149,6 +153,8 @@ $('#id_upload_doc').submit(function (event) {
                         reader.readAsDataURL(file);
                     } // end if
                     else {
+                        $(".btn").attr("disabled", false);
+
                         $("#main-loader").hide();
                         swal({
                             title: "Something went wrong!",
@@ -160,12 +166,14 @@ $('#id_upload_doc').submit(function (event) {
                     }
                 }
             } else {
+                $(".btn").attr("disabled", false);
                 var resp = JSON.parse(request.responseText);
                 alert("Request failed" + resp.error)
                 $("#main-loader").hide();
             }
         };
         request.onerror = function () {
+            $(".btn").attr("disabled", false);
             swal({
                 title: "Alert!",
                 text: "Error while uploading!!",

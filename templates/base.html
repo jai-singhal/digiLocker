@@ -14,23 +14,16 @@
 <body>
 	<div id="main_useraddress" uaddress="{{user_address}}"></div>
 	<div id="main-loader">
-		<div class="hex"></div>
-		<div class="para1"></div>
-		<div class="para2"></div>
-		<div class="para3"></div>
+		<div class="loader">
+			<div class="hex"></div>
+			<div class="para1"></div>
+			<div class="para2"></div>
+			<div class="para3"></div>
+		</div>
 	</div>
 
 
-	{% with messages = get_flashed_messages() %}
-	{% if messages %}
-	<ul class=flashes>
-		{% for message in messages %}
-		<li>{{ message }}</li>
-		{% endfor %}
-	</ul>
-	{% endif %}
-	{% endwith %}
-	{% block body %}{% endblock %}
+
 
 	{% block container %}
 
@@ -46,10 +39,25 @@
 	<script type="text/javascript" src="{{ url_for('static', filename='js/abi.js') }}"></script>
 	<script type="text/javascript" src="{{ url_for('static', filename='js/base.js') }}"></script>
 
-	{% block javascript %}
 	<script>
+	{% with messages = get_flashed_messages() %}
+	{% if messages %}
+		{% for message in messages %}
+		swal({
+            title: "Warning!",
+            text: "{{ message }}",
+            icon: "warning",
+            allowOutsideClick: false,
+            closeOnClickOutside: false,
+        });
+		{% endfor %}
+	{% endif %}
+	{% endwith %}
+	{% block body %}{% endblock %}
 	</script>
+
+
+	{% block javascript %}
 	{% endblock javascript %}
 </body>
-
 </html>

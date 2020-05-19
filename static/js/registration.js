@@ -24,6 +24,7 @@ $(document).ready(function () {
 
 $("#resident_registration").submit(function (e) {
     e.preventDefault();
+    $("#main-loader").show();
     
     $(".btn").attr("disabled", true);
 
@@ -172,7 +173,6 @@ $("#requestor_registration").submit(function (e) {
 
     validateMasterCode();
     if (!masterKeyValid || master_code.length == 0) return false;
-
 
     var cno = $("#org_contact_no").val()
 

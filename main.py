@@ -50,21 +50,24 @@ def index(user_address):
 @token_required
 def dashboard(user_address = None):
     if not user_address:
-        return redirect(url_for('index',  next= request.path))
+        flash("You are not authenticated. Please login again!")
+        return redirect(url_for('index', next= "/".join(request.url.split('/')[3:])))
     return render_template("dashboard.html", user_address = user_address)
 
 @app.route("/registration")
 @token_required
 def registration(user_address):
     if not user_address:
-        return redirect(url_for('index',  next= request.path))
+        flash("You are not authenticated. Please login again!")
+        return redirect(url_for('index', next= "/".join(request.url.split('/')[3:])))
     return render_template("registration.html", user_address = user_address)
 
 @app.route('/dashboard/upload/doc', methods=['GET'])
 @token_required
 def upload_file(user_address):
     if not user_address:
-        return redirect(url_for('index',  next= request.path))
+        flash("You are not authenticated. Please login again!")
+        return redirect(url_for('index', next= "/".join(request.url.split('/')[3:])))
     return render_template("upload_doc.html", user_address=user_address)
 
 
@@ -300,7 +303,9 @@ def dashboardPost(user_address):
 @token_required
 def searchUser(user_address):
     if not user_address:
-        return redirect(url_for('index',  next= request.path))
+        flash("You are not authenticated. Please login again!")
+        return redirect(url_for('index', next= "/".join(request.url.split('/')[3:])))
+        # return redirect(url_for('index',  next= request.path))
 
     if not request.args.get("uid", None):
         return redirect("/dashboard", code= 400)
@@ -316,7 +321,9 @@ def searchUser(user_address):
 @token_required
 def searchDoc(user_address):
     if not user_address:
-        return redirect(url_for('index',  next= request.path))
+        flash("You are not authenticated. Please login again!")
+        return redirect(url_for('index', next= "/".join(request.url.split('/')[3:])))
+        # return redirect(url_for('index',  next= request.path))
 
     if not request.args.get('docid', None):
         return redirect("/dashboard", code = 400)
@@ -417,7 +424,7 @@ def sendAproovedMailToRequestor(user_address):
 @token_required
 def approoveDoc(user_address):
     if not user_address:
-        flash("You must login into the system")
+        flash("You are not authenticated. Please login again!")
         return redirect(url_for('index', next= "/".join(request.url.split('/')[3:])))
 
     requester_address = request.args.get('requester', None)
@@ -425,12 +432,12 @@ def approoveDoc(user_address):
     doc_id = request.args.get('doc_id', None)
 
     if not requester_address or not owner_address or not doc_id:
-        return redirect("/", code = 400)
+        return redirect(url_for('index'))
 
     if owner_address != user_address:
         session.pop("x-access-tokens", None)
         session.pop("user_address", None)
-        flash("You was logined with different account. Login with current account")
+        flash("Not a correct account address, you are logined with. Try with different account.")
         return redirect(url_for('index', next= "/".join(request.url.split('/')[3:])))
 
     return render_template(
@@ -447,7 +454,7 @@ def approoveDoc(user_address):
 @token_required
 def access_doc(user_address):
     if not user_address:
-        flash("You must login into the system")
+        flash("You are not authenticated. Please login again!")
         return redirect(url_for('index', next= "/".join(request.url.split('/')[3:])))
 
     requester_address = request.args.get('requester', None)
@@ -457,12 +464,12 @@ def access_doc(user_address):
 
     if not requester_address or not owner_address or not doc_id or not ekey:
         flash("Invalid URL")
-        return redirect("/", code = 400)
+        return redirect(url_for('index'))
 
     if requester_address != user_address:
         session.pop("x-access-tokens", None)
         session.pop("user_address", None)
-        flash("You was logined with different account. Login with current account")
+        flash("Not a correct account address, you are logined with. Try with different account.")
         return redirect(url_for('index', next= "/".join(request.url.split('/')[3:])))
 
     return render_template("requester_decrypt.html", 
