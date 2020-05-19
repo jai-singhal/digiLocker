@@ -1,7 +1,5 @@
 var documents = [];
 var docList = [];
-var _glblDocName = "";
-
 
 var resident_address = document.getElementById("main_id").getAttribute("user_address");
 
@@ -389,35 +387,28 @@ function getDocName(docid, owner_address) {
     })
 }
 
-function getDocNameOnly(docid, owner_address) {
-    contract.methods.getDocumentName(
-        docid, owner_address).call().then(function (docname) {
-            _glblDocName = docname;
-    })
-}
 
+$(document).on('click', '.verify_doc', function () 
+{
 
-
-$(document).on('click', '.verify_doc', function () {
-
-
-
-  
-    $('#declarationModel').modal("open");
     var _this = $(this);
     var doc_id = _this.attr("doc_id");
     var doc_owner = _this.attr("docOwner");
-    getDocNameOnly(doc_id,doc_owner);
-    $("#doc_id").html(doc_id);
-    $("#doc_owner").html(doc_owner);
-    $(".doc_name_modal").html("Verification of the Document :"+_glblDocName);
+    contract.methods.getDocumentName(doc_id,doc_owner).call().then(function(docname)
+    {
 
-    $("#doc_name").html(_glblDocName);
-    // console.log(_glblDocName)
-
+            $('#declarationModel').modal("open");
+            
+            $("#doc_id").html(doc_id);
+            $("#doc_owner").html(doc_owner);
+            $(".doc_name_modal").html("Verification of the Document :"+docname);
+            $("#doc_name").html(docname);
     
-    // console.log(doc_id, doc_owner,address)
-
+    }).catch(function(error)
+    {
+        console.log("error while calling getDocumentName() -"+error.message)
+    });
+    
     $('#verifyThisDoc').submit(function (e) {
         $("#main-loader").show();
         e.preventDefault();
