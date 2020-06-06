@@ -140,4 +140,3 @@ logs/*
 .env/
 ben/
 config.py
-static/js/abi.js

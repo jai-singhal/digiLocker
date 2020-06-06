@@ -189,11 +189,10 @@ $("#requestor_registration").submit(function (e) {
 
     $("#main-loader").show();
     var request = new XMLHttpRequest();
-    $("#main-loader").hide().fadeOut("slow");
     var register_url = "/api/user/registration/";
     request.open('POST', register_url, true);
     request.onload = function () {
-        $("#main-loader").hide().fadeOut("slow");
+        $("#main-loader").show();
         if (request.status == 200) {
             // Success!
             var resp = JSON.parse(request.responseText);
@@ -205,7 +204,6 @@ $("#requestor_registration").submit(function (e) {
                     fname, lname, email, utype, cno,
                     access_key, resp.pu
                 ).send().then(function (res) {
-                    $("#main-loader").hide();
                     swal({
                         title: "Success!",
                         text: "Registration Successful!! You will recieve credentials via mail.",
@@ -214,6 +212,7 @@ $("#requestor_registration").submit(function (e) {
                         closeOnClickOutside: false,
                     }).then((value) => {
                         if (value) {
+                            $("#main-loader").hide();
                             window.location.replace(resp.redirect_url);
                         }
                     });
@@ -223,6 +222,8 @@ $("#requestor_registration").submit(function (e) {
                     $(".btn").attr("disabled", false);
                 });
             } else {
+                $("#main-loader").hide();
+                $(".btn").attr("disabled", false);
                 alert("Not valid")
             }
         } else {
@@ -233,6 +234,8 @@ $("#requestor_registration").submit(function (e) {
 
     request.onerror = function () {
         alert("Registration failed - there was an error");
+        $("#main-loader").hide();
+        $(".btn").attr("disabled", false);
     };
     request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
     request.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));

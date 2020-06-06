@@ -33,7 +33,7 @@ def getKey(total_doc, masterKey, user_address):
     key = keys[startIndex:startIndex+128]
     return key.decode()
 
-def prepareMailMsg(name, from_mail, address, pr, master_key, MAIL_SENDER):
+def prepareMailMsg(name, from_mail, address, pr, MAIL_SENDER):
     msg = Message(
         recipients=[from_mail.strip(),],
         sender = MAIL_SENDER
@@ -48,10 +48,6 @@ def prepareMailMsg(name, from_mail, address, pr, master_key, MAIL_SENDER):
         <table>
         <tr><td>Account Address: </td><td><strong>{address}</strong></td></tr>
     """
-    if master_key:
-        msgHtml += f"""
-        <tr><td>Master key: </td><td><strong>{master_key}</strong></td></tr>
-        """
     msgHtml += "</table>"
 
     if pr:

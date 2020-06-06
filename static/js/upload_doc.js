@@ -43,6 +43,7 @@ $('#id_upload_doc').submit(function (event) {
             if (request.status == 200) {
                 var resp = JSON.parse(request.responseText);
                 if (resp.valid == false) {
+
                     swal({
                         title: "Warning!",
                         text: "Master key is not valid!!",
@@ -164,6 +165,8 @@ $('#id_upload_doc').submit(function (event) {
                                     }
                                 },
                                 error: function (res) {
+                                    $(".btn").attr("disabled", false);
+
                                     alert(res, "error")
                                 }
                             });

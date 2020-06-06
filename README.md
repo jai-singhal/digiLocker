@@ -34,79 +34,23 @@ pip install -r requirements.txt
 python main.py
 ```
 
+### Other Dependencies
+
+- Install the Ganache()
+
 ## System Design
 
-### Login
+### Resident Perspective
 
-![doc-upload](https://i.imgur.com/mC79hzC.png)
-
-
-### Document uploading
-
-![doc-upload](https://i.imgur.com/bwbkliL.png)
+![Resident](https://i.imgur.com/2Lrcsux.png)
 
 
-## Todos
+### Requestor Perspective
 
-### Ankit
+![Requestor](https://i.imgur.com/QAuXW5V.png)
 
-Soldity functions
-1. Get the index of doc_id in array.
+### Auth Activity digram
 
+![auth](https://i.imgur.com/SjtrkUV.png)
 
-## /aproove/doc
- input from user: masterkey
-
- params(fetched from blockchain): 
- 	public key of requester(fetched from blockchain), doc_no(why? => modulo, to get the approprate key from PKBDF2)
-
-Functionality:
-- encrypt masterkey with public key of requester.(opposite of encrytion std.)
-- Send the mail to requester with following params
-	- ecrypted masterkey
-	- doc id,
-	- doc name
-	- owner name
-	- requester email, name, adddress
-
-Requestor will get the email, 
-		WITH URL params( 
-		requester_address
-		docid
-		doc_name
-		ecrypted masterkey
-		owner_address
-		doc hash
-	)
-
-## /aprooved/doc/?{params}
-
-- Ask requester its private key(why? to decrypt the master key doc key)
-- Compare doc hash with the blockchain doc hash
-- Decrypt the encrypted doc
-- Download the document
-- Doc location = BASE_URL/{{owner_address}}/{{doc_name}}.
-
-
-## Other
-- Accessing Document permission:
- - Add button with each document(s) which should be responsible for making an POST call to python server,
-    sending, requesting useraddress, docid.
-
-
-
-
-{
-	"jai<uaddr>": {
-		{iron(addr), docid1, permission},
-		{iron(addr), docid2, perm2}
-		{h2019, doc8, p}
-	}
-
-}
-
-
-returns [iron_email, iron_email, h2019_email], [docid1, docid2, doc8], [docid1_name, docid2_name, doc8_name], [p1, p2, p3]
-
-
-These are tasks we have to do in future
+### Document upload and permission Grant Activity digram

@@ -1,21 +1,24 @@
-from flask import Flask, escape, request, session, redirect, url_for, jsonify, flash
-from flask import render_template
-from utils import *
-import jwt
-import random, os, string
-import datetime
-from functools import wraps
-import settings
-import hashlib
 import binascii
-from flask_mail import Mail
-from werkzeug.utils import secure_filename
-from base64 import b64decode,b64encode
+import datetime
+import hashlib
+import os
+import random
+import string
+from base64 import b64decode, b64encode
+from functools import wraps
+
 from Crypto.Cipher import PKCS1_v1_5 as Cipher_PKCS1_v1_5
 from Crypto.PublicKey import RSA
+from flask import (Flask, escape, flash, jsonify, redirect, render_template,
+                   request, session, url_for)
+from werkzeug.utils import secure_filename
+
 # from werkzeug import secure_filename
 import dropbox
-
+import jwt
+import settings
+from flask_mail import Mail
+from utils import *
 
 app = Flask(__name__)
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', "docx"])
@@ -136,7 +139,7 @@ def upload_file_postapi(user_address):
 
 @app.route("/api/user/accesskey", methods = ['POST'])
 @token_required
-def comparehash_digest(user_address):
+def comparehash_digest_nd_senddockey(user_address):
     if not user_address:
         return jsonify({
             'success': False, 
@@ -150,6 +153,7 @@ def comparehash_digest(user_address):
         mkey_digest_new = hashlib.sha256()
         mkey_digest_new.update(master_key.strip().encode())
         mkey_digest_new.update(app.config["SECRET_KEY"])
+        # mkey_digest_new.update(user_address.encode())
         mkey_digest_new = mkey_digest_new.hexdigest()
 
         if "0x" + mkey_digest_new == mkeydigest:
@@ -195,7 +199,7 @@ def registration_postapi(user_address):
             mkey_digest.update(app.config["SECRET_KEY"])
             mkey_digest = mkey_digest.hexdigest()
 
-            msg = prepareMailMsg(f"{first_name} {last_name}", email, user_address, None, master_key, MAIL_SENDER)
+            msg = prepareMailMsg(f"{first_name} {last_name}", email, user_address, None, MAIL_SENDER)
             mail.send(msg)  
 
             return {
@@ -207,13 +211,9 @@ def registration_postapi(user_address):
             }
 
         elif utype == "2":
-            mastercode = request.form.get("mastercode")
-            if mastercode not in app.config["VERIFICATION_CODES"]:
-                return {'success': False, 'error': "Verification code not valid.", "status_code": 400}
-
             pu, pr = generateRSAKeypair()
             pu = binascii.hexlify(pu.encode()).decode()
-            msg = prepareMailMsg(f"{first_name}", email, user_address, pr, None, MAIL_SENDER)
+            msg = prepareMailMsg(f"{first_name}", email, user_address, pr, MAIL_SENDER)
             mail.send(msg)  
             return jsonify({
                 'success': True, 
@@ -554,4 +554,3 @@ def downloadEncryptedFileNcompareHash(user_address):
 if __name__ == '__main__':
     app.run(host="0.0.0.0", debug=True)
     # app.run(host="172.18.16.108", debug=True)
-

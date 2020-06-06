@@ -11,6 +11,7 @@ contract digiLocker {
         string timestamp; //
         bytes32 docHash; //doc hash
     }
+    
     struct UserDetails{
         string firstName;
         string lastName;
@@ -23,8 +24,8 @@ contract digiLocker {
         bool valid;
         UserDetails details;
         address _useraddress;
-        bytes32 accessKey; // user master key Hash
-        string pubKey; // Public key of user
+        bytes32 accessKey; // user master key Hash //resindent only
+        string pubKey; // Public key of user //requestor only
     }
     uint usercount = 0;
     address[] _glbluseraddress;
