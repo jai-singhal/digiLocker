@@ -140,3 +140,4 @@ logs/*
 .env/
 ben/
 config.py
+screenshots/
