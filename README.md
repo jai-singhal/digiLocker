@@ -1,6 +1,16 @@
 # Digital locker using Ethereum Blockchain
 
+
+
 ## How to setup
+
+### Install the Metamask
+
+Download the metamask extension from: https://metamask.io/
+
+### Ethereum account and network
+
+We have used Rinkeby Test network, and deployed the contract on the same network. So to run the application, you may required to get some free ethers from [here](https://faucet.rinkeby.io/).
 
 ### Clone repository
 
@@ -34,10 +44,6 @@ pip install -r requirements.txt
 python main.py
 ```
 
-### Other Dependencies
-
-- Install the Ganache()
-
 ## System Design
 
 ### Resident Perspective
@@ -54,3 +60,5 @@ python main.py
 ![auth](https://i.imgur.com/SjtrkUV.png)
 
 ### Document upload and permission Grant Activity digram
+
+![doc](https://i.imgur.com/LeaB6zf.png)
