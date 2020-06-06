@@ -1,7 +1,6 @@
 pragma solidity ^0.5.0;
 pragma experimental ABIEncoderV2;
 
-
 contract digiLocker {
     //structures and other variable declrn
     
@@ -11,7 +10,6 @@ contract digiLocker {
         string timestamp; //
         bytes32 docHash; //doc hash
     }
-    
     struct UserDetails{
         string firstName;
         string lastName;
@@ -24,8 +22,8 @@ contract digiLocker {
         bool valid;
         UserDetails details;
         address _useraddress;
-        bytes32 accessKey; // user master key Hash //resindent only
-        string pubKey; // Public key of user //requestor only
+        bytes32 accessKey; // user master key Hash
+        string pubKey; // Public key of user
     }
     uint usercount = 0;
     address[] _glbluseraddress;
