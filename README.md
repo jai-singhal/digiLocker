@@ -62,3 +62,32 @@ python main.py
 ### Document upload and permission Grant Activity digram
 
 ![doc](https://i.imgur.com/LeaB6zf.png)
+
+
+
+## Configuration
+
+### config.py
+Please add the `config.py` to your main directory with your credentials
+**Sample config.py**
+
+```python
+# config.py
+APPCONFIG = {
+    "APP_SECRETKEY":"",
+    "DROPBOX_KEY":"",
+    "DROPBOX_SECRET":"",
+    "DROPBOX_ACCESS_TYPE":"",
+    "DROPBOX_ACCESS_TOKEN":"",
+    "MAIL_USERNAME":"",
+    "MAIL_PASSWORD":"",
+    "MAIL_DEFAULT_SENDER":"",
+    "MAIL_SENDER":"",
+    "SECRET_KEY": b"",
+    "SERVER_BASE_ADDRESS": "http://127.0.0.1:5000",
+    "VERIFICATION_CODES": [
+        "12345",
+        # your verification codes here.
+    ]
+}
+```
