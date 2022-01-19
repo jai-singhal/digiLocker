@@ -1,6 +1,40 @@
 # Digital locker using Ethereum Blockchain
 
+## Research Paper
 
+View the paper [here](https://drive.google.com/file/d/1VXvfNA6ipPr8VxRAEaJLFGmXbmeHWk86/view?usp=sharing)
+
+Cite it
+```
+@INPROCEEDINGS{Sing2201:DD,
+AUTHOR="Jai Singhal and Ankit Gautam and Ashutosh Bhatia and Ankit Agrawal and
+Rekha Kaushik",
+TITLE="{DD-Locker:} Blockchain Based Decentralized Personal Document Locker",
+BOOKTITLE="2022 International Conference on Information Networking (ICOIN) (ICOIN
+2022)",
+ADDRESS="Jeju Island, Korea (South)",
+DAYS=11,
+MONTH=jan,
+YEAR=2022,
+KEYWORDS="Blockchain; Ethereum; Dapps; Smart Contract",
+ABSTRACT="Document verification is the first step whenever we enter any organization
+or institute. In any organization, it is essential to track, verify, and
+check the person's background who will become a part of the organization.
+This process
+is very time-consuming and hectic for both parties involved. Various
+governments provide cloud-based digital locker services for the citizens
+storing the public document on a centralized server. But due to its
+centralized nature, this type of service is weak against information
+breaches and Denial of Service (DoS) attacks. Also, there are some privacy
+concerns with such centralized digital locker services as the stored
+documents may contain users' crucial personal information. This paper
+proposes a blockchain-based digital locker in a decentralized application
+using Ethereum Blockchain to securely store personal documents with high
+availability. The proposed solution also verifies documents with ease,
+confidentiality, access control, data privacy, authenticity, and
+maintaining the integrity of documents."
+}
+```
 
 ## How to setup
 
