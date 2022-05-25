@@ -37,7 +37,7 @@ parsimonious==0.8.1
 protobuf==3.11.3
 pycparser==2.20
 pycryptodome==3.9.7
-PyJWT==1.7.1
+PyJWT==2.4.0
 # pypiwin32==223
 pyrsistent==0.16.0
 # pywin32==227
