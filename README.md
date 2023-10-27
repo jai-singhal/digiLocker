@@ -5,6 +5,7 @@
 View the paper [here](https://drive.google.com/file/d/1VXvfNA6ipPr8VxRAEaJLFGmXbmeHWk86/view?usp=sharing)
 
 Cite it
+
 ```
 @INPROCEEDINGS{Sing2201:DD,
 AUTHOR="Jai Singhal and Ankit Gautam and Ashutosh Bhatia and Ankit Agrawal and
@@ -73,7 +74,28 @@ virtualenv .
 pip install -r requirements.txt
 ```
 
+If you are having a difficulty installing the packages, simply install Python3.9 and run the following command on your terminal
+
+```
+python3.9 -m pip install virtualenv
+```
+
+```
+source venv/bin/activate
+```
+
+ for Linux/Mac users
+
+```
+source venv/Scripts/activate
+```
+
+ for Windows users
+
+Please ensure that you deactivate any previous environments to avoid errors
+
 ### Run the server
+
 ```powershell
 python main.py
 ```
@@ -83,7 +105,6 @@ python main.py
 ### Resident Perspective
 
 ![Resident](https://i.imgur.com/2Lrcsux.png)
-
 
 ### Requestor Perspective
 
@@ -97,11 +118,10 @@ python main.py
 
 ![doc](https://i.imgur.com/LeaB6zf.png)
 
-
-
 ## Configuration
 
 ### config.py
+
 Please add the `config.py` to your main directory with your credentials
 **Sample config.py**
 
