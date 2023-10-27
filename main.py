@@ -6,6 +6,12 @@ import random
 import string
 from base64 import b64decode, b64encode
 from functools import wraps
+from dapr.actor import ActorInterface, actormethod
+from dapr.actor.runtime.config import ActorRuntimeConfig, ActorReentrancyConfig, ActorTypeConfig
+from flask_dapr.actor import DaprActor
+from dapr.conf import settings
+from dapr_config.demo_actor import DemoActor
+from datetime import timedelta
 
 from Crypto.Cipher import PKCS1_v1_5 as Cipher_PKCS1_v1_5
 from Crypto.PublicKey import RSA
@@ -20,7 +26,24 @@ import settings
 from flask_mail import Mail
 from utils import *
 
-app = Flask(__name__)
+app = Flask(f"{DemoActor.__name__}Service")
+
+# Enable DaprActor Extension
+actor = DaprActor(app)
+
+# Register DemoActor
+actor.register_actor(DemoActor)
+
+# Create ActorRuntime configuration
+actor_runtime_config = ActorRuntimeConfig(
+    actor_idle_timeout=timedelta(hours=1),
+    actor_scan_interval=timedelta(seconds=30),
+    drain_ongoing_call_timeout=timedelta(minutes=1),
+    drain_rebalanced_actors=True,
+    reentrancy=ActorReentrancyConfig(enabled=False),
+    reminders_storage_partitions=7
+)
+
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', "docx"])
 app.config.from_object(settings)
 mail = Mail(app)
@@ -552,5 +575,5 @@ def downloadEncryptedFileNcompareHash(user_address):
         return {"success": False, "error": str(e)}
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", debug=True)
-    # app.run(host="172.18.16.108", debug=True)
+    app.run(host="0.0.0.0", debug=True, port="8083")
+    
