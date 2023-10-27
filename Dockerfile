@@ -54,4 +54,4 @@ EXPOSE $DAPR_APP_PORT
 #CMD ["gunicorn", "-w 2", "-b", "0.0.0.0:8000", "-t 120", "main:app"]
 
 # Start Dapr sidecar and then your Flask app
-CMD ["dapr", "run", "--app-id", "digiLocker", "--app-port", "5000", "python", "main.py"]
+CMD ["dapr", "run", "--app-id", "digiLocker", "--app-port", "8083", "python", "main.py"]
